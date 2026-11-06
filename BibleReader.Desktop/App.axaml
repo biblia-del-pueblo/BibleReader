@@ -1,8 +1,24 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sys="clr-namespace:System;assembly=netstandard"
              x:Class="BibleReader.Desktop.App"
              RequestedThemeVariant="Default">
-  <Application.Styles>
-    <FluentTheme />
-  </Application.Styles>
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <!-- Styles applied when the App is in Light Mode -->
+                <ResourceDictionary x:Key="Light">
+                    <sys:String x:Key="SvgThemeCss">path { fill: #333333 !important; }</sys:String>
+                </ResourceDictionary>
+
+                <!-- Styles applied when the App is in Dark Mode -->
+                <ResourceDictionary x:Key="Dark">
+                    <sys:String x:Key="SvgThemeCss">path { fill: #FFFFFF !important; }</sys:String>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>

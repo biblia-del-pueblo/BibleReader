@@ -2,7 +2,7 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net10.0-android</TargetFramework>
-        <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion>23</SupportedOSPlatformVersion>
         <Nullable>enable</Nullable>
         <ApplicationId>com.CompanyName.BibleReader</ApplicationId>
         <ApplicationVersion>1</ApplicationVersion>
@@ -21,9 +21,21 @@
         <PackageReference Include="Avalonia.Android" />
         <PackageReference Include="Svg.Controls.Skia.Avalonia" />
         <PackageReference Include="Xamarin.AndroidX.Core.SplashScreen" />
+        <PackageReference Include="Xamarin.AndroidX.Core.Core.Ktx" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\BibleReader.Library\BibleReader.Library.csproj" />
+    </ItemGroup>
+
+    <!-- The Bible's text, bundled into the APK as assets (MainActivity copies them to app storage on first run).
+         BibleDirectory is the folder with the numbered .md files; src\booknames.xml supplies the abbreviations.
+         Override it with -p:BibleDirectory=... ; without the folder the app starts with a "no Bible found" message. -->
+    <PropertyGroup>
+        <BibleDirectory Condition="'$(BibleDirectory)' == ''">$(MSBuildThisFileDirectory)..\..\BibliaLibrePrivate\Bibles\English.WorldEnglishBibleUS</BibleDirectory>
+    </PropertyGroup>
+    <ItemGroup Condition="Exists('$(BibleDirectory)')">
+        <AndroidAsset Include="$(BibleDirectory)\*.md" Link="Bible\%(Filename)%(Extension)" />
+        <AndroidAsset Include="$(BibleDirectory)\src\booknames.xml" Link="Bible\booknames.xml" Condition="Exists('$(BibleDirectory)\src\booknames.xml')" />
     </ItemGroup>
 </Project>

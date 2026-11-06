@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:BibleReader.Library.UI"
+             x:Class="BibleReader.Library.UI.BibleView">
+
+    <!-- The toolbar on top follows the text block's Position and navigates it by book and chapter. -->
+    <Grid RowDefinitions="Auto,*" Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+        <local:BibleToolbar Target="{Binding #Block}" />
+        <!-- Vertical: a single column that scrolls by touch, which is what a phone wants.
+             The font list falls back to what the device has when "Bible Roman" is not installed. -->
+        <local:BibleTextBlock x:Name="Block"
+                              Grid.Row="1"
+                              Margin="16,8"
+                              Orientation="Vertical"
+                              FontSize="18"
+                              FontFamily="Bible Roman, Noto Serif, Inter"
+                              Background="{DynamicResource SystemControlBackgroundAltHighBrush}" />
+    </Grid>
+</UserControl>

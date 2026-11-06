@@ -1,6 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:svg="clr-namespace:Svg.Controls.Skia;assembly=Svg.Controls.Skia.Avalonia"
+             xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
              x:Class="BibleReader.Library.UI.BibleToolbar">
 
     <UserControl.Styles>
@@ -38,7 +38,8 @@
                     <TextBlock x:Name="BookText" FontWeight="SemiBold" VerticalAlignment="Center" />
                     <TextBlock x:Name="ReferenceText" Opacity="0.8" VerticalAlignment="Center" />
                     <!-- Direct Svg tag -->
-                    <svg:Svg Path="/Assets/down-arrow.svg" Width="16" Height="16"/>
+                    <svg:Svg Path="/Assets/down-arrow.svg" Width="16" Height="16"
+                            Css="{DynamicResource SvgThemeCss}" />
                     <TextBlock Opacity="0.6" VerticalAlignment="Center" />
                 </StackPanel>
             </Button>

@@ -18,5 +18,8 @@
         <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 
         <PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.2.0.3" />
+        <!-- AndroidX Core 1.19 contains the Kotlin extensions; an older Core.Ktx next to it duplicates classes (D8 error).
+             Keep this at the same version as Xamarin.AndroidX.Core. -->
+        <PackageVersion Include="Xamarin.AndroidX.Core.Core.Ktx" Version="1.19.0.1" />
     </ItemGroup>
 </Project>
