@@ -8,6 +8,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Documents;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Input.GestureRecognizers;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
@@ -67,16 +68,24 @@ public class BibleTextBlock : Panel
     public static readonly StyledProperty<double> ColumnSpacingProperty =
         AvaloniaProperty.Register<BibleTextBlock, double>(nameof(ColumnSpacing), 24);
 
+    /// <summary>
+    /// <see cref="Orientation.Horizontal"/> (default): columns side by side, scrolled one whole column at a time.
+    /// <see cref="Orientation.Vertical"/>: a single column as wide as the control, scrolled vertically
+    /// (touch drag with inertia, mouse wheel, scroll bar), meant for phones.
+    /// </summary>
+    public static readonly StyledProperty<Orientation> OrientationProperty =
+        AvaloniaProperty.Register<BibleTextBlock, Orientation>(nameof(Orientation), Orientation.Horizontal);
+
     public static readonly AttachedProperty<FloatSide> SideProperty =
         AvaloniaProperty.RegisterAttached<BibleTextBlock, Control, FloatSide>("Side");
 
     static BibleTextBlock()
     {
         AffectsMeasure<BibleTextBlock>(TextProperty, FontSizeProperty, FontFamilyProperty,
-            TextAlignmentProperty, FloatSpacingProperty, ColumnCountProperty, ColumnWidthProperty, ColumnSpacingProperty);
+            TextAlignmentProperty, FloatSpacingProperty, ColumnCountProperty, ColumnWidthProperty, ColumnSpacingProperty, OrientationProperty);
         AffectsArrange<BibleTextBlock>(SideProperty);
         AffectsMeasure<BibleTextBlock>(ForegroundProperty);
-        SideProperty.Changed.AddClassHandler<Control>((c, _) => (c.Parent as BibleTextBlock)?.InvalidateMeasure());
+        SideProperty.Changed.AddClassHandler<Control>((c, _) => (c.Parent as BibleTextBlock)?.MarkDirty());
     }
 
     public string? Text { get => GetValue(TextProperty); set => SetValue(TextProperty, value); }
@@ -86,6 +95,7 @@ public class BibleTextBlock : Panel
     public TextAlignment TextAlignment { get => GetValue(TextAlignmentProperty); set => SetValue(TextAlignmentProperty, value); }
     public double FloatSpacing { get => GetValue(FloatSpacingProperty); set => SetValue(FloatSpacingProperty, value); }
 
+    public Orientation Orientation { get => GetValue(OrientationProperty); set => SetValue(OrientationProperty, value); }
     public int ColumnCount { get => GetValue(ColumnCountProperty); set => SetValue(ColumnCountProperty, value); }
     public double ColumnWidth { get => GetValue(ColumnWidthProperty); set => SetValue(ColumnWidthProperty, value); }
     public double ColumnSpacing { get => GetValue(ColumnSpacingProperty); set => SetValue(ColumnSpacingProperty, value); }
@@ -98,13 +108,75 @@ public class BibleTextBlock : Panel
     private readonly List<PlacedLine> _lines = new();
     private readonly List<Rect> _floatRects = new();
 
+    // ---- Debounced re-layout ------------------------------------------------------------------------
+    // Flowing a long text is slow, so while the available size keeps changing (window being dragged) the last
+    // layout stays on screen and the real re-flow happens once the size has been stable for a moment.
+
+    /// <summary>How long the size must stay unchanged before the text is flowed again.</summary>
+    public static readonly TimeSpan ResizeDelay = TimeSpan.FromMilliseconds(150);
+
+    private DispatcherTimer? _resizeTimer;
+    private Size _lastAvailable, _lastTotal;
+    private bool _hasLayout, _dirty = true, _commitResize;
+
+    /// <summary>Something other than the size changed (text, font, floats…): the next measure must re-flow.</summary>
+    private void MarkDirty() { _dirty = true; InvalidateMeasure(); }
+
+    protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+    {
+        base.OnPropertyChanged(change);
+        if (change.Property == TextProperty || change.Property == FontSizeProperty || change.Property == FontFamilyProperty
+            || change.Property == ForegroundProperty || change.Property == TextAlignmentProperty
+            || change.Property == FloatSpacingProperty || change.Property == ColumnCountProperty
+            || change.Property == ColumnWidthProperty || change.Property == ColumnSpacingProperty
+            || change.Property == OrientationProperty)
+            _dirty = true;
+    }
+
     protected override Size MeasureOverride(Size availableSize)
+    {
+        // Only a pure size change is deferred; with an unchanged size the measure always runs, because a float
+        // child may have invalidated it.
+        if (_hasLayout && !_dirty && !_commitResize && availableSize != _lastAvailable)
+        {
+            // Vertical mode: a height-only change just changes the viewport, no re-flow is needed.
+            if (Orientation == Orientation.Vertical && availableSize.Width == _lastAvailable.Width)
+            {
+                _lastAvailable = availableSize;
+                _lastTotal = UpdateVertical(availableSize, _lastTotal.Width);
+                _layer.Measure(_lastTotal);
+                _layer.InvalidateVisual();
+                return _lastTotal;
+            }
+            // Resizing: keep showing the old layout and flow again when the size settles.
+            _resizeTimer ??= new DispatcherTimer(ResizeDelay, DispatcherPriority.Background, (_, _) =>
+            {
+                _resizeTimer!.Stop();
+                _commitResize = true;
+                InvalidateMeasure();
+            });
+            _resizeTimer.Stop();
+            _resizeTimer.Start();
+            return _lastTotal;
+        }
+        _resizeTimer?.Stop();
+        _commitResize = false;
+        _dirty = false;
+        _lastAvailable = availableSize;
+        var result = MeasureCore(availableSize);
+        _lastTotal = result;
+        _hasLayout = true;
+        return result;
+    }
+
+    private Size MeasureCore(Size availableSize)
     {
         bool widthFinite = !double.IsInfinity(availableSize.Width);
         bool heightFinite = !double.IsInfinity(availableSize.Height);
         double totalWidth = widthFinite ? availableSize.Width : 400;
         double spacing = ColumnSpacing;
-        bool fixedWidth = !double.IsNaN(ColumnWidth) && ColumnWidth > 0;
+        bool vertical = Orientation == Orientation.Vertical;
+        bool fixedWidth = !vertical && !double.IsNaN(ColumnWidth) && ColumnWidth > 0;
         bool unbounded = false; // true: add as many columns as the text needs
         int columns;
         double width;
@@ -117,12 +189,11 @@ public class BibleTextBlock : Panel
         }
         else
         {
-            columns = Math.Max(1, ColumnCount);
+            columns = vertical ? 1 : Math.Max(1, ColumnCount);
             width = Math.Max(1, (totalWidth - (columns - 1) * spacing) / columns);
         }
         // The text is first flowed as ONE tall column of this width; it is cut into columns afterwards.
         _width = width;
-        int usedColumns = 1;
         double gap = FloatSpacing;
 
         // 1. Measure floats. Each one is anchored at the text index where it was declared and gets placed
@@ -134,7 +205,7 @@ public class BibleTextBlock : Panel
         _caret = Math.Min(_caret, text.Length);
         _floatRects.Clear();
         var pending = new List<(Control Child, Size Size, FloatSide Side, int Anchor)>();
-        foreach (var child in Children.OfType<Control>().Where(c => c != _layer && c != _popup))
+        foreach (var child in Children.OfType<Control>().Where(c => c != _layer && c != _popup && c != _scrollBar && c != _vBar))
         {
             child.Measure(new Size(width, double.PositiveInfinity));
             pending.Add((child, child.DesiredSize, GetSide(child), anchors.TryGetValue(child, out var a) ? a : 0));
@@ -168,11 +239,30 @@ public class BibleTextBlock : Panel
             var source = new RichTextSource(text, segments);
             var formatter = TextFormatter.Current;
 
+            // Formats the line starting at `from` from a window of text just past where it can end (see
+            // RichTextSource.Limit). A line that ends close to the window's edge is formatted again with a
+            // bigger window, so the break is always decided with enough text after it.
+            TextLine? Format(int from, double lineWidth)
+            {
+                int window = Math.Max(200, (int)(lineWidth / Math.Max(1, FontSize * 0.25)) * 2);
+                while (true)
+                {
+                    source.Limit = Math.Min(text.Length, from + window);
+                    var l = formatter.FormatLine(source, from, lineWidth, paraProps);
+                    if (l is null || source.Limit >= text.Length || from + l.Length <= source.Limit - 80)
+                    {
+                        source.Limit = int.MaxValue;
+                        return l;
+                    }
+                    window *= 2;
+                }
+            }
+
             int index = 0;
             while (index < text.Length)
             {
                 // Probe with full width to learn the line height, then recompute with the real band.
-                var probe = formatter.FormatLine(source, index, width, paraProps);
+                var probe = Format(index, width);
                 if (probe is null) break;
 
                 var (left, right) = Insets(top, probe.Height);
@@ -192,7 +282,8 @@ public class BibleTextBlock : Panel
                 }
                 lineWidth = Math.Max(lineWidth, 1);
 
-                var line = formatter.FormatLine(source, index, lineWidth, paraProps);
+                // No float beside this line: the probe is already the line.
+                var line = lineWidth == width ? probe : Format(index, lineWidth);
                 if (line is null || line.Length == 0) break;
 
                 // Floats declared inside this line start here: place them at this line's top, then lay the
@@ -227,18 +318,29 @@ public class BibleTextBlock : Panel
         double flowHeight = Math.Max(textBottom, floatsBottom);
 
         // 3. Cut the tall column into `columns` columns.
-        double contentHeight = flowHeight;
-        if ((columns > 1 || unbounded) && _lines.Count > 0)
+        double pitch = width + spacing;
+        // With a fixed column width and a bounded size only the columns that fit are shown; the rest are
+        // reached with the scroll bar, one whole column at a time.
+        bool paged = fixedWidth && widthFinite && heightFinite;
+        int visible = paged ? Math.Max(1, (int)((availableSize.Width + spacing) / pitch)) : int.MaxValue;
+
+        var flowLines = _lines.ToList();
+        var flowArranged = _arranged.ToList();
+
+        (int Used, double Height) Cut(double columnHeight)
         {
+            _lines.Clear();
+            _lines.AddRange(flowLines);
+            _arranged = flowArranged.ToList();
+            if (!((columns > 1 || unbounded) && _lines.Count > 0)) return (1, flowHeight);
+
             double step = _lines.Min(l => l.Line.Height);
             // Finite height: newspaper-style, fill column 1 first. Infinite height: balance the columns.
-            double h = heightFinite ? availableSize.Height : flowHeight / columns;
-            h = Math.Max(h, step);
+            double h = Math.Max(columnHeight, step);
             List<double>? starts;
             while ((starts = SplitColumns(h, columns)) is null) h += step;
-            usedColumns = starts.Count(x => x < double.MaxValue);
+            int used = starts.Count(x => x < double.MaxValue);
 
-            double pitch = width + spacing;
             double Top(int col) => starts[col];
             int ColumnAt(double y)
             {
@@ -247,14 +349,14 @@ public class BibleTextBlock : Panel
                 return c;
             }
 
-            contentHeight = 0;
+            double height = 0;
             var columned = new List<PlacedLine>(_lines.Count);
             foreach (var pl in _lines)
             {
                 int c = ColumnAt(pl.Origin.Y);
                 var origin = new Point(c * pitch + pl.Origin.X, pl.Origin.Y - Top(c));
                 columned.Add(pl with { Origin = origin });
-                contentHeight = Math.Max(contentHeight, origin.Y + pl.Line.Height);
+                height = Math.Max(height, origin.Y + pl.Line.Height);
             }
             _lines.Clear();
             _lines.AddRange(columned);
@@ -265,16 +367,254 @@ public class BibleTextBlock : Panel
                 int c = ColumnAt(slot.Y);
                 slot = new Rect(c * pitch + slot.X, slot.Y - Top(c), slot.Width, slot.Height);
                 _arranged[i] = (child, slot);
-                contentHeight = Math.Max(contentHeight, slot.Bottom);
+                height = Math.Max(height, slot.Bottom);
             }
+            return (used, height);
         }
 
-        double contentWidth = fixedWidth ? usedColumns * width + (usedColumns - 1) * spacing : totalWidth;
-        var total = new Size(contentWidth, contentHeight);
+        var (usedColumns, contentHeight) = Cut(heightFinite ? availableSize.Height : flowHeight / columns);
+        double barHeight = 0;
+        if (paged && usedColumns > visible)
+        {
+            // The scroll bar takes room from the bottom, so the columns are cut again at a lower height.
+            _scrollBar.IsVisible = true; // a hidden control measures to zero
+            _scrollBar.Measure(new Size(availableSize.Width, double.PositiveInfinity));
+            barHeight = Math.Max(_scrollBar.DesiredSize.Height, 12);
+            (usedColumns, contentHeight) = Cut(Math.Max(1, availableSize.Height - barHeight));
+        }
+
+        _scrolling = paged && usedColumns > visible;
+        _pitch = pitch;
+        _barHeight = barHeight;
+        _firstColumn = _scrolling ? Math.Clamp(_firstColumn, 0, usedColumns - visible) : 0;
+        _visibleColumns = _scrolling ? visible : usedColumns;
+        // An animation in progress keeps its current offset (it heads for the new target by itself).
+        if (!_scrolling) StopAnimation();
+        if (_anim is not { IsEnabled: true } && !_panning) _offsetX = _firstColumn * pitch;
+
+        double contentWidth = fixedWidth ? _visibleColumns * width + (_visibleColumns - 1) * spacing : totalWidth;
+        _viewWidth = contentWidth;
+        if (_scrollBar.IsVisible != _scrolling) _scrollBar.IsVisible = _scrolling;
+        if (_scrolling)
+        {
+            _updatingBar = true;
+            _scrollBar.Minimum = 0;
+            _scrollBar.Maximum = usedColumns - visible;
+            _scrollBar.ViewportSize = visible;
+            _scrollBar.LargeChange = visible;
+            _scrollBar.SmallChange = 1;
+            _scrollBar.Value = _firstColumn;
+            _updatingBar = false;
+            _scrollBar.Measure(new Size(contentWidth, barHeight));
+        }
+
+        _contentHeight = contentHeight;
+        Size total;
+        if (vertical)
+        {
+            if (_scrollBar.IsVisible) _scrollBar.IsVisible = false;
+            total = UpdateVertical(availableSize, contentWidth);
+        }
+        else
+        {
+            _vScrolling = false;
+            _offsetY = 0;
+            if (_vBar.IsVisible) _vBar.IsVisible = false;
+            // Scrolling fills the given height exactly, with the scroll bar along the bottom edge.
+            total = new Size(contentWidth, _scrolling ? availableSize.Height : contentHeight);
+        }
         _layer.Measure(total);
         _layer.InvalidateVisual();
         return total;
     }
+
+    // ---- Vertical scrolling -------------------------------------------------------------------------
+
+    private readonly ScrollBar _vBar;
+    private bool _vScrolling;
+    private double _offsetY, _viewHeight, _contentHeight, _barWidth;
+
+    /// <summary>Sizes the viewport of the single column and configures the vertical scroll bar.</summary>
+    private Size UpdateVertical(Size available, double width)
+    {
+        bool heightFinite = !double.IsInfinity(available.Height);
+        _vScrolling = heightFinite && _contentHeight > available.Height + 0.5;
+        _viewHeight = _vScrolling ? available.Height : _contentHeight;
+        _offsetY = _vScrolling ? Math.Clamp(_offsetY, 0, _contentHeight - _viewHeight) : 0;
+        if (_vBar.IsVisible != _vScrolling) _vBar.IsVisible = _vScrolling; // visible before measuring: hidden = zero size
+        if (_vScrolling)
+        {
+            _updatingBar = true;
+            _vBar.Minimum = 0;
+            _vBar.Maximum = _contentHeight - _viewHeight;
+            _vBar.ViewportSize = _viewHeight;
+            _vBar.LargeChange = _viewHeight * 0.9;
+            _vBar.SmallChange = FontSize * 2.5;
+            _vBar.Value = _offsetY;
+            _updatingBar = false;
+            _vBar.Measure(new Size(double.PositiveInfinity, _viewHeight));
+            _barWidth = Math.Max(_vBar.DesiredSize.Width, 8);
+        }
+        return new Size(width, _viewHeight);
+    }
+
+    private void SetOffsetY(double y)
+    {
+        y = Math.Clamp(y, 0, Math.Max(0, _contentHeight - _viewHeight));
+        if (Math.Abs(y - _offsetY) < 0.01) return;
+        _offsetY = y;
+        if (Math.Abs(_vBar.Value - y) > 0.01)
+        {
+            _updatingBar = true;
+            _vBar.Value = y;
+            _updatingBar = false;
+        }
+        _popup.IsOpen = false;
+        InvalidateArrange(); // floats follow the offset
+        _layer.InvalidateVisual();
+    }
+
+    // Touch panning: the scroll gesture recognizer turns a finger drag (and its inertia afterwards) into deltas.
+    private void OnScrollGesture(object? sender, ScrollGestureEventArgs e)
+    {
+        if (_vScrolling)
+        {
+            SetOffsetY(_offsetY + e.Delta.Y);
+            e.Handled = true;
+        }
+        else if (_scrolling && _touchDown)
+        {
+            // Horizontal mode: the columns follow the finger; they settle on a whole column when it lifts.
+            StopAnimation();
+            _panning = true;
+            double max = Math.Max(0, (_scrollBar.Maximum) * _pitch);
+            _offsetX = Math.Clamp(_offsetX + e.Delta.X, 0, max);
+            _popup.IsOpen = false;
+            InvalidateArrange();
+            _layer.InvalidateVisual();
+            e.Handled = true;
+        }
+    }
+
+    private bool _touchDown, _panning;
+
+    /// <summary>Finger lifted while panning: choose the column to settle on (a short flick is enough).</summary>
+    private void OnScrollInertiaStarting(object? sender, ScrollGestureInertiaStartingEventArgs e)
+    {
+        if (!_panning) return;
+        SettlePan(e.Inertia.X);
+        e.Handled = true; // no free-running inertia: the columns snap
+    }
+
+    private void OnScrollGestureEnded(object? sender, ScrollGestureEndedEventArgs e)
+    {
+        if (_panning) SettlePan(0);
+    }
+
+    private void SettlePan(double velocityX)
+    {
+        _panning = false;
+        double moved = _offsetX / _pitch - _firstColumn; // columns dragged, signed (positive = towards later columns)
+        int sign = Math.Sign(moved);
+        bool flick = sign != 0 && Math.Sign(velocityX) == sign;
+        double threshold = flick ? 0.1 : 0.35;
+        int target = sign == 0 ? _firstColumn : _firstColumn + sign * (int)Math.Round(Math.Abs(moved) + 0.5 - threshold);
+        ApplyColumn(target, force: true);
+    }
+
+    // A tap (touch) opens a footnote; for touch the press can't, because it may be the start of a pan.
+    private void OnTapped(object? sender, TappedEventArgs e)
+    {
+        if (e.Pointer?.Type != PointerType.Touch) return;
+        var position = e.GetPosition(this);
+        if (OverScrollBar(position)) return;
+        if (HitFootnote(ToContent(position), out var bounds) is { } note)
+        {
+            bounds = bounds.Translate(new Vector(-_offsetX, -_offsetY));
+            e.Handled = true;
+            Dispatcher.UIThread.Post(() => ShowFootnote(note, bounds), DispatcherPriority.Background);
+        }
+    }
+
+    // ---- Column scrolling ---------------------------------------------------------------------------
+
+    private readonly ScrollBar _scrollBar;
+    private bool _scrolling, _updatingBar;
+    private int _firstColumn, _visibleColumns;
+    private double _pitch, _offsetX, _viewWidth, _barHeight;
+
+    /// <summary>Shows column <paramref name="column"/> as the first visible one (snapped to a whole column).</summary>
+    private void ApplyColumn(int column, bool force = false)
+    {
+        if (_scrolling) column = Math.Clamp(column, 0, Math.Max(0, (int)_scrollBar.Maximum));
+        if (Math.Abs(_scrollBar.Value - column) > 1e-6)
+        {
+            _updatingBar = true;
+            _scrollBar.Value = column;
+            _updatingBar = false;
+        }
+        if (column == _firstColumn && !force) return;
+        _firstColumn = column;
+        _popup.IsOpen = false;
+        AnimateScroll();
+    }
+
+    // Soft scrolling: the offset eases toward the target column instead of jumping. Each new target (wheel
+    // notches in quick succession, thumb dragging) restarts the ease from wherever the offset currently is.
+    private static readonly TimeSpan ScrollDuration = TimeSpan.FromMilliseconds(280);
+    private DispatcherTimer? _anim;
+    private readonly System.Diagnostics.Stopwatch _animClock = new();
+    private double _animFrom;
+
+    private void AnimateScroll()
+    {
+        _animFrom = _offsetX;
+        _animClock.Restart();
+        _anim ??= new DispatcherTimer(TimeSpan.FromMilliseconds(15), DispatcherPriority.Render, (_, _) => AnimationTick());
+        _anim.Start();
+    }
+
+    private void AnimationTick()
+    {
+        double target = _firstColumn * _pitch;
+        double t = Math.Min(1, _animClock.Elapsed / ScrollDuration);
+        double eased = 1 - Math.Pow(1 - t, 3); // ease-out cubic
+        _offsetX = _animFrom + (target - _animFrom) * eased;
+        if (t >= 1) { _offsetX = target; _anim?.Stop(); }
+        InvalidateArrange(); // floats follow the offset
+        _layer.InvalidateVisual();
+    }
+
+    private void StopAnimation()
+    {
+        _anim?.Stop();
+    }
+
+    protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
+    {
+        base.OnPointerWheelChanged(e);
+        double delta = e.Delta.Y != 0 ? e.Delta.Y : e.Delta.X;
+        if (_vScrolling && e.Delta.Y != 0)
+        {
+            SetOffsetY(_offsetY - e.Delta.Y * FontSize * 3);
+            e.Handled = true;
+            return;
+        }
+        if (!_scrolling || delta == 0) return;
+        ApplyColumn(_firstColumn + (delta < 0 ? 1 : -1));
+        e.Handled = true;
+    }
+
+    /// <summary>Control coordinates → coordinates of the laid-out columns (which are all positioned side by side).</summary>
+    private Point ToContent(Point point) => new(point.X + _offsetX, point.Y + _offsetY);
+
+    /// <summary>False for lines in columns scrolled out of view, so they are not drawn.</summary>
+    private bool IsInView(PlacedLine pl) =>
+        _vScrolling ? pl.Origin.Y + pl.Line.Height > _offsetY && pl.Origin.Y < _offsetY + _viewHeight
+        : !_scrolling || (pl.Origin.X + pl.Line.WidthIncludingTrailingWhitespace > _offsetX && pl.Origin.X < _offsetX + _viewWidth);
+
+    private bool OverScrollBar(Point point) =>
+        (_scrollBar.IsVisible && point.Y >= _scrollBar.Bounds.Top) || (_vBar.IsVisible && point.X >= _vBar.Bounds.Left);
 
     /// <summary>
     /// Greedily breaks the flowed lines into at most <paramref name="columns"/> columns of height
@@ -344,19 +684,17 @@ public class BibleTextBlock : Panel
             if (index >= lineEnd) return null;
             if (spaces.TryGetValue(index, out double natural))
             {
-                var style = segments.First(seg => index >= seg.Start && index < seg.End).Style with { Baseline = BaselineAlignment.Baseline };
+                var style = segments[FindSegment(segments, index)].Style with { Baseline = BaselineAlignment.Baseline };
                 return new GapRun(natural + extra, height, baseline, ToRunProperties(style));
             }
 
-            foreach (var seg in segments)
-            {
-                if (index < seg.Start || index >= seg.End) continue;
-                int stop = Math.Min(seg.End, lineEnd);
-                for (int i = index; i < stop; i++)
-                    if (spaces.ContainsKey(i)) { stop = i; break; }
-                return new TextCharacters(text.AsMemory(index, stop - index), ToRunProperties(seg.Style));
-            }
-            return null;
+            int found = FindSegment(segments, index);
+            if (found < 0) return null;
+            var seg = segments[found];
+            int stop = Math.Min(seg.End, lineEnd);
+            for (int i = index; i < stop; i++)
+                if (spaces.ContainsKey(i)) { stop = i; break; }
+            return new TextCharacters(text.AsMemory(index, stop - index), ToRunProperties(seg.Style));
         }
     }
 
@@ -381,7 +719,20 @@ public class BibleTextBlock : Panel
     {
         _layer.Arrange(new Rect(finalSize));
         foreach (var (child, slot) in _arranged)
-            child.Arrange(slot);
+        {
+            if (!_scrolling && !_vScrolling) { child.Arrange(slot); continue; }
+            bool hidden = _scrolling
+                ? slot.Right <= _offsetX || slot.X >= _offsetX + _viewWidth
+                : slot.Bottom <= _offsetY || slot.Y >= _offsetY + _viewHeight;
+            if (hidden)
+                child.Arrange(new Rect(-100000 - slot.Width, slot.Y, slot.Width, slot.Height)); // outside the viewport
+            else
+                child.Arrange(slot.Translate(new Vector(-_offsetX, -_offsetY)));
+        }
+        if (_scrollBar.IsVisible)
+            _scrollBar.Arrange(new Rect(0, Math.Max(0, finalSize.Height - _barHeight), _viewWidth, _barHeight));
+        if (_vBar.IsVisible)
+            _vBar.Arrange(new Rect(Math.Max(0, finalSize.Width - _barWidth), 0, _barWidth, finalSize.Height));
         return finalSize;
     }
 
@@ -390,9 +741,13 @@ public class BibleTextBlock : Panel
     {
         public override void Render(DrawingContext context)
         {
+            // Only whole columns are visible: clip to them and slide the row of columns by the scroll offset.
+            double width = owner._scrolling ? owner._viewWidth : Bounds.Width;
+            using var clip = context.PushClip(new Rect(0, 0, width, Bounds.Height));
+            using var shift = context.PushTransform(Matrix.CreateTranslation(-owner._offsetX, -owner._offsetY));
             owner.DrawSelection(context);
             foreach (var placed in owner._lines)
-                placed.Line.Draw(context, placed.Origin);
+                if (owner.IsInView(placed)) placed.Line.Draw(context, placed.Origin);
         }
     }
 
@@ -520,6 +875,7 @@ public class BibleTextBlock : Panel
         if (!HasSelection) return;
         foreach (var pl in _lines)
         {
+            if (!IsInView(pl)) continue;
             int first = pl.Line.FirstTextSourceIndex;
             int start = Math.Max(SelStart, first), end = Math.Min(SelEnd, first + pl.Line.Length - pl.Line.NewLineLength);
             if (end <= start) continue;
@@ -539,7 +895,9 @@ public class BibleTextBlock : Panel
     protected override void OnPointerMoved(PointerEventArgs e)
     {
         base.OnPointerMoved(e);
-        var point = e.GetPosition(this);
+        var position = e.GetPosition(this);
+        if (OverScrollBar(position)) { Cursor = null; return; }
+        var point = ToContent(position);
         if (_selecting)
         {
             if (IndexAt(point) is { } index) SetSelection(_anchor, index);
@@ -551,6 +909,7 @@ public class BibleTextBlock : Panel
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         base.OnPointerReleased(e);
+        _touchDown = false;
         if (!_selecting) return;
         _selecting = false;
         e.Pointer.Capture(null);
@@ -561,10 +920,14 @@ public class BibleTextBlock : Panel
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
+        if (e.Pointer.Type == PointerType.Touch) { _touchDown = true; return; } // touch pans (and taps open footnotes); it does not select
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
-        var point = e.GetPosition(this);
+        var position = e.GetPosition(this);
+        if (OverScrollBar(position)) return; // the scroll bar is a child; its presses bubble up to here
+        var point = ToContent(position);
         if (HitFootnote(point, out var bounds) is { } note)
         {
+            bounds = bounds.Translate(new Vector(-_offsetX, -_offsetY)); // popup placement uses control coordinates
             e.Handled = true;
             Dispatcher.UIThread.Post(() => ShowFootnote(note, bounds), DispatcherPriority.Background);
             return;
@@ -624,6 +987,21 @@ public class BibleTextBlock : Panel
             PlacementTarget = this,
         };
         Children.Add(_popup);
+        _scrollBar = new ScrollBar { Orientation = Orientation.Horizontal, IsVisible = false, AllowAutoHide = false };
+        _scrollBar.ValueChanged += (_, e) =>
+        {
+            if (!_updatingBar) ApplyColumn((int)Math.Round(e.NewValue)); // snap to whole columns
+        };
+        Children.Add(_scrollBar);
+        _vBar = new ScrollBar { Orientation = Orientation.Vertical, IsVisible = false };
+        _vBar.ValueChanged += (_, e) => { if (!_updatingBar) SetOffsetY(e.NewValue); };
+        Children.Add(_vBar);
+        GestureRecognizers.Add(new ScrollGestureRecognizer { CanVerticallyScroll = true, CanHorizontallyScroll = true });
+        AddHandler(Gestures.ScrollGestureEvent, OnScrollGesture);
+        AddHandler(Gestures.ScrollGestureInertiaStartingEvent, OnScrollInertiaStarting);
+        AddHandler(Gestures.ScrollGestureEndedEvent, OnScrollGestureEnded);
+        Tapped += OnTapped;
+        ClipToBounds = true;
         Focusable = true;
         ContextMenu = new ContextMenu
         {
@@ -645,6 +1023,7 @@ public class BibleTextBlock : Panel
     [Content]
     public InlineCollection Inlines { get; }
 
+    bool NewChapter = false;
     private readonly HashSet<Control> _ownedFloats = new();
 
     private void OnInlinesChanged()
@@ -671,7 +1050,7 @@ public class BibleTextBlock : Panel
         foreach (var c in current)
             if (_ownedFloats.Add(c) && !Children.Contains(c))
                 Children.Add(c);
-        InvalidateMeasure();
+        MarkDirty();
     }
 
     // ---- Parsing BibleText runs ---------------------------------------------------------------------
@@ -688,45 +1067,79 @@ public class BibleTextBlock : Panel
     /// <see cref="Footnote"/>, Paragraph becomes a blank line. Other classes (Greek, Hebrew, WordWithStrong…)
     /// are shown as plain text for now.
     /// </remarks>
-    public void Parse(IEnumerable<BibleText.Run> text)
+    public void Parse(List<BibleText.Run> text)
     {
         ArgumentNullException.ThrowIfNull(text);
         Inlines.Clear();
-        foreach (var inline in ToInlines(text, FontSize, upperCase: false))
-            Inlines.Add(inline);
+        Inlines.AddRange(ToInlines(text, FontSize, upperCase: false));
     }
 
     private static IEnumerable<Inline> ToInlines(IEnumerable<BibleText.Run>? runs, double size, bool upperCase)
     {
         foreach (var run in runs ?? [])
+        {
             foreach (var inline in ToInlines(run, size, upperCase))
                 yield return inline;
+        }
     }
 
     private static IEnumerable<Inline> ToInlines(BibleText.Run run, double size, bool upperCase)
     {
+        var firstRun = run.Runs?.FirstOrDefault();
         switch (run.Class)
         {
             case BibleText.Run.Classes.Footnote:
             {
                 // The popup content keeps its structure, so links/references inside a footnote stay styled.
                 var note = new Footnote();
-                if (run.Runs?.Any() == true)
-                    foreach (var child in ToInlines(run.Runs, size, upperCase))
-                        note.Inlines!.Add(child);
-                else if (!string.IsNullOrEmpty(run.Text))
-                    note.Inlines!.Add(new Avalonia.Controls.Documents.Run(run.Text));
+                    var runs = run.Runs;
+                    if (runs?.Any() == true)
+                    {
+                        if (firstRun?.Class == BibleText.Run.Classes.Bold &&
+                            firstRun.Text == $"{run.Position.Chapter}:{run.Position.Verse}")
+                        {
+                            foreach (var child in ToInlines(run.Runs.Skip(1), size, upperCase))
+                                note.Inlines!.Add(child);
+                        }
+                        else
+                        {
+                            foreach (var child in ToInlines(run.Runs, size, upperCase))
+                                note.Inlines!.Add(child);
+                        }
+                    }
+                    else if (!string.IsNullOrEmpty(run.Text))
+                        note.Inlines!.Add(new Avalonia.Controls.Documents.Run(run.Text));
                 yield return note;
                 yield break;
             }
 
             case BibleText.Run.Classes.Chapter:
-                yield return new FloatRun(run.Chapter.ToString())
+                if (run.Runs.Any() && firstRun?.Class == BibleText.Run.Classes.Title)
+                { // Swap chapter & first title
+                    foreach (var child in ToInlines(firstRun, size, upperCase)) yield return child;
+                    yield return new FloatRun(run.Chapter.ToString())
+                    {
+                        Side = FloatSide.Left,
+                        FontSize = size * 2.4,
+                        FontWeight = FontWeight.Bold,
+                    };
+                    // The chapter number is already shown as a left float, so don't repeat it in the text.
+                    foreach (var child in ToInlines(run.Runs.Skip(1), size, upperCase)) yield return child;
+                    yield break;
+                }
+                else
                 {
-                    Side = FloatSide.Left,
-                    FontSize = size * 2.4,
-                    FontWeight = FontWeight.Bold,
-                };
+                    yield return new FloatRun(run.Chapter.ToString())
+                    {
+                        Side = FloatSide.Left,
+                        FontSize = size * 2.4,
+                        FontWeight = FontWeight.Bold,
+                    };
+                    if (run.Runs?.Any() == true)
+                    {
+                        foreach (var child in ToInlines(run.Runs, size, upperCase)) yield return child;
+                    }
+                }
                 yield break;
 
             case BibleText.Run.Classes.Verse:
@@ -746,6 +1159,13 @@ public class BibleTextBlock : Panel
                 yield return new LineBreak();
                 yield return new LineBreak();
                 yield break;
+            case BibleText.Run.Classes.Title:
+                if (!run.First)
+                {
+                    yield return new LineBreak();
+                    yield return new LineBreak();
+                }
+                break;
         }
 
         // Everything else is a styled span around the run's text or its parsed children.
@@ -931,18 +1351,38 @@ public class BibleTextBlock : Panel
         return (sb.ToString(), segs, anchors, notes);
     }
 
-    /// <summary>Serves the flattened text to the formatter one styled run at a time.</summary>
+    /// <summary>Index of the segment containing <paramref name="index"/> (segments are contiguous and sorted), or -1.</summary>
+    private static int FindSegment(List<Segment> segments, int index)
+    {
+        int lo = 0, hi = segments.Count - 1;
+        while (lo <= hi)
+        {
+            int mid = (lo + hi) >> 1;
+            var seg = segments[mid];
+            if (index < seg.Start) hi = mid - 1;
+            else if (index >= seg.End) lo = mid + 1;
+            else return mid;
+        }
+        return -1;
+    }
+
+    /// <summary>
+    /// Serves the flattened text to the formatter one styled run at a time. <see cref="Limit"/> makes the text
+    /// appear to end early: the formatter fetches runs up to the end of the paragraph for every line it breaks,
+    /// which is quadratic for a long paragraph, so each line is formatted from a window just past its end.
+    /// </summary>
     private sealed class RichTextSource(string text, List<Segment> segments) : ITextSource
     {
+        public int Limit { get; set; } = int.MaxValue;
+
         public TextRun? GetTextRun(int textSourceIndex)
         {
-            if (textSourceIndex >= text.Length) return null;
-            foreach (var seg in segments)
-            {
-                if (textSourceIndex < seg.Start || textSourceIndex >= seg.End) continue;
-                return new TextCharacters(text.AsMemory(textSourceIndex, seg.End - textSourceIndex), ToRunProperties(seg.Style));
-            }
-            return null;
+            int end = Math.Min(text.Length, Limit);
+            if (textSourceIndex >= end) return null;
+            int i = FindSegment(segments, textSourceIndex);
+            if (i < 0) return null;
+            var seg = segments[i];
+            return new TextCharacters(text.AsMemory(textSourceIndex, Math.Min(seg.End, end) - textSourceIndex), ToRunProperties(seg.Style));
         }
     }
 }

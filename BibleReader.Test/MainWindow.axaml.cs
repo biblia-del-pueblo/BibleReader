@@ -12,6 +12,6 @@ public partial class MainWindow : Window
         InitializeComponent();
     
         var file = File.ReadAllText("01-Genesis.md");
-        text.Parse(new BibleText().Open("C:\\GitHub\\BibleReader\\BibleReader.Test").Books.FirstOrDefault().Runs);
+        text.Parse(new BibleText().Open("C:\\GitHub\\BibliaLibrePrivate\\Bibles\\English.WorldEnglishBibleUS").Books.Skip(4).FirstOrDefault().Runs);
     }
 }
