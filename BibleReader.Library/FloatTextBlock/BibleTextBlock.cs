@@ -10,6 +10,7 @@ using Avalonia.Controls.Documents;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Input.GestureRecognizers;
+using Avalonia.Input.Platform;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
@@ -88,8 +89,8 @@ public class BibleTextBlock : Panel
     /// The verse at the start of the view (the first visible column, or the top edge in vertical mode).
     /// Setting it scrolls there, loading the verse's books first when they are not shown.
     /// </summary>
-    public static readonly StyledProperty<BibleText.VersePosition?> PositionProperty =
-        AvaloniaProperty.Register<BibleTextBlock, BibleText.VersePosition?>(nameof(Position),
+    public static readonly StyledProperty<Bible.VersePosition?> PositionProperty =
+        AvaloniaProperty.Register<BibleTextBlock, Bible.VersePosition?>(nameof(Position),
             defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
     public static readonly AttachedProperty<FloatSide> SideProperty =
@@ -102,7 +103,7 @@ public class BibleTextBlock : Panel
         AffectsArrange<BibleTextBlock>(SideProperty);
         PositionProperty.Changed.AddClassHandler<BibleTextBlock>((c, e) =>
         {
-            if (!c._settingPosition) c.ScrollToPosition(e.NewValue as BibleText.VersePosition);
+            if (!c._settingPosition) c.ScrollToPosition(e.NewValue as Bible.VersePosition);
         });
         AffectsMeasure<BibleTextBlock>(ForegroundProperty);
         SideProperty.Changed.AddClassHandler<Control>((c, _) => (c.Parent as BibleTextBlock)?.MarkDirty());
@@ -115,7 +116,7 @@ public class BibleTextBlock : Panel
     public TextAlignment TextAlignment { get => GetValue(TextAlignmentProperty); set => SetValue(TextAlignmentProperty, value); }
     public double FloatSpacing { get => GetValue(FloatSpacingProperty); set => SetValue(FloatSpacingProperty, value); }
 
-    public BibleText.VersePosition? Position { get => GetValue(PositionProperty); set => SetValue(PositionProperty, value); }
+    public Bible.VersePosition? Position { get => GetValue(PositionProperty); set => SetValue(PositionProperty, value); }
     public Orientation Orientation { get => GetValue(OrientationProperty); set => SetValue(OrientationProperty, value); }
     public int ColumnCount { get => GetValue(ColumnCountProperty); set => SetValue(ColumnCountProperty, value); }
     public double ColumnWidth { get => GetValue(ColumnWidthProperty); set => SetValue(ColumnWidthProperty, value); }
@@ -124,7 +125,7 @@ public class BibleTextBlock : Panel
     public static FloatSide GetSide(Control control) => control.GetValue(SideProperty);
     public static void SetSide(Control control, FloatSide value) => control.SetValue(SideProperty, value);
 
-    /// <param name="PageStart">The line follows a <see cref="PageBreak"/>: it begins a page.</param>
+    /// <param name="PageStart">The line follows a <see cref="PageBreak"/>: it starts a column.</param>
     private readonly record struct PlacedLine(TextLine Line, Point Origin, bool PageStart = false);
 
     /// <summary>Flattened-text index at which each line following a <see cref="PageBreak"/> starts.</summary>
@@ -137,8 +138,8 @@ public class BibleTextBlock : Panel
     // Verse (and chapter) starts are VerseRun inlines; Flatten records where each one lands in the flowed text.
     // Position is the last mark at or before the first visible line; setting it scrolls to the line of its mark.
 
-    private List<(int Index, BibleText.VersePosition Pos)> _markers = new();
-    private BibleText.VersePosition? _pendingPosition; // to scroll to once the books that contain it are laid out
+    private List<(int Index, Bible.VersePosition Pos)> _markers = new();
+    private Bible.VersePosition? _pendingPosition; // to scroll to once the books that contain it are laid out
     private bool _settingPosition, _positionQueued, _programmatic, _keepPosition;
 
     private void RequestPositionUpdate()
@@ -187,9 +188,9 @@ public class BibleTextBlock : Panel
     /// The mark for <paramref name="pos"/> in the laid-out text: the exact verse, else the next verse of the
     /// chapter, else the chapter start, else the start of the book. Null when the book is not in the text.
     /// </summary>
-    private (int Index, BibleText.VersePosition Pos)? ResolveMarker(BibleText.VersePosition pos)
+    private (int Index, Bible.VersePosition Pos)? ResolveMarker(Bible.VersePosition pos)
     {
-        (int, BibleText.VersePosition)? nextVerse = null, chapterStart = null, bookStart = null;
+        (int, Bible.VersePosition)? nextVerse = null, chapterStart = null, bookStart = null;
         foreach (var m in _markers)
         {
             if (!ReferenceEquals(m.Pos.Book, pos.Book)) continue;
@@ -210,7 +211,7 @@ public class BibleTextBlock : Panel
         return null;
     }
 
-    private void ScrollToPosition(BibleText.VersePosition? pos)
+    private void ScrollToPosition(Bible.VersePosition? pos)
     {
         if (pos?.Book is null) return;
         if (TryScrollTo(pos)) return;
@@ -223,10 +224,10 @@ public class BibleTextBlock : Panel
         if (index < 0) return;
         _pendingPosition = pos;
         _keepPosition = true;
-        if (!_loadingBook) _ = SwitchWindowAsync(books, index, null);
+        if (!_loadingBook) _ = SwitchWindowAsync(books, WindowStartFor(books, index), null);
     }
 
-    private bool TryScrollTo(BibleText.VersePosition pos)
+    private bool TryScrollTo(Bible.VersePosition pos)
     {
         if (!_hasLayout || _dirty || ResolveMarker(pos) is not { } mark || LineAt(mark.Index) is not { } line) return false;
         _keepPosition = true;
@@ -266,7 +267,7 @@ public class BibleTextBlock : Panel
     // is carried over, so the text just keeps going.
 
     /// <summary>The books to scroll through; use <see cref="ShowBookAsync"/> to start at one.</summary>
-    public IReadOnlyList<BibleText.Book>? Books { get; set; }
+    public IReadOnlyList<Bible.Book>? Books { get; set; }
 
     /// <summary>Index in <see cref="Books"/> of the first of the two books shown.</summary>
     public int BookIndex { get; private set; }
@@ -296,10 +297,20 @@ public class BibleTextBlock : Panel
     public async Task ShowBookAsync(int index)
     {
         if (Books is not { } books || index < 0 || index >= books.Count || _loadingBook) return;
-        await SwitchWindowAsync(books, index, null);
+        int first = WindowStartFor(books, index);
+        // The last book has no book after it, so it opens as the second book and is scrolled to.
+        if (first != index) _pendingPosition = new Bible.VersePosition { Book = books[index], Chapter = 0, Verse = 0 };
+        await SwitchWindowAsync(books, first, null);
     }
 
-    private async Task SwitchWindowAsync(IReadOnlyList<BibleText.Book> books, int first, (bool FromSplit, double Value)? anchor)
+    /// <summary>
+    /// The first book of the window that shows <paramref name="bookIndex"/> at its start: the book itself, except
+    /// for the last book, which gets the one before it so there is always something to scroll back into.
+    /// </summary>
+    private static int WindowStartFor(IReadOnlyList<Bible.Book> books, int bookIndex) =>
+        bookIndex == books.Count - 1 && bookIndex > 0 ? bookIndex - 1 : bookIndex;
+
+    private async Task SwitchWindowAsync(IReadOnlyList<Bible.Book> books, int first, (bool FromSplit, double Value)? anchor)
     {
         _loadingBook = true;
         try
@@ -351,9 +362,21 @@ public class BibleTextBlock : Panel
         double pos = vertical ? _offsetY : _firstColumn;       // where the view starts
         double split = vertical ? _splitY : _splitColumn;      // where the second book starts
         double end = vertical ? _contentHeight : _totalColumns;
-        if (_scrollDirection > 0 && pos > split + (end - split) / 2 && BookIndex + 2 < books.Count)
+        double view = vertical ? _viewHeight : _visibleColumns; // how much of the text is visible at once
+
+        // Forward: the view has passed half of the second book. The view's start can never get beyond
+        // (end - view), the last scroll position, and on a wide view a short book ends before half of it is
+        // reachable; the last position (the end of the window) is then the trigger, or a short book could
+        // never be scrolled past. When everything fits in one view that position is 0: any push forward counts.
+        double length = end - split;
+        double forwardAt = Math.Min(split + length / 2, Math.Max(0, end - view));
+        // Backward: the view has come back into the first half of the first book. A short first book only
+        // counts at its very start, so the switch right after a forward slide does not undo itself.
+        double backwardBelow = split < 2 * view ? 0.5 : split / 2;
+
+        if (_scrollDirection > 0 && pos >= forwardAt - 0.5 && BookIndex + 2 < books.Count)
             _ = SwitchWindowAsync(books, BookIndex + 1, (false, pos - split));   // first book dropped, next one appended
-        else if (_scrollDirection < 0 && pos < split / 2 && BookIndex > 0)
+        else if (_scrollDirection < 0 && pos < backwardBelow && BookIndex > 0)
             _ = SwitchWindowAsync(books, BookIndex - 1, (true, pos));            // previous book prepended
     }
 
@@ -516,7 +539,7 @@ public class BibleTextBlock : Panel
                 if (probe is null) break;
                 if (!cutting && top > 0 && gapIndex != index && _breakStarts.Contains(index))
                 {
-                    top += probe.Height * 2; // no pages to break to: leave a visible gap instead
+                    top += probe.Height * 2; // no next column to break to: leave a visible gap instead
                     gapIndex = index;
                 }
 
@@ -579,8 +602,6 @@ public class BibleTextBlock : Panel
         bool paged = fixedWidth && widthFinite && heightFinite;
         int visible = paged ? Math.Max(1, (int)((availableSize.Width + spacing) / pitch)) : int.MaxValue;
 
-        // A page is what is visible at once: all visible columns when paged, else all columns (1 when unbounded).
-        int pageSize = paged ? visible : columns == int.MaxValue ? 1 : columns;
         var flowLines = _lines.ToList();
         var flowArranged = _arranged.ToList();
 
@@ -595,7 +616,7 @@ public class BibleTextBlock : Panel
             // Finite height: newspaper-style, fill column 1 first. Infinite height: balance the columns.
             double h = Math.Max(columnHeight, step);
             List<double>? starts;
-            while ((starts = SplitColumns(h, columns, pageSize)) is null) h += step;
+            while ((starts = SplitColumns(h, columns)) is null) h += step;
             int used = starts.Count(x => x < double.MaxValue);
 
             double Top(int col) => starts[col];
@@ -988,26 +1009,19 @@ public class BibleTextBlock : Panel
     /// Greedily breaks the flowed lines into at most <paramref name="columns"/> columns of height
     /// <paramref name="height"/>. Returns each column's start offset in flow coordinates, or null if it doesn't fit.
     /// </summary>
-    private List<double>? SplitColumns(double height, int columns, int pageSize)
+    private List<double>? SplitColumns(double height, int columns)
     {
         var starts = new List<double> { 0 };
         foreach (var pl in _lines)
         {
             if (pl.PageStart)
             {
-                // Begin this line in the first column of a page; columns skipped to get there stay empty.
-                bool firstInColumn = pl.Origin.Y <= starts[^1] + 0.01;
-                int index = firstInColumn ? starts.Count - 1 : starts.Count;
-                int target = (index + pageSize - 1) / pageSize * pageSize;
+                // A page break puts this line at the top of the next column.
+                if (pl.Origin.Y <= starts[^1] + 0.01) continue; // it already is the first line of its column
                 // With a fixed number of columns a break that has no room is ignored (a taller column can't help).
-                if (target < columns)
+                if (starts.Count < columns)
                 {
-                    if (!firstInColumn || target != index)
-                    {
-                        if (firstInColumn) starts.RemoveAt(starts.Count - 1);
-                        while (starts.Count < target) starts.Add(pl.Origin.Y); // empty padding columns
-                        starts.Add(pl.Origin.Y);
-                    }
+                    starts.Add(pl.Origin.Y);
                     continue;
                 }
             }
@@ -1391,9 +1405,9 @@ public class BibleTextBlock : Panel
         _vBar.ValueChanged += (_, e) => { if (!_updatingBar) SetOffsetY(e.NewValue); };
         Children.Add(_vBar);
         GestureRecognizers.Add(new ScrollGestureRecognizer { CanVerticallyScroll = true, CanHorizontallyScroll = true });
-        AddHandler(Gestures.ScrollGestureEvent, OnScrollGesture);
-        AddHandler(Gestures.ScrollGestureInertiaStartingEvent, OnScrollInertiaStarting);
-        AddHandler(Gestures.ScrollGestureEndedEvent, OnScrollGestureEnded);
+        AddHandler(InputElement.ScrollGestureEvent, OnScrollGesture);
+        AddHandler(InputElement.ScrollGestureInertiaStartingEvent, OnScrollInertiaStarting);
+        AddHandler(InputElement.ScrollGestureEndedEvent, OnScrollGestureEnded);
         Tapped += OnTapped;
         ClipToBounds = true;
         Focusable = true;
@@ -1452,7 +1466,7 @@ public class BibleTextBlock : Panel
     private static readonly IBrush WordsOfJesusBrush = new SolidColorBrush(Color.Parse("#B22222"));
 
     /// <summary>Replaces the content with one or two (separated by a book <see cref="PageBreak"/>) lists of runs, scrolled to the start.</summary>
-    private void SetContent(BibleText.Book first, BibleText.Book? second)
+    private void SetContent(Bible.Book first, Bible.Book? second)
     {
         StopAnimation();
         _panning = false;
@@ -1470,8 +1484,10 @@ public class BibleTextBlock : Panel
             Inlines.AddRange(ToInlines(second, FontSize, upperCase: false));
         }
     }
-    private static IEnumerable<Inline> ToInlines(BibleText.Book book, double size, bool upperCase)
+    private static IEnumerable<Inline> ToInlines(Bible.Book book, double size, bool upperCase)
     {
+        // Mark the book start (chapter 0), so Position names the new book as soon as its heading is in view.
+        yield return new VerseRun { Position = new Bible.VersePosition { Book = book, Chapter = 0, Verse = 0 } };
         yield return new Run(book.Name)
         {
             FontSize = size * 2.4,
@@ -1482,7 +1498,7 @@ public class BibleTextBlock : Panel
         foreach (var inline in ToInlines(book.Runs, size, upperCase)) yield return inline;
     }
 
-    private static IEnumerable<Inline> ToInlines(IEnumerable<BibleText.Run>? runs, double size, bool upperCase)
+    private static IEnumerable<Inline> ToInlines(IEnumerable<Bible.Run>? runs, double size, bool upperCase)
     {
         foreach (var run in runs ?? [])
         {
@@ -1491,19 +1507,19 @@ public class BibleTextBlock : Panel
         }
     }
 
-    private static IEnumerable<Inline> ToInlines(BibleText.Run run, double size, bool upperCase)
+    private static IEnumerable<Inline> ToInlines(Bible.Run run, double size, bool upperCase)
     {
         var firstRun = run.Runs?.FirstOrDefault();
         switch (run.Class)
         {
-            case BibleText.Run.Classes.Footnote:
+            case Bible.Run.Classes.Footnote:
             {
                 // The popup content keeps its structure, so links/references inside a footnote stay styled.
                 var note = new Footnote();
                     var runs = run.Runs;
                     if (runs?.Any() == true)
                     {
-                        if (firstRun?.Class == BibleText.Run.Classes.Bold &&
+                        if (firstRun?.Class == Bible.Run.Classes.Bold &&
                             firstRun.Text == $"{run.Position.Chapter}:{run.Position.Verse}")
                         {
                             foreach (var child in ToInlines(run.Runs.Skip(1), size, upperCase))
@@ -1521,9 +1537,9 @@ public class BibleTextBlock : Panel
                 yield break;
             }
 
-            case BibleText.Run.Classes.Chapter:
+            case Bible.Run.Classes.Chapter:
                 if (run.Position is not null) yield return new VerseRun { Position = run.Position }; // chapter start (verse 0)
-                if (run.Runs.Any() && firstRun?.Class == BibleText.Run.Classes.Title)
+                if (run.Runs.Any() && firstRun?.Class == Bible.Run.Classes.Title)
                 { // Swap chapter & first title
                     foreach (var child in ToInlines(firstRun, size, upperCase)) yield return child;
                     yield return new FloatRun(run.Chapter.ToString())
@@ -1551,7 +1567,7 @@ public class BibleTextBlock : Panel
                 }
                 yield break;
 
-            case BibleText.Run.Classes.Verse:
+            case Bible.Run.Classes.Verse:
                 yield return new VerseRun(run.Position?.Verse.ToString() ?? "")
                 {
                     Position = run.Position,
@@ -1565,11 +1581,11 @@ public class BibleTextBlock : Panel
 
                 yield break;
 
-            case BibleText.Run.Classes.Paragraph:
+            case Bible.Run.Classes.Paragraph:
                 yield return new LineBreak();
                 yield return new LineBreak();
                 yield break;
-            case BibleText.Run.Classes.Title:
+            case Bible.Run.Classes.Title:
                 if (!run.First)
                 {
                     yield return new LineBreak();
@@ -1583,16 +1599,16 @@ public class BibleTextBlock : Panel
         bool lineAfter = false;
         switch (run.Class)
         {
-            case BibleText.Run.Classes.Bold: span.FontWeight = FontWeight.Bold; break;
-            case BibleText.Run.Classes.Italic: span.FontStyle = FontStyle.Italic; break;
-            case BibleText.Run.Classes.WordsOfJesus: span.Foreground = WordsOfJesusBrush; break;
-            case BibleText.Run.Classes.SmallCaps: upperCase = true; size *= 0.85; span.FontSize = size; break;
-            case BibleText.Run.Classes.Link:
+            case Bible.Run.Classes.Bold: span.FontWeight = FontWeight.Bold; break;
+            case Bible.Run.Classes.Italic: span.FontStyle = FontStyle.Italic; break;
+            case Bible.Run.Classes.WordsOfJesus: span.Foreground = WordsOfJesusBrush; break;
+            case Bible.Run.Classes.SmallCaps: upperCase = true; size *= 0.85; span.FontSize = size; break;
+            case Bible.Run.Classes.Link:
                 span.TextDecorations = TextDecorations.Underline;
                 span.Foreground = LinkBrush;
                 break;
-            case BibleText.Run.Classes.Title:
-            case BibleText.Run.Classes.Book:
+            case Bible.Run.Classes.Title:
+            case Bible.Run.Classes.Book:
                 size *= 1.25;
                 span.FontSize = size;
                 span.FontWeight = FontWeight.Bold;
@@ -1616,7 +1632,7 @@ public class BibleTextBlock : Panel
     }
 
     /// <summary>The run's text without markup: its children's text when it has any, else its own.</summary>
-    private static string PlainText(BibleText.Run run) =>
+    private static string PlainText(Bible.Run run) =>
         run.Runs?.Any() == true ? string.Concat(run.Runs.Select(PlainText)) : run.Text ?? string.Empty;
 
     private readonly record struct RunStyle(FontFamily Family, double Size, FontStyle Style, FontWeight Weight,
@@ -1670,7 +1686,7 @@ public class BibleTextBlock : Panel
         var anchors = new Dictionary<Control, int>();
         var notes = new List<NoteRange>();
         var breaks = new HashSet<int>();
-        var markers = new List<(int Index, BibleText.VersePosition Pos)>();
+        var markers = new List<(int Index, Bible.VersePosition Pos)>();
         int splitIndex = -1;
         int noteNumber = 0;
         bool lastSpace = true; // trims leading whitespace
@@ -1747,7 +1763,7 @@ public class BibleTextBlock : Panel
                     case Run run: Append(run.Text ?? string.Empty, style); break;
                     case PageBreak pageBreak:
                         Append("\n", style, verbatim: true);
-                        breaks.Add(sb.Length); // the next line starts a page
+                        breaks.Add(sb.Length); // the next line starts a column
                         if (ReferenceEquals(pageBreak, _bookBreak)) splitIndex = sb.Length; // the second book starts here
                         break;
                     case LineBreak: Append("\n", style, verbatim: true); break;

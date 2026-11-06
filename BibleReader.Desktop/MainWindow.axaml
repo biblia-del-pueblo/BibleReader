@@ -1,0 +1,18 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:BibleReader.Library.UI"
+        x:Class="BibleReader.Desktop.MainWindow"
+        Width="680" Height="400"
+        Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+        Icon="Assets\CrossBible-logo.ico">
+    <!-- No ScrollViewer: the text block fits as many whole columns as the window shows and brings its own
+         horizontal scroll bar that moves one column at a time. -->
+        <!-- &#173; is a soft hyphen (U+00AD): an invisible break opportunity inside a word. -->
+    <Grid RowDefinitions="Auto,*">
+        <!-- The toolbar follows the text block's Position. -->
+        <local:BibleToolbar Target="{Binding #text}" />
+        <local:BibleTextBlock x:Name ="text" Grid.Row="1" Margin="24" Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+            FontSize="18" FontFamily="Bible Roman" ColumnWidth="300" ColumnSpacing="24" HorizontalAlignment="Center">
+        </local:BibleTextBlock>
+    </Grid>
+</Window>

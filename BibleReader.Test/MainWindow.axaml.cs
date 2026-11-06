@@ -10,7 +10,7 @@ public partial class MainWindow : Window
         InitializeComponent();
 
         // Scrolling past the end of a book continues in the next one, back past the start in the previous one.
-        text.Books = new BibleText().Open("C:\\GitHub\\BibliaLibrePrivate\\Bibles\\English.WorldEnglishBibleUS").Books;
+        text.Books = new Bible().Open("C:\\GitHub\\BibliaLibrePrivate\\Bibles\\English.WorldEnglishBibleUS").Books;
         _ = text.ShowBookAsync(4);
     }
 }

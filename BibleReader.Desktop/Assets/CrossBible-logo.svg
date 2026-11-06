@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="title">
+  <title id="title">CrossBible</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1E40AF"/>
+      <stop offset="1" stop-color="#0B1437"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FDE68A"/>
+      <stop offset="1" stop-color="#D99A1E"/>
+    </linearGradient>
+    <linearGradient id="page" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFBEF"/>
+      <stop offset="1" stop-color="#EADFC4"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.32" r="0.5">
+      <stop offset="0" stop-color="#FDE68A" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#FDE68A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- app tile -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <rect width="512" height="512" rx="112" fill="url(#glow)"/>
+
+  <!-- open book: cover, then left and right page -->
+  <path d="M60 232 Q160 206 256 244 Q352 206 452 232 L452 382 Q352 356 256 394 Q160 356 60 382 Z" fill="#0A1030" opacity="0.55"/>
+  <path d="M256 360 Q160 322 76 346 L76 206 Q160 182 256 222 Z" fill="url(#page)"/>
+  <path d="M256 360 Q352 322 436 346 L436 206 Q352 182 256 222 Z" fill="url(#page)"/>
+  <path d="M256 222 L256 360" stroke="#C9B98F" stroke-width="3" fill="none"/>
+
+  <!-- lines of text on the pages -->
+  <g stroke="#B9AA82" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.75">
+    <path d="M104 238 Q160 224 226 252"/>
+    <path d="M104 266 Q160 252 226 280"/>
+    <path d="M104 294 Q160 280 226 308"/>
+    <path d="M286 252 Q352 224 408 238"/>
+    <path d="M286 280 Q352 252 408 266"/>
+    <path d="M286 308 Q352 280 408 294"/>
+  </g>
+
+  <!-- cross rising from the spine -->
+  <g>
+    <rect x="232" y="62" width="48" height="236" rx="10" fill="#7A4B05" opacity="0.35" transform="translate(4 6)"/>
+    <rect x="172" y="112" width="168" height="48" rx="10" fill="#7A4B05" opacity="0.35" transform="translate(4 6)"/>
+    <rect x="232" y="62" width="48" height="236" rx="10" fill="url(#gold)"/>
+    <rect x="172" y="112" width="168" height="48" rx="10" fill="url(#gold)"/>
+  </g>
+</svg>

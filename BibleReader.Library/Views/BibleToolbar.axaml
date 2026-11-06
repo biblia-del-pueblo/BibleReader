@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:svg="clr-namespace:Svg.Controls.Skia;assembly=Svg.Controls.Skia.Avalonia"
+             x:Class="BibleReader.Library.UI.BibleToolbar">
+
+    <UserControl.Styles>
+        <!-- A cell of the book / chapter grid (the buttons are added in code). -->
+        <Style Selector="Button.cell">
+            <Setter Property="MinWidth" Value="56" />
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="Padding" Value="4,8" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <!-- The book or chapter the text block is at. -->
+        <Style Selector="Button.cell.current">
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+        </Style>
+    </UserControl.Styles>
+
+    <!-- Theme brushes (not fixed colours): the bar and its popup follow light/dark mode, including live switches. -->
+    <Border Padding="8,2"
+            BorderThickness="0,0,0,1"
+            Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+            BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+        <Grid>
+            <!-- The position is a flat button: it looks like text until hovered. -->
+            <Button x:Name="PositionButton"
+                    HorizontalAlignment="Left"
+                    Padding="8,4"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    Cursor="Hand"
+                    Click="OnPositionClick">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <TextBlock x:Name="BookText" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBlock x:Name="ReferenceText" Opacity="0.8" VerticalAlignment="Center" />
+                    <!-- Direct Svg tag -->
+                    <svg:Svg Path="/Assets/down-arrow.svg" Width="16" Height="16"/>
+                    <TextBlock Opacity="0.6" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+
+            <!-- Book grid, or (after choosing a book) the chapter grid with a header to go back. -->
+            <Popup x:Name="BookPopup"
+                   Placement="BottomEdgeAlignedLeft"
+                   IsLightDismissEnabled="True"
+                   Closed="OnPopupClosed">
+                <Border Padding="6"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+                        BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                    <StackPanel>
+                        <StackPanel x:Name="ChapterHeader" Orientation="Horizontal" Spacing="10" Margin="2,0,2,6" IsVisible="False">
+                            <Button Content="‹  Books" Padding="10,4" Background="Transparent" Click="OnBackClick" />
+                            <TextBlock x:Name="TitleText" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <ScrollViewer MaxHeight="400" HorizontalScrollBarVisibility="Disabled">
+                            <UniformGrid x:Name="BookGrid" Columns="6" />
+                        </ScrollViewer>
+                    </StackPanel>
+                </Border>
+            </Popup>
+        </Grid>
+    </Border>
+</UserControl>

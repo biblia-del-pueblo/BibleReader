@@ -11,19 +11,19 @@ using IO = System.IO;
 
 namespace BibleReader.Library;
 
-public class BibleText
+public class Bible
 {
     public class Book
     {
-        public BibleText Bible { get; set; }
-        public Book(BibleText bible) { Bible = bible; } 
+        public Bible Bible { get; set; }
+        public Book(Bible bible) { Bible = bible; } 
         public string Name { get; set; }
         public string Abbrevation { get; set; }
         public string Description { get; set; }
         public string File { get; set; }
         public string Markdown { get => field ??= IO.File.ReadAllText(File, System.Text.Encoding.UTF8); set => field = value; }
         public List<Run> Runs {
-            get => field ??= BibleText.ParseBook(this).ToList();
+            get => field ??= Bible.ParseBook(this).ToList();
             set => field = value;
         }
     }
@@ -82,9 +82,9 @@ public class BibleText
     public static IEnumerable<Run> ParseText(string text, Run.Classes textClass, VersePosition position)
     {
         foreach (Match m in Regex.Matches(text, @"\*\*(?<bold>.*?)\*\*|\*(?<italic>.*?)\*|\^\[(?<footnote>.*?)\]|" +
-            @"\[(?<smallcaps>.*?)\]\(.smallcaps\)|\[(?<wordsofjesus>.*?)\]\(.wj\)|" +
+            @"\[(?<smallcaps>.*?)\]\{.smallcaps\}|\[(?<wordsofjesus>.*?)\]\{.wj\}|" +
             @"\[(?<link>(.*?))\]\((?<linkurl>[a-zA-Z]+://.*?)\)|" + 
-            @"(?<normal>.*?(?=\*\*.*?\*\*|\*.*?\*|\^\[.*?\]|\[.*?\]\(.smallcaps\)|\[.*?\]\(.wj\)|\[.*?\]\([a-zA-Z]+://.*?\)|$))", RegexOptions.Singleline))
+            @"(?<normal>.*?(?=\*\*.*?\*\*|\*.*?\*|\^\[.*?\]|\[.*?\]\{.smallcaps\}|\[.*?\]\{.wj\}|\[.*?\]\([a-zA-Z]+://.*?\)|$))", RegexOptions.Singleline))
         {
             if (m.Groups["bold"].Success)
                 yield return new Run
@@ -225,9 +225,10 @@ public class BibleText
     }
 
     public List<Book> Books { get; set; } = new List<Book>();
-
-    public BibleText Open(string path)
+    public string Name { get; set; }
+    public Bible Open(string path)
     {
+        Name = IO.Path.GetFileName(path);
         var dir = new IO.DirectoryInfo(path);
         if (!dir.Exists) throw new IO.DirectoryNotFoundException($"Directory not found: {path}");
         var files = dir.EnumerateFiles("*.md", IO.SearchOption.TopDirectoryOnly)
