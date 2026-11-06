@@ -34,7 +34,7 @@ namespace BibleReader.Library.ViewModels
         {
 
         }
-        public int GetPage(int chapter, int verse) { ]}
+        public int GetPage(int chapter, int verse) { }
 
         public ReaderModel() { }
 

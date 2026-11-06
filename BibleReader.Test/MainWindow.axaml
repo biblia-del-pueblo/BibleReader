@@ -1,0 +1,20 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:BibleReader.Library.UI"
+        x:Class="BibleReader.Test.MainWindow"
+        Title="BibleReader.Test"
+        Width="600" Height="400">
+    <ScrollViewer HorizontalScrollBarVisibility="Auto">
+        <!-- &#173; is a soft hyphen (U+00AD): an invisible break opportunity inside a word. -->
+        <local:BibleTextBlock x:Name ="text" Margin="24" FontSize="18" FontFamily="Bible Roman" Height="400" ColumnWidth="300" ColumnSpacing="24">
+            <local:FloatRun Side="Left" FontSize="36" FontWeight="Bold">1</local:FloatRun>
+            <Run>In the beginning there was the Word, and the Word was with God, and the Word was God. He was in the be&#173;gin&#173;ning with God. All things were made through him, and with&#173;out him was not any thing made that was made. In him was life, and the life was the light of men. The light shines in the dark&#173;ness, and the dark&#173;ness has not over&#173;come it. There was a man sent from God, whose name was John. He came as a wit&#173;ness, to bear wit&#173;ness about the light, that all might be&#173;lieve through him.</Run>
+            <LineBreak />
+            <LineBreak />
+            <local:FloatRun Side="Left" FontSize="36" FontWeight="Bold">2</local:FloatRun>
+            <Run>In the be&#173;gin&#173;ning was the </Run>
+            <Run FontWeight="Bold" Foreground="Navy">Word</Run><local:Footnote>Greek: logos, meaning word, speech or reason.</local:Footnote>
+            <Run>, and the Word was with God, and the Word was God. He was in the be&#173;gin&#173;ning with God. All things were made through him, and with&#173;out him was not any thing made that was made. In him was life, and the life was the light of men. The light shines in the dark&#173;ness, and the dark&#173;ness has not over&#173;come it. There was a man sent from God, whose name was John. He came as a wit&#173;ness, to bear wit&#173;ness about the light, that all might be&#173;lieve through him.</Run>
+        </local:BibleTextBlock>
+    </ScrollViewer>
+</Window>

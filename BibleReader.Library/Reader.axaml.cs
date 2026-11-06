@@ -6,7 +6,7 @@ namespace BibleReader.Library;
 
 public partial class Reader : UserControl
 {
-    public ReaderModel()
+    public Reader()
     {
         InitializeComponent();
     }

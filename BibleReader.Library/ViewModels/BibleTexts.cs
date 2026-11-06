@@ -1,23 +1,31 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Platform;
+using Avalonia.Controls.Templates;
 using Avalonia.Media;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
 using IO = System.IO;
 
 namespace BibleReader.Library;
 
-public class Text
+public class BibleText
 {
     public class Book
     {
+        public BibleText Bible { get; set; }
+        public Book(BibleText bible) { Bible = bible; } 
         public string Name { get; set; }
         public string Abbrevation { get; set; }
         public string Description { get; set; }
         public string File { get; set; }
         public string Markdown { get => field ??= IO.File.ReadAllText(File, System.Text.Encoding.UTF8); set => field = value; }
+        public List<Run> Runs {
+            get => field ??= BibleText.ParseBook(this).ToList();
+            set => field = value;
+        }
     }
     public class VersePosition
     {
@@ -42,7 +50,7 @@ public class Text
             Link,
             Title,
             Book,
-            Chaper,
+            Chapter,
             Verse,
             Footnote,
             Paragraph
@@ -52,6 +60,7 @@ public class Text
         public string Url { get; set; }
         public IEnumerable<Run> Runs { get; set; }
         public string StrongNumber { get; set; }
+        public VersePosition Position { get; set; }
         public VersePosition Reference { get; set; }
         public Color MarkerColor { get; set; }
         public int Chapter { get; set; }
@@ -69,25 +78,12 @@ public class Text
             .SelectMany(run => run.Append(run.All));
     }
 
-    public IEnumerable<Run> Runs { get; set; }
-    public string Markdown
-    {
-        get => field;
-        set
-        {
-            if (field != value)
-            {
-                field = value;
-                Parse();
-            }
-        }
-    }
-
-    public IEnumerable<Run> ParseText(string text, Run.Classes textClass = Run.Classes.Text)
+    public static IEnumerable<Run> ParseText(string text, Run.Classes textClass = Run.Classes.Text)
     {
         foreach (Match m in Regex.Matches(text, @"\*\*(?<bold>.*?)\*\*|\*(?<italic>.*?)\*|\^\[(?<footnote>.*?)\]|" +
             @"\[(?<smallcaps>.*?)\]\(.smallcaps\)|\[(?<wordsofjesus>.*?)\]\(.wj\)|" +
-            @"\[(?<link>(.*?)\]\((?<linkurl>[a-zA-Z]+://.*?)\)|(?<normal>.*?"))
+            @"\[(?<link>(.*?))\]\((?<linkurl>[a-zA-Z]+://.*?)\)|" + 
+            @"(?<normal>.*?(?=\*\*.*?\*\*|\*.*?\*|\^\[.*?\]|\[.*?\]\(.smallcaps\)|\[.*?\]\(.wj\)|\[.*?\]\([a-zA-Z]+://.*?\)|$))", RegexOptions.Singleline))
         {
             if (m.Groups["bold"].Success)
                 yield return new Run
@@ -100,8 +96,8 @@ public class Text
                 yield return new Run
                 {
                     Class = Run.Classes.Italic,
-                    Text = m.Groups["bold"].Value,
-                    Runs = ParseText(m.Groups["bold"].Value, Run.Classes.Italic).ToList()
+                    Text = m.Groups["italic"].Value,
+                    Runs = ParseText(m.Groups["italic"].Value, Run.Classes.Italic).ToList()
                 };
             else if (m.Groups["footnote"].Success)
                 yield return new Run
@@ -130,7 +126,7 @@ public class Text
                 {
                     Class = Run.Classes.WordsOfJesus,
                     Text = m.Groups["wordsofjesus"].Value,
-                    Runs = ParseText(m.Groups["wordsofjesus"].Value, Run.Classes.SmallCaps).ToList()
+                    Runs = ParseText(m.Groups["wordsofjesus"].Value, Run.Classes.WordsOfJesus).ToList()
                 };
             else if (m.Groups["normal"].Success)
                 yield return new Run
@@ -141,34 +137,89 @@ public class Text
                 };
         }
     }
-    IEnumerable<Run> ParseVerse(Match verse)
+    static IEnumerable<Run> ParseVerse(Match verse, VersePosition position)
     {
         if (verse.Groups["title"].Success)
         {
-            foreach (Run run in ParseText(verse.Groups["title"].Value, Run.Classes.Title)) yield return run;
+            var titleText = verse.Groups["title"].Value;
+            yield return new Run
+            {
+                Class = Run.Classes.Title,
+                Text = titleText,
+                Position = position,
+                Runs = ParseText(titleText, Run.Classes.Title).ToList()
+            };
         }
         else
         {
-            foreach (Run run in ParseText(verse.Groups["title"].Value, Run.Classes.Title)) yield return run;
+            var verseText = verse.Groups["versebody"].Value;
+            int verseNumber = int.Parse(verse.Groups["verseno"].Value);
+
+            var verseRun = new Run
+            {
+                Class = Run.Classes.Verse,
+                Text = verseText,
+                Position = new VersePosition { Book = position.Book, Chapter = position.Chapter, Verse = verseNumber },
+                Runs = ParseText(verseText, Run.Classes.Text).ToList()
+            };
+            yield return verseRun;
         }
 
     }
-    IEnumerable<Run> ParseChapter(Match chapter)
+    static IEnumerable<Run> ParseChapter(Match chapter, VersePosition position)
     {
+        var chapterText = chapter.Groups["chbody"].Value;
+        var chapterNumber = int.Parse(chapter.Groups["chno"].Value);
         yield return new Run
         {
-            Class = Run.Classes.ChaperNumber,
-            Chapter = int.Parse(chapter.Groups["chno"].Value),
-            Text = chapter.Groups["chno"].Value
+            Class = Run.Classes.Chapter,
+            Chapter = chapterNumber,
+            Position = new VersePosition { Book = position.Book, Chapter = chapterNumber, Verse = 0 },
+            Text = chapterText
         };
-        foreach (Run run in Regex.Matches(chapter.Groups["chbody"].Value, @"(^|\n)#\s+(?<title>.*?)\r?\n|@(?<verseno[0-9]+)(?=\s+)(?<versebody>.*?)(?:@[0-9]\s+|\r?\n#)")
-            .Select(verse => ParseVerse(verse))) yield return run;
+        // Replace footnotes
+        bool replaced;
+        do
+        {
+            replaced = false;
+            chapterText = Regex.Replace(chapterText, @"\^(?<mark>[a-zA-Z]+)\^(?!\[)(?<text>.*?)(?:\^\k<mark>(?<footnote>\^\[(?>\[(?<c>)|[^\[\]]+|\](?<-c>))*(?(c)(?!))\]))[ \t]*\r?\n?", m =>
+            {
+                replaced = true;
+                return $"{m.Groups["footnote"].Value}{m.Groups["text"].Value}";
+            }, RegexOptions.Singleline);// ^^ footnotes
+        } while (replaced);
+
+        foreach (Run run in Regex.Matches(chapterText, @"((?<=^|\n)##\s+(?<title>.*?)\r?\n)|@(?<verseno>[0-9]+)(?=\s)(?<versebody>.*?)(?=@[0-9]+\s+|\r?\n#)", RegexOptions.Singleline)
+            .SelectMany(verse => ParseVerse(verse, position))) yield return run;
     }
-    public IEnumerable<Run> Parse(string markdown)
+
+    public static IEnumerable<Run> ParseBook(Book book)
     {
-        // TODO strip comments
-        var chapters = Regex.Matches(markdown, @"(^|\n)#\s+(?<chno>[0-9]+)\r?\n(?<chbody>.*?)(?:\n#\s+[0-9]+\r?\n|$)")
+        var markdown = book.Markdown;
+        // strip comments
+        markdown = Regex.Replace(markdown, @"/\*.*?\*/", "", RegexOptions.Singleline); // comments
+        markdown = Regex.Replace(markdown, @"(?<!:)//.*?\r?\n", "", RegexOptions.Singleline); // single line comments
+
+        var chapters = Regex.Matches(markdown, @"(^|\n)#\s+(?<chno>[0-9]+)\s*\r?\n(?<chbody>.*?)(?=\n#\s+[0-9]+\s*\r?\n|$)", RegexOptions.Singleline)
             .OfType<Match>();
-        return chapters.SelectMany(chapter => ParseChapter(chapter));
+        return chapters.SelectMany(chapter => ParseChapter(chapter, new VersePosition { Book = book }));
     }
+
+    public List<Book> Books { get; set; } = new List<Book>();
+
+    public BibleText Open(string path)
+    {
+        var dir = new IO.DirectoryInfo(path);
+        if (!dir.Exists) throw new IO.DirectoryNotFoundException($"Directory not found: {path}");
+        var files = dir.EnumerateFiles("*.md", IO.SearchOption.TopDirectoryOnly)
+            .Where(file => Regex.IsMatch(file.Name, @"^[0-9.]+-"))
+            .OrderBy(file => file.Name);
+        Books.AddRange(files.Select(file => new Book(this)
+        {
+            Name = Regex.Replace(file.Name, @"^[0-9.]+-(.*)\.md$", "$1"),
+            File = file.FullName,
+        }));
+        return this;
+    }
+
 }
