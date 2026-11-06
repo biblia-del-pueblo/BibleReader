@@ -238,6 +238,25 @@ public class BibleText
             Name = Regex.Replace(file.Name, @"^[0-9.]+-(.*)\.md$", "$1"),
             File = file.FullName,
         }));
+        var booknamesFile = IO.Path.Combine(path, "booknames.xml");
+        if (!IO.File.Exists(booknamesFile)) booknamesFile = IO.Path.Combine(path, "src", "booknames.xml");
+        if (IO.File.Exists(booknamesFile))
+        {
+            var xml = System.Xml.Linq.XDocument.Load(booknamesFile);
+            var id = xml.Root.Elements("ID")
+                .Select(id => {
+                    var xbooks = id.Elements("BOOK");
+                    return xbooks
+                        .Join(Books, book => book.Value, book => book.Name, (id, book) => new { Id = id, Book = book })
+                        .ToList();
+                })
+                .MaxBy(list => list.Count);
+            foreach (var book in id)
+            {
+                book.Book.Abbrevation = book.Id.Attribute("bshort")?.Value;
+                book.Book.Description = book.Id.Attribute("desc")?.Value;
+            }
+        }
         return this;
     }
 
