@@ -185,7 +185,7 @@ public class BibleText
             Chapter = chapterNumber,
             Position = position,
             Text = chapterText,
-            Runs = Regex.Matches(chapterText, @"((?<=^|\n)##\s+(?<title>.*?)\r?\n)|@(?<verseno>[0-9]+)(?=\s)(?<versebody>.*?)(?=@[0-9]+\s+|\r?\n#)", RegexOptions.Singleline)
+            Runs = Regex.Matches(chapterText, @"((?<=^|\n)##\s+(?<title>.*?)\r?\n)|@(?<verseno>[0-9]+)(?=\s)(?<versebody>.*?)(?=@[0-9]+\s+|\r?\n#|$)", RegexOptions.Singleline)
                 .SelectMany(verse => ParseVerse(verse, position))
                 .ToList()
         };

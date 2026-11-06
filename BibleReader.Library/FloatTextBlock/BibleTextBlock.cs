@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Avalonia.Metadata;
 using Avalonia;
 using Avalonia.Controls;
@@ -17,6 +18,13 @@ using Avalonia.Media.TextFormatting;
 using Avalonia.Platform.Storage;
 
 namespace BibleReader.Library.UI;
+
+/// <summary>Raised when the user scrolls past the first or the last page of the shown text.</summary>
+public sealed class BoundaryEventArgs(bool atEnd) : EventArgs
+{
+    /// <summary>True: scrolled past the end; false: scrolled back past the start.</summary>
+    public bool AtEnd { get; } = atEnd;
+}
 
 /// <summary>Which side a child of <see cref="BibleTextBlock"/> floats to.</summary>
 public enum FloatSide
@@ -107,6 +115,57 @@ public class BibleTextBlock : Panel
 
     private readonly List<PlacedLine> _lines = new();
     private readonly List<Rect> _floatRects = new();
+
+    // ---- Scrolling across books ---------------------------------------------------------------------
+    // With <see cref="Books"/> set, scrolling past the end of the shown book continues in the next one and
+    // scrolling back past the start continues at the end of the previous one.
+
+    /// <summary>The books to scroll through; use <see cref="ShowBookAsync"/> to show one.</summary>
+    public IReadOnlyList<BibleText.Book>? Books { get; set; }
+
+    /// <summary>Index in <see cref="Books"/> of the book being shown.</summary>
+    public int BookIndex { get; private set; }
+
+    /// <summary>The shown book changed (by scrolling across a boundary or by <see cref="ShowBookAsync"/>).</summary>
+    public event EventHandler? BookChanged;
+
+    /// <summary>The user scrolled past the first or last page. Raised whether or not <see cref="Books"/> is set.</summary>
+    public event EventHandler<BoundaryEventArgs>? BoundaryReached;
+
+    private bool _loadingBook, _startAtEnd;
+    private readonly System.Diagnostics.Stopwatch _boundaryClock = System.Diagnostics.Stopwatch.StartNew();
+    private TimeSpan _lastBoundary = TimeSpan.FromSeconds(-10);
+
+    /// <summary>
+    /// Shows <c>Books[index]</c>. Reading and parsing the book happens off the UI thread.
+    /// <paramref name="startAtEnd"/> shows its last page instead of its first (used when scrolling back).
+    /// </summary>
+    public async Task ShowBookAsync(int index, bool startAtEnd = false)
+    {
+        if (Books is not { } books || index < 0 || index >= books.Count || _loadingBook) return;
+        _loadingBook = true;
+        try
+        {
+            var book = books[index];
+            var runs = await Task.Run(() => book.Runs); // lazily reads and parses the book's markdown
+            _startAtEnd = startAtEnd;
+            BookIndex = index;
+            Parse(runs);
+            BookChanged?.Invoke(this, EventArgs.Empty);
+        }
+        finally { _loadingBook = false; }
+    }
+
+    private void RaiseBoundary(bool atEnd)
+    {
+        // A flick or a wheel burst raises this many times: act once, then ignore the rest for a moment.
+        if (_loadingBook || _boundaryClock.Elapsed - _lastBoundary < TimeSpan.FromMilliseconds(700)) return;
+        _lastBoundary = _boundaryClock.Elapsed;
+        BoundaryReached?.Invoke(this, new BoundaryEventArgs(atEnd));
+        if (Books is null) return;
+        int next = BookIndex + (atEnd ? 1 : -1);
+        if (next >= 0 && next < Books.Count) _ = ShowBookAsync(next, startAtEnd: !atEnd);
+    }
 
     // ---- Debounced re-layout ------------------------------------------------------------------------
     // Flowing a long text is slow, so while the available size keeps changing (window being dragged) the last
@@ -386,6 +445,11 @@ public class BibleTextBlock : Panel
         _scrolling = paged && usedColumns > visible;
         _pitch = pitch;
         _barHeight = barHeight;
+        if (_startAtEnd && !vertical)
+        {
+            if (_scrolling) _firstColumn = usedColumns - visible; // last page
+            _startAtEnd = false;
+        }
         _firstColumn = _scrolling ? Math.Clamp(_firstColumn, 0, usedColumns - visible) : 0;
         _visibleColumns = _scrolling ? visible : usedColumns;
         // An animation in progress keeps its current offset (it heads for the new target by itself).
@@ -440,6 +504,11 @@ public class BibleTextBlock : Panel
         bool heightFinite = !double.IsInfinity(available.Height);
         _vScrolling = heightFinite && _contentHeight > available.Height + 0.5;
         _viewHeight = _vScrolling ? available.Height : _contentHeight;
+        if (_startAtEnd)
+        {
+            if (_vScrolling) _offsetY = _contentHeight - _viewHeight; // bottom
+            _startAtEnd = false;
+        }
         _offsetY = _vScrolling ? Math.Clamp(_offsetY, 0, _contentHeight - _viewHeight) : 0;
         if (_vBar.IsVisible != _vScrolling) _vBar.IsVisible = _vScrolling; // visible before measuring: hidden = zero size
         if (_vScrolling)
@@ -479,7 +548,20 @@ public class BibleTextBlock : Panel
     {
         if (_vScrolling)
         {
-            SetOffsetY(_offsetY + e.Delta.Y);
+            double max = Math.Max(0, _contentHeight - _viewHeight);
+            double target = _offsetY + e.Delta.Y;
+            bool beyond = (target > max + 0.5 && _offsetY >= max - 0.5) || (target < -0.5 && _offsetY <= 0.5);
+            if (beyond)
+            {
+                _overscroll += e.Delta.Y; // keep pushing against the edge to move on to the next/previous book
+                if (Math.Abs(_overscroll) > 100)
+                {
+                    RaiseBoundary(atEnd: _overscroll > 0);
+                    _overscroll = 0;
+                }
+            }
+            else _overscroll = 0;
+            SetOffsetY(target);
             e.Handled = true;
         }
         else if (_scrolling && _touchDown)
@@ -487,8 +569,9 @@ public class BibleTextBlock : Panel
             // Horizontal mode: the columns follow the finger; they settle on a whole column when it lifts.
             StopAnimation();
             _panning = true;
-            double max = Math.Max(0, (_scrollBar.Maximum) * _pitch);
-            _offsetX = Math.Clamp(_offsetX + e.Delta.X, 0, max);
+            double max = Math.Max(0, _scrollBar.Maximum * _pitch);
+            // A little rubber band past both ends: letting go there moves on to the neighbouring book.
+            _offsetX = Math.Clamp(_offsetX + e.Delta.X, -0.4 * _pitch, max + 0.4 * _pitch);
             _popup.IsOpen = false;
             InvalidateArrange();
             _layer.InvalidateVisual();
@@ -497,6 +580,7 @@ public class BibleTextBlock : Panel
     }
 
     private bool _touchDown, _panning;
+    private double _overscroll;
 
     /// <summary>Finger lifted while panning: choose the column to settle on (a short flick is enough).</summary>
     private void OnScrollInertiaStarting(object? sender, ScrollGestureInertiaStartingEventArgs e)
@@ -546,7 +630,13 @@ public class BibleTextBlock : Panel
     /// <summary>Shows column <paramref name="column"/> as the first visible one (snapped to a whole column).</summary>
     private void ApplyColumn(int column, bool force = false)
     {
-        if (_scrolling) column = Math.Clamp(column, 0, Math.Max(0, (int)_scrollBar.Maximum));
+        if (_scrolling)
+        {
+            int last = Math.Max(0, (int)_scrollBar.Maximum);
+            if (column > last) RaiseBoundary(atEnd: true); // asked for a page after the last one
+            else if (column < 0) RaiseBoundary(atEnd: false);
+            column = Math.Clamp(column, 0, last);
+        }
         if (Math.Abs(_scrollBar.Value - column) > 1e-6)
         {
             _updatingBar = true;
@@ -596,11 +686,20 @@ public class BibleTextBlock : Panel
         double delta = e.Delta.Y != 0 ? e.Delta.Y : e.Delta.X;
         if (_vScrolling && e.Delta.Y != 0)
         {
-            SetOffsetY(_offsetY - e.Delta.Y * FontSize * 3);
+            double max = Math.Max(0, _contentHeight - _viewHeight);
+            double target = _offsetY - e.Delta.Y * FontSize * 3;
+            if (target > max + 0.5 && _offsetY >= max - 0.5) RaiseBoundary(atEnd: true);
+            else if (target < -0.5 && _offsetY <= 0.5) RaiseBoundary(atEnd: false);
+            SetOffsetY(target);
             e.Handled = true;
             return;
         }
-        if (!_scrolling || delta == 0) return;
+        if (delta == 0) return;
+        if (!_scrolling)
+        {
+            if (!_vScrolling) RaiseBoundary(atEnd: delta < 0); // everything fits: any wheel turn is "past the edge"
+            return;
+        }
         ApplyColumn(_firstColumn + (delta < 0 ? 1 : -1));
         e.Handled = true;
     }
@@ -612,6 +711,45 @@ public class BibleTextBlock : Panel
     private bool IsInView(PlacedLine pl) =>
         _vScrolling ? pl.Origin.Y + pl.Line.Height > _offsetY && pl.Origin.Y < _offsetY + _viewHeight
         : !_scrolling || (pl.Origin.X + pl.Line.WidthIncludingTrailingWhitespace > _offsetX && pl.Origin.X < _offsetX + _viewWidth);
+
+    /// <summary>Arrow, page and Home/End keys. Going on past the first or last page continues in the next/previous book.</summary>
+    private bool NavigateByKey(Key key)
+    {
+        int direction = key switch
+        {
+            Key.Right or Key.Down or Key.PageDown or Key.Space => 1,
+            Key.Left or Key.Up or Key.PageUp => -1,
+            Key.Home => -2,
+            Key.End => 2,
+            _ => 0,
+        };
+        if (direction == 0) return false;
+        bool page = key is Key.PageDown or Key.PageUp or Key.Space;
+
+        if (_vScrolling)
+        {
+            double max = Math.Max(0, _contentHeight - _viewHeight);
+            double step = page ? _viewHeight * 0.9 : FontSize * 3;
+            double target = direction switch { -2 => 0, 2 => max, _ => _offsetY + direction * step };
+            if (Math.Abs(direction) == 1)
+            {
+                if (target > max + 0.5 && _offsetY >= max - 0.5) RaiseBoundary(atEnd: true);
+                else if (target < -0.5 && _offsetY <= 0.5) RaiseBoundary(atEnd: false);
+            }
+            SetOffsetY(target);
+        }
+        else if (_scrolling)
+        {
+            int last = Math.Max(0, (int)_scrollBar.Maximum);
+            int step = page ? Math.Max(1, _visibleColumns) : 1;
+            ApplyColumn(direction switch { -2 => 0, 2 => last, _ => _firstColumn + direction * step });
+        }
+        else if (Math.Abs(direction) == 1)
+        {
+            RaiseBoundary(atEnd: direction > 0); // everything fits on one page
+        }
+        return true;
+    }
 
     private bool OverScrollBar(Point point) =>
         (_scrollBar.IsVisible && point.Y >= _scrollBar.Bounds.Top) || (_vBar.IsVisible && point.X >= _vBar.Bounds.Left);
@@ -887,6 +1025,7 @@ public class BibleTextBlock : Panel
     protected override void OnKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);
+        if (e.KeyModifiers == KeyModifiers.None && NavigateByKey(e.Key)) { e.Handled = true; return; }
         if (!e.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
         if (e.Key == Key.C) { Copy(); e.Handled = true; }
         else if (e.Key == Key.A) { SelectAll(); e.Handled = true; }
@@ -992,6 +1131,13 @@ public class BibleTextBlock : Panel
         {
             if (!_updatingBar) ApplyColumn((int)Math.Round(e.NewValue)); // snap to whole columns
         };
+        // The bar can't move past its ends, so pressing an end button while already there asks for the next/previous book.
+        _scrollBar.AddHandler(PointerPressedEvent, (_, e) =>
+        {
+            double x = e.GetPosition(_scrollBar).X, width = _scrollBar.Bounds.Width;
+            if (x > width - 24 && _scrollBar.Value >= _scrollBar.Maximum - 0.5) RaiseBoundary(atEnd: true);
+            else if (x < 24 && _scrollBar.Value <= 0.5) RaiseBoundary(atEnd: false);
+        }, Avalonia.Interactivity.RoutingStrategies.Tunnel);
         Children.Add(_scrollBar);
         _vBar = new ScrollBar { Orientation = Orientation.Vertical, IsVisible = false };
         _vBar.ValueChanged += (_, e) => { if (!_updatingBar) SetOffsetY(e.NewValue); };
@@ -1070,6 +1216,12 @@ public class BibleTextBlock : Panel
     public void Parse(List<BibleText.Run> text)
     {
         ArgumentNullException.ThrowIfNull(text);
+        // New content starts at its beginning (ShowBookAsync can ask for its end instead).
+        StopAnimation();
+        _panning = false;
+        _firstColumn = 0;
+        _offsetX = _offsetY = _overscroll = 0;
+        _anchor = _caret = 0;
         Inlines.Clear();
         Inlines.AddRange(ToInlines(text, FontSize, upperCase: false));
     }
