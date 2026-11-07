@@ -11,12 +11,12 @@
             <ResourceDictionary.ThemeDictionaries>
                 <!-- Styles applied when the App is in Light Mode -->
                 <ResourceDictionary x:Key="Light">
-                    <sys:String x:Key="SvgThemeCss">path { fill: #333333 !important; }</sys:String>
+                    <sys:String x:Key="SvgThemeCss">path, rect { fill: #333333 !important; }</sys:String>
                 </ResourceDictionary>
 
                 <!-- Styles applied when the App is in Dark Mode -->
                 <ResourceDictionary x:Key="Dark">
-                    <sys:String x:Key="SvgThemeCss">path { fill: #FFFFFF !important; }</sys:String>
+                    <sys:String x:Key="SvgThemeCss">path, rect { fill: #FFFFFF !important; }</sys:String>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>

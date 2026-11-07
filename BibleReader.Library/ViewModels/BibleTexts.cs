@@ -2,12 +2,13 @@
 using Avalonia.Controls.Platform;
 using Avalonia.Controls.Templates;
 using Avalonia.Media;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using static System.Net.Mime.MediaTypeNames;
-using IO = System.IO;
+using System.Net;
 
 namespace BibleReader.Library;
 
@@ -201,7 +202,7 @@ public class Bible
         public string Id { get; set; }
         public string Description { get; set; }
         public string File { get; set; }
-        public string Markdown { get => field ??= IO.File.ReadAllText(File, System.Text.Encoding.UTF8); set => field = value; }
+        public string Markdown { get => field ??= System.IO.File.ReadAllText(File, System.Text.Encoding.UTF8); set => field = value; }
         public List<Run> Runs {
             get => field ??= Bible.ParseBook(this).ToList();
             set => field = value;
@@ -404,25 +405,47 @@ public class Bible
         }
     }
 
-    public List<Book> Books { get; set; } = new List<Book>();
     public string Name { get; set; }
-    public Bible Open(string path)
+    public string EnglishName { get; set; }
+    [Newtonsoft.Json.JsonIgnore] // Settings are saved with Newtonsoft; the books are read from the folder
+    public List<Book> Books { get; set; } = new List<Book>();
+    public string ConfigPath
     {
-        Name = IO.Path.GetFileName(path);
-        var dir = new IO.DirectoryInfo(path);
-        if (!dir.Exists) throw new IO.DirectoryNotFoundException($"Directory not found: {path}");
-        var files = dir.EnumerateFiles("*.md", IO.SearchOption.TopDirectoryOnly)
+        get
+        {
+            if (field == null)
+            {
+                field = Path.Combine(Settings.Current.ConfigPath, WebUtility.UrlEncode(EnglishName));
+            }
+            return field;
+        }
+    }
+
+    public void Open()
+    {
+        var bible = OpenFrom(ConfigPath);
+        Name = bible.Name;
+        EnglishName = bible.EnglishName;
+        Books = bible.Books;
+    }
+    public static Bible OpenFrom(string path)
+    {
+        var bible = new Bible();
+        bible.Name = WebUtility.UrlDecode(Path.GetFileName(path));
+        var dir = new DirectoryInfo(path);
+        if (!dir.Exists) throw new DirectoryNotFoundException($"Directory not found: {path}");
+        var files = dir.EnumerateFiles("*.md", SearchOption.TopDirectoryOnly)
             .Where(file => Regex.IsMatch(file.Name, @"^[0-9.]+-"))
             .OrderBy(file => file.Name);
-        Books.AddRange(files.Select(file => new Book(this)
+        bible.Books.AddRange(files.Select(file => new Book(bible)
         {
             Name = Regex.Replace(file.Name, @"^[0-9.]+-(.*)\.md$", "$1"),
             Index = int.Parse(Regex.Match(file.Name, "^[0-9]+").Value),
             File = file.FullName,
         }));
-        var booknamesFile = IO.Path.Combine(path, "booknames.xml");
-        if (!IO.File.Exists(booknamesFile)) booknamesFile = IO.Path.Combine(path, "src", "booknames.xml");
-        if (IO.File.Exists(booknamesFile))
+        var booknamesFile = Path.Combine(path, "booknames.xml");
+        if (!File.Exists(booknamesFile)) booknamesFile = Path.Combine(path, "src", "booknames.xml");
+        if (File.Exists(booknamesFile))
         {
             var xml = System.Xml.Linq.XDocument.Load(booknamesFile);
             var enid = xml.Root.Elements("ID")
@@ -432,7 +455,7 @@ public class Bible
                 .Select(id => {
                     var xbooks = id.Elements("BOOK");
                     return xbooks
-                        .Join(Books, book => book.Value, book => book.Name, (id, book) => new { Id = id, Book = book })
+                        .Join(bible.Books, book => book.Value, book => book.Name, (id, book) => new { Id = id, Book = book })
                         .Join(enid, book => book.Id.Attribute("bnumber")?.Value, id => id.Attribute("bnumber")?.Value, (b, enid) => new
                         {
                             b.Id, b.Book, EnId = enid
@@ -457,7 +480,6 @@ public class Bible
                 }
             }
         }
-        return this;
-    }
-
+        return bible;
+    }   
 }

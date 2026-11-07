@@ -19,6 +19,55 @@ public partial class BibleView : UserControl
     {
         InitializeComponent();
         SizeChanged += (_, e) => ApplyColumns(e.NewSize);
+        // Remember the open Bible, and open the remembered one when the view is first shown.
+        Block.PropertyChanged += (_, e) =>
+        {
+            if (e.Property == BibleTextBlock.PositionProperty) { SavePositionSoon(); return; }
+            if (e.Property != BibleTextBlock.BibleProperty) return;
+            var name = (e.NewValue as Bible)?.EnglishName;
+            if (Settings.Current.CurrentBible == name) return;
+            Settings.Current.CurrentBible = name;
+            try { Settings.Current.Save(); } catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Could not save the settings: {ex}"); }
+        };
+        AttachedToVisualTree += (_, _) => RestoreBible();
+    }
+
+    private bool _restored;
+    private Avalonia.Threading.DispatcherTimer? _saveTimer;
+
+    /// <summary>Saves the position a second after it stopped changing: it changes with every scroll.</summary>
+    private void SavePositionSoon()
+    {
+        _saveTimer ??= new Avalonia.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        _saveTimer.Tick -= OnSaveTimer;
+        _saveTimer.Tick += OnSaveTimer;
+        _saveTimer.Stop();
+        _saveTimer.Start();
+    }
+
+    private void OnSaveTimer(object? sender, EventArgs e)
+    {
+        _saveTimer?.Stop();
+        if (Block.IsBusy) { SavePositionSoon(); return; } // still opening: the position is not the reader's yet
+        if (Block.Bible is null || Block.Position is not { Book: { } book } position) return;
+        var settings = Settings.Current;
+        if (settings.CurrentBible != Block.Bible.EnglishName) return; // the Bible is being switched
+        if (settings.CurrentBookIndex == book.Index && settings.CurrentChapter == position.Chapter && settings.CurrentVerse == position.Verse) return;
+        settings.CurrentBookIndex = book.Index;
+        settings.CurrentChapter = position.Chapter;
+        settings.CurrentVerse = position.Verse;
+        try { settings.Save(); } catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Could not save the settings: {ex}"); }
+    }
+
+    private void RestoreBible()
+    {
+        if (_restored) return;
+        _restored = true;
+        if (Block.Bible is not null || Settings.Current.CurrentBible is not { Length: > 0 } name) return;
+        if (Settings.Current.Bibles?.FirstOrDefault(b => b.EnglishName == name) is not { } bible) return;
+        var settings = Settings.Current;
+        Block.OpenNextAt(settings.CurrentBookIndex, settings.CurrentChapter, settings.CurrentVerse);
+        Toolbar.Bible = bible; // the text block follows, and opens at the saved position
     }
 
     /// <summary>
@@ -41,6 +90,13 @@ public partial class BibleView : UserControl
         get => Block.Books;
         set => Block.Books = value;
     }
+    /// <summary>The Bible shown; the text block follows the toolbar's <see cref="BibleToolbar.Bible"/>.</summary>
+    public Bible? Bible
+    {
+        get => Block.Bible;
+        set => Block.Bible = value;
+    }
+
     public async Task ShowBookAsync(int n)=> await Block.ShowBookAsync(n);
 
     private void ApplyColumns(Size size)
@@ -68,6 +124,13 @@ public partial class BibleView : UserControl
         }
     }
 
+    /// <summary>A deleted Bible can no longer be read: when it is the one shown, the toolbar and the text block drop it.</summary>
+    private void OnBibleDeleted(object? sender, OnlineBible bible)
+    {
+        if (Toolbar.Bible?.EnglishName == bible.EnglishName) Toolbar.Bible = null;
+        if (Block.Bible?.EnglishName == bible.EnglishName) Block.Bible = null; // also when it was opened with OpenAsync
+    }
+
     /// <summary>The text block, for settings the view does not expose itself.</summary>
     public BibleTextBlock TextBlock => Block;
 
@@ -82,10 +145,11 @@ public partial class BibleView : UserControl
     /// Reads the books in <paramref name="directory"/> and shows <paramref name="bookIndex"/> (default: the first
     /// real book, skipping the front matter such as the table of contents).
     /// </summary>
-    public async Task OpenAsync(string directory, int bookIndex = -1)
+    public async Task OpenAsync(string directory, int bookIndex = -1) => await OpenAsync(await Task.Run(() => Bible.OpenFrom(directory)), bookIndex);
+
+    public async Task OpenAsync(Bible bible, int bookIndex = -1)
     {
-        // Listing the files and reading the book names is work for a worker thread: the first screen is waiting.
-        var books = await Task.Run(() => new Bible().Open(directory).Books);
+        var books = bible.Books;
         Block.Books = books;
         if (bookIndex < 0)
         {
@@ -95,4 +159,5 @@ public partial class BibleView : UserControl
         }
         await Block.ShowBookAsync(bookIndex);
     }
+
 }

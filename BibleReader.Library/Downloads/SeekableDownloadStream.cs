@@ -10,7 +10,7 @@ using EstrellasDeEsperanza.AsyncLock;
 
 #nullable enable
 
-namespace BibleReader;
+namespace BibleReader.Library;
 
 public class SeekableDownloadStream : System.IO.Stream
 {
@@ -41,8 +41,9 @@ public class SeekableDownloadStream : System.IO.Stream
 		IsTemp = isTemp;
 		Progress = progress;
 		Buffer = new FileStream(TmpFile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite, 4096, FileOptions.WriteThrough | FileOptions.Asynchronous);
-		Size = Download.GetFileSizeAsync(Url);
-		DownloadComplete = DownloadSequential();
+		// Off the caller's thread: Length blocks on this task, which would deadlock if it had to resume on a UI thread.
+		Size = Task.Run(() => Download.GetFileSizeAsync(Url));
+		DownloadComplete = Task.Run(DownloadSequential);
 	}
 
 

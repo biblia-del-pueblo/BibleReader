@@ -95,6 +95,13 @@ public class BibleTextBlock : Panel
             defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
     /// <summary>
+    /// The Bible to read. Setting it (or binding it, e.g. to <see cref="BibleToolbar.Bible"/>) loads its books when
+    /// they are not loaded yet and shows the first real book, skipping the front matter.
+    /// </summary>
+    public static readonly StyledProperty<Bible?> BibleProperty =
+        AvaloniaProperty.Register<BibleTextBlock, Bible?>(nameof(Bible));
+
+    /// <summary>
     /// True while the text asked for is still being prepared: a requested verse that is not on screen yet, or the very
     /// first text. Show a spinner while it is set.
     /// </summary>
@@ -113,6 +120,7 @@ public class BibleTextBlock : Panel
         {
             if (!c._settingPosition) c.ScrollToPosition(e.NewValue as Bible.VersePosition);
         });
+        BibleProperty.Changed.AddClassHandler<BibleTextBlock>((c, e) => c.OnBibleChanged(e.NewValue as Bible));
         AffectsMeasure<BibleTextBlock>(ForegroundProperty);
         SideProperty.Changed.AddClassHandler<Control>((c, _) => (c.Parent as BibleTextBlock)?.MarkDirty());
     }
@@ -124,6 +132,7 @@ public class BibleTextBlock : Panel
     public TextAlignment TextAlignment { get => GetValue(TextAlignmentProperty); set => SetValue(TextAlignmentProperty, value); }
     public double FloatSpacing { get => GetValue(FloatSpacingProperty); set => SetValue(FloatSpacingProperty, value); }
 
+    public Bible? Bible { get => GetValue(BibleProperty); set => SetValue(BibleProperty, value); }
     public Bible.VersePosition? Position { get => GetValue(PositionProperty); set => SetValue(PositionProperty, value); }
     public Orientation Orientation { get => GetValue(OrientationProperty); set => SetValue(OrientationProperty, value); }
     public int ColumnCount { get => GetValue(ColumnCountProperty); set => SetValue(ColumnCountProperty, value); }
@@ -285,6 +294,55 @@ public class BibleTextBlock : Panel
     // Once the view has passed more than half of the second book, the first book is dropped and the one after
     // the second is appended; scrolling back past half of the first book does the opposite. The scroll position
     // is carried over, so the text just keeps going.
+
+    // Where the next Bible opens (see OpenNextAt); else it opens where the reader was in the Bible it replaces.
+    private (int BookIndex, int Chapter, int Verse)? _openAt;
+
+    /// <summary>
+    /// The next Bible set (or bound) opens at this book (<c>Book.Index</c>), chapter and verse instead of where the
+    /// reader is now, e.g. at the last position of a previous run.
+    /// </summary>
+    public void OpenNextAt(int bookIndex, int chapter, int verse) => _openAt = (bookIndex, chapter, verse);
+
+    private async void OnBibleChanged(Bible? bible)
+    {
+        // Where the reader was in the Bible that is replaced: the new one opens there.
+        (int BookIndex, int Chapter, int Verse)? previous = _openAt
+            ?? (Position is { Book: { } shown } pos ? (shown.Index, pos.Chapter, pos.Verse) : null);
+        _openAt = null;
+        if (bible is null)
+        {
+            // No Bible: forget the books and empty the view (a book still loading is dropped when it arrives).
+            Books = null;
+            _pendingPosition = null;
+            Inlines.Clear();
+            return;
+        }
+        try
+        {
+            if (bible.Books.Count == 0)
+            {
+                // Reading the folder is work for a worker thread; the books belong to the chosen Bible, not the temporary one.
+                var loaded = await Task.Run(() => Bible.OpenFrom(bible.ConfigPath));
+                foreach (var book in loaded.Books) book.Bible = bible;
+                bible.Books = loaded.Books;
+            }
+            if (!ReferenceEquals(Bible, bible)) return; // another Bible was chosen while this one loaded
+            var books = bible.Books;
+            Books = books;
+            int index = books.FindIndex(book =>
+                !System.IO.Path.GetFileName(book.File ?? string.Empty).StartsWith("00.", StringComparison.Ordinal));
+            // Keep the position: the same book (by its number), chapter and verse of the new Bible, when it has them.
+            int kept = previous is { } old ? books.FindIndex(book => book.Index == old.BookIndex) : -1;
+            await ShowBookAsync(kept >= 0 ? kept : index < 0 ? 0 : index);
+            if (kept >= 0 && previous is { } p && (p.Chapter > 0 || p.Verse > 0) && ReferenceEquals(Bible, bible))
+                Position = new Bible.VersePosition { Book = books[kept], Chapter = p.Chapter, Verse = p.Verse };
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Could not open {bible.EnglishName}: {ex}");
+        }
+    }
 
     /// <summary>The books to scroll through; use <see cref="ShowBookAsync"/> to start at one.</summary>
     public IReadOnlyList<Bible.Book>? Books { get; set; }
@@ -1881,7 +1939,7 @@ public class BibleTextBlock : Panel
             case Bible.Run.Classes.Bold: span.FontWeight = FontWeight.Bold; break;
             case Bible.Run.Classes.Italic: span.FontStyle = FontStyle.Italic; break;
             case Bible.Run.Classes.WordsOfJesus: span.Foreground = WordsOfJesusBrush; break;
-            case Bible.Run.Classes.SmallCaps: upperCase = true; size *= 0.85; span.FontSize = size; break;
+            case Bible.Run.Classes.SmallCaps: upperCase = true; break; // the size is reduced per letter, see SmallCapsRuns
             case Bible.Run.Classes.Link:
                 span.TextDecorations = TextDecorations.Underline;
                 span.Foreground = LinkBrush;
@@ -1903,11 +1961,41 @@ public class BibleTextBlock : Panel
         }
         else if (!string.IsNullOrEmpty(run.Text))
         {
-            span.Inlines!.Add(new Avalonia.Controls.Documents.Run(upperCase ? run.Text.ToUpperInvariant() : run.Text));
+            if (upperCase) foreach (var part in SmallCapsRuns(run.Text, size)) span.Inlines!.Add(part);
+            else span.Inlines!.Add(new Avalonia.Controls.Documents.Run(run.Text));
         }
 
         if (span.Inlines!.Count > 0) yield return span;
         if (lineAfter) yield return new LineBreak();
+    }
+
+    private const double SmallCapsScale = 0.85;
+
+    /// <summary>
+    /// Small capitals: the first letter of every word is a capital of the regular size, the other letters are
+    /// capitals of a smaller size ("Lord" becomes L + ORD).
+    /// </summary>
+    private static IEnumerable<Avalonia.Controls.Documents.Run> SmallCapsRuns(string text, double size)
+    {
+        bool wordStart = true;
+        var small = new StringBuilder();
+        foreach (var ch in text)
+        {
+            if (wordStart && !char.IsWhiteSpace(ch))
+            {
+                if (small.Length > 0) { yield return SmallRun(small.ToString()); small.Clear(); }
+                yield return new Avalonia.Controls.Documents.Run(char.ToUpperInvariant(ch).ToString());
+                wordStart = false;
+            }
+            else
+            {
+                small.Append(char.IsWhiteSpace(ch) ? ch : char.ToUpperInvariant(ch));
+                wordStart = char.IsWhiteSpace(ch);
+            }
+        }
+        if (small.Length > 0) yield return SmallRun(small.ToString());
+
+        Avalonia.Controls.Documents.Run SmallRun(string t) => new(t) { FontSize = size * SmallCapsScale };
     }
 
     /// <summary>The run's text without markup: its children's text when it has any, else its own.</summary>

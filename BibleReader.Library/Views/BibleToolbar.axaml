@@ -24,6 +24,15 @@
         <Style Selector="Button.cell.Epistles"><Setter Property="Background" Value="#668F66D9" /></Style>
         <Style Selector="Button.cell.Revelation"><Setter Property="Background" Value="#6640B8C8" /></Style>
         <Style Selector="Button.cell.Apocrypha"><Setter Property="Background" Value="#66909090" /></Style>
+        <!-- An entry of the menu popup (the buttons are added in code). -->
+        <Style Selector="Button.entry.current"><Setter Property="FontWeight" Value="Bold" /></Style>
+        <Style Selector="Button.entry">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
         <!-- The book or chapter the text block is at. -->
         <Style Selector="Button.cell.current">
             <Setter Property="FontWeight" Value="Bold" />
@@ -73,7 +82,53 @@
                         <TextBlock Opacity="0.6" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
+                <!-- The installed Bibles: opens a list to choose the Bible to read. -->
+                <Button x:Name="BiblesButton"
+                        VerticalAlignment="Center"
+                        Padding="8,4"
+                        BorderThickness="0"
+                        Background="Transparent"
+                        Cursor="Hand"
+                        ToolTip.Tip="Installed Bibles"
+                        Click="OnBiblesClick">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <svg:Svg Path="/Assets/bookshelf.svg" Width="26" Height="26"
+                                Css="{DynamicResource SvgThemeCss}" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
+
+            <!-- The menu: opened by the menu button, its entries are added in code. -->
+            <Popup x:Name="MenuPopup"
+                   Placement="BottomEdgeAlignedLeft"
+                   IsLightDismissEnabled="True"
+                   Closed="OnMenuPopupClosed">
+                <Border MinWidth="200"
+                        Padding="4"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+                        BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                    <StackPanel x:Name="MenuItems" />
+                </Border>
+            </Popup>
+
+            <!-- The installed Bibles; its entries are added in code. -->
+            <Popup x:Name="BiblesPopup"
+                   Placement="BottomEdgeAlignedLeft"
+                   IsLightDismissEnabled="True"
+                   Closed="OnBiblesPopupClosed">
+                <Border MinWidth="220"
+                        Padding="4"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+                        BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                    <ScrollViewer MaxHeight="400" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel x:Name="BiblesItems" />
+                    </ScrollViewer>
+                </Border>
+            </Popup>
 
             <!-- Book grid, or (after choosing a book) the chapter grid with a header to go back. -->
             <Popup x:Name="BookPopup"

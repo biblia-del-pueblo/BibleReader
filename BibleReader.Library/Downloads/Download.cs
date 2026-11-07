@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Svg;
+using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -7,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BibleReader;
+namespace BibleReader.Library;
 
 public class Download
 {
@@ -55,9 +57,9 @@ public class Download
             {
                 // Pick the extractor from the url, not destinationFile: callers may pass a name without extension
                 if (url.EndsWith(".7z", StringComparison.OrdinalIgnoreCase))
-                    Zip.Unzip7zFile(destinationFile, destinationPath, filter, stream, singleFile ? null : progress);
+                    await Task.Run(() => Zip.Unzip7zFile(destinationFile, destinationPath, filter, stream, singleFile ? null : progress));
                 else
-                    Zip.UnzipZipFile(destinationFile, destinationPath, filter, stream, singleFile ? null : progress);
+                    await Task.Run(() => Zip.UnzipZipFile(destinationFile, destinationPath, filter, stream, singleFile ? null : progress));
             }
         }
         else throw new NotSupportedException("Url must be a 7z or zip archive");
@@ -65,7 +67,7 @@ public class Download
     public static async Task<long> GetFileSizeAsync(string url)
     {
         using var request = new HttpRequestMessage(HttpMethod.Head, url);
-        using var response = await Download.Client.SendAsync(request, Cancel.Token);
+        using var response = await Download.Client.SendAsync(request, Cancel.Token).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
         return response.Content.Headers.ContentLength ?? -1;
     }
@@ -73,7 +75,7 @@ public class Download
     public static async Task<bool> FileExistsAsync(string url)
     {
         using var request = new HttpRequestMessage(HttpMethod.Head, url);
-        using var response = await Client.SendAsync(request, Cancel.Token);
+        using var response = await Client.SendAsync(request, Cancel.Token).ConfigureAwait(false);
         return response.IsSuccessStatusCode;
     }
     public static async Task<long> DownloadFileChunkAsync(string url, long offset, long length, byte[] buffer)
@@ -81,14 +83,14 @@ public class Download
         if (length <= 0) return 0;
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Range = new System.Net.Http.Headers.RangeHeaderValue(offset, offset + length - 1);
-        using var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, Cancel.Token);
+        using var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, Cancel.Token).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
         if (response.StatusCode != HttpStatusCode.PartialContent) throw new InvalidDataException("Request did not return a PartialContent status code.");
-        using var stream = await response.Content.ReadAsStreamAsync();
+        using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
         var size = response.Content.Headers.ContentLength ?? 0;
         int totalRead = 0;
         int read;
-        while ((read = await stream.ReadAsync(buffer, totalRead, (int)size - totalRead, Cancel.Token)) > 0)
+        while ((read = await stream.ReadAsync(buffer, totalRead, (int)size - totalRead, Cancel.Token).ConfigureAwait(false)) > 0)
         {
             totalRead += read;
         }
@@ -99,10 +101,10 @@ public class Download
         if (length <= 0) return 0;
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Range = new System.Net.Http.Headers.RangeHeaderValue(offset, offset + length - 1);
-        using var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, Cancel.Token);
+        using var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, Cancel.Token).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
         if (response.StatusCode != HttpStatusCode.PartialContent) throw new InvalidDataException("Request did not return a PartialContent status code.");
-        await response.Content.CopyToAsync(stream);
+        await response.Content.CopyToAsync(stream).ConfigureAwait(false);
         return response.Content.Headers.ContentLength ?? 0;
     }
 
@@ -110,5 +112,12 @@ public class Download
     {
         if (Directory.Exists(destination)) Directory.Delete(destination, true);
         await DownloadFileAndUnzipAsync(url, Path.GetTempFileName() + Path.GetExtension(url), destination);
+    }
+
+    public static async Task<string> DownloadStringAsync(string url)
+    {
+        using var response = await Client.GetAsync(url, Cancel.Token);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync();
     }
 }

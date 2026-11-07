@@ -35,10 +35,31 @@ public partial class BibleToolbar : UserControl
     public static readonly StyledProperty<Bible.VersePosition?> PositionProperty =
         AvaloniaProperty.Register<BibleToolbar, Bible.VersePosition?>(nameof(Position));
 
+    /// <summary>
+    /// True while the online Bibles are shown instead of the text. Set by the "Online Bibles…" menu entry; the host
+    /// (see <see cref="BibleView"/>) binds to it to swap its content. Choosing a chapter resets it.
+    /// </summary>
+    public static readonly StyledProperty<bool> ShowOnlineBiblesProperty =
+        AvaloniaProperty.Register<BibleToolbar, bool>(nameof(ShowOnlineBibles));
+    /// <summary>The Bible chosen in the Bibles popup. Bind a <see cref="BibleTextBlock.Bible"/> to it to read it.</summary>
+    public static readonly StyledProperty<Bible?> BibleProperty =
+        AvaloniaProperty.Register<BibleToolbar, Bible?>(nameof(Bible));
+
+    public bool ShowOnlineBibles { get => GetValue(ShowOnlineBiblesProperty); set => SetValue(ShowOnlineBiblesProperty, value); }
+
     public BibleTextBlock? Target { get => GetValue(TargetProperty); set => SetValue(TargetProperty, value); }
     public Bible.VersePosition? Position { get => GetValue(PositionProperty); set => SetValue(PositionProperty, value); }
 
+    public Bible? Bible
+    {
+        get => GetValue(BibleProperty);
+        set => SetValue(BibleProperty, value);
+    }
+
     private DateTime _closedAt = DateTime.MinValue;
+    private DateTime _menuClosedAt = DateTime.MinValue;
+    private DateTime _biblesClosedAt = DateTime.MinValue;
+
     private Bible.Book? _chaptersFor; // the book whose chapters the popup shows (null: the book page)
 
     static BibleToolbar()
@@ -51,6 +72,8 @@ public partial class BibleToolbar : UserControl
     public BibleToolbar()
     {
         InitializeComponent();
+        MenuPopup.PlacementTarget = MenuButton;
+        BiblesPopup.PlacementTarget = BiblesButton;
         BookPopup.PlacementTarget = PositionButton; // a reference to a named sibling, set here rather than as a binding
         UpdateText();
     }
@@ -78,25 +101,72 @@ public partial class BibleToolbar : UserControl
         BookPopup.IsOpen = true;
     }
     
-    /// <summary>The menu of the current position: copy its reference ("Genesis 1:9") or its verse text.</summary>
+    /// <summary>The menu: copy the current reference or verse text, and switch between reading and the online Bibles.</summary>
     private void OnMenuClick(object? sender, RoutedEventArgs e)
     {
-        if (Position is not { Book: not null } position) return;
+        if (MenuPopup.IsOpen) { MenuPopup.IsOpen = false; return; }
+        // Pressing the button already light-dismissed the open popup; don't reopen it with the same click.
+        if ((DateTime.UtcNow - _menuClosedAt).TotalMilliseconds < 300) return;
 
-        var menu = new ContextMenu();
-        menu.Items.Add(CreateMenuItem("Copy reference", () => CopyAsync(ReferenceOf(position))));
-        // Only a verse has a text; the start of a book or chapter has none.
-        if (VerseTextOf(position) is { Length: > 0 } text)
-            menu.Items.Add(CreateMenuItem("Copy verse text", () => CopyAsync(text)));
-        menu.Open(MenuButton);
+        MenuItems.Children.Clear();
+        if (Position is { Book: not null } position)
+        {
+            AddMenuEntry("Copy reference", () => CopyAsync(ReferenceOf(position)));
+            // Only a verse has a text; the start of a book or chapter has none.
+            if (VerseTextOf(position) is { Length: > 0 } text)
+                AddMenuEntry("Copy verse text", () => CopyAsync(text));
+        }
+        AddMenuEntry(ShowOnlineBibles ? "Back to reading" : "Online Bibles…", () =>
+        {
+            ShowOnlineBibles = !ShowOnlineBibles;
+            return Task.CompletedTask;
+        });
+        MenuPopup.IsOpen = true;
     }
 
-    private static MenuItem CreateMenuItem(string header, Func<Task> action)
+    /// <summary>Lists the installed Bibles (<see cref="Settings.Bibles"/>); choosing one sets <see cref="Bible"/>.</summary>
+    private void OnBiblesClick(object? sender, RoutedEventArgs e)
     {
-        var item = new MenuItem { Header = header };
-        item.Click += async (_, _) => await action();
-        return item;
+        if (BiblesPopup.IsOpen) { BiblesPopup.IsOpen = false; return; }
+        if ((DateTime.UtcNow - _biblesClosedAt).TotalMilliseconds < 300) return;
+
+        BiblesItems.Children.Clear();
+        var bibles = Settings.Current.Bibles ?? new List<Bible>();
+        string? current = Position?.Book?.Bible?.Name;
+        foreach (var bible in bibles.Where(b => !string.IsNullOrEmpty(b.EnglishName)))
+        {
+            var chosen = bible;
+            var button = new Button { Content = chosen.Name ?? chosen.EnglishName };
+            button.Classes.Add("entry");
+            if (chosen.EnglishName == current) button.Classes.Add("current");
+            button.Click += (_, _) =>
+            {
+                BiblesPopup.IsOpen = false;
+                ShowOnlineBibles = false;
+                if (Bible != chosen) Bible = chosen;
+            };
+            BiblesItems.Children.Add(button);
+        }
+        if (BiblesItems.Children.Count == 0)
+            BiblesItems.Children.Add(new TextBlock { Text = "No Bibles installed yet", Opacity = 0.7, Margin = new Thickness(12, 8) });
+        BiblesPopup.IsOpen = true;
     }
+
+    private void OnBiblesPopupClosed(object? sender, EventArgs e) => _biblesClosedAt = DateTime.UtcNow;
+
+    private void AddMenuEntry(string header, Func<Task> action)
+    {
+        var button = new Button { Content = header };
+        button.Classes.Add("entry");
+        button.Click += async (_, _) =>
+        {
+            MenuPopup.IsOpen = false;
+            await action();
+        };
+        MenuItems.Children.Add(button);
+    }
+
+    private void OnMenuPopupClosed(object? sender, EventArgs e) => _menuClosedAt = DateTime.UtcNow;
 
     private async Task CopyAsync(string text)
     {
@@ -203,6 +273,7 @@ public partial class BibleToolbar : UserControl
     private void SelectChapter(Bible.Book book, int chapter)
     {
         BookPopup.IsOpen = false;
+        ShowOnlineBibles = false; // a chapter is read in the text, not in the online list
         if (Target is null) return;
         // Verse 0 is the start of the chapter; the text block loads the book if it is not shown yet.
         Target.Position = new Bible.VersePosition { Book = book, Chapter = chapter, Verse = 0 };

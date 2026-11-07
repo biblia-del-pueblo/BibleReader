@@ -5,16 +5,21 @@
 
     <!-- The toolbar on top follows the text block's Position and navigates it by book and chapter. -->
     <Grid RowDefinitions="Auto,*" Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
-        <local:BibleToolbar Target="{Binding #Block}" />
+        <local:BibleToolbar x:Name="Toolbar" Target="{Binding #Block}" />
         <!-- Vertical: a single column that scrolls by touch, which is what a phone wants.
              Bible Roman is the font embedded in this assembly's Assets folder (regular, italic and bold). -->
         <local:BibleTextBlock x:Name="Block"
                               Grid.Row="1"
+                              Bible="{Binding #Toolbar.Bible}"
                               Margin="16,8"
+                              IsVisible="{Binding !#Toolbar.ShowOnlineBibles}"
                               Orientation="Vertical"
                               FontSize="18"
                               FontFamily="avares://BibleReader.Library/Assets#Bible Roman"
                               Background="{DynamicResource SystemControlBackgroundAltHighBrush}" />
+
+        <!-- Replaces the text while the toolbar menu's "Online Bibles…" is chosen. -->
+        <local:OnlineBiblesView Grid.Row="1" BibleDeleted="OnBibleDeleted" IsVisible="{Binding #Toolbar.ShowOnlineBibles}" />
 
         <!-- Shown over the text while a requested verse (or the first text) is still being prepared. It does not take
              touches, so the text underneath can still be scrolled. -->

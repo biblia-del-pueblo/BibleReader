@@ -30,5 +30,7 @@
         <PackageVersion Include="HarfBuzzSharp.NativeAssets.WebAssembly" Version="14.2.0" />
         <PackageVersion Include="LibArchive.Net" Version="0.3.1" />
         <PackageVersion Include="EstrellasDeEsperanza.AsyncLock" Version="4.2.1" />
+        <PackageVersion Include="HtmlAgilityPack" Version="1.13.1" />
+        <PackageVersion Include="System.Linq.AsyncEnumerable" Version="10.0.0" />
     </ItemGroup>
 </Project>

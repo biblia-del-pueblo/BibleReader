@@ -26,6 +26,12 @@
         <PackageReference Include="Svg.Controls.Skia.Avalonia" />
         <PackageReference Include="EstrellasDeEsperanza.AsyncLock" />
         <PackageReference Include="LibArchive.Net" />
+        <PackageReference Include="HtmlAgilityPack" />
+        <PackageReference Include=" System.Linq.AsyncEnumerable" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BibleMarkdown\BibleMarkdown\BibleMarkdown.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -38,9 +44,5 @@
         <Compile Update="Views\BibleView.axaml.cs">
             <DependentUpon>BibleView.axaml</DependentUpon>
         </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Downloads\" />
     </ItemGroup>
 </Project>
