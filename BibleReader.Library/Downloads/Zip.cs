@@ -12,7 +12,7 @@ namespace BibleReader;
 
 public class Zip
 {
-	public static CancellationToken Cancel => PluginManager.Cancel.Token;
+	public static CancellationToken Cancel => Download.Cancel.Token;
 
 	static Zip()
 	{

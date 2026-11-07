@@ -11,8 +11,13 @@ namespace BibleReader;
 
 public class Download
 {
-    public static CancellationTokenSource Cancel => PluginManager.Cancel;
-    public static HttpClientHandler Proxy => PluginManager.Proxy;
+    public static CancellationTokenSource Cancel { get; set; } = new CancellationTokenSource();
+    public static HttpClientHandler Proxy { get; set; } = new HttpClientHandler { UseProxy = false };
+    public static HttpClient Client
+    {
+        get => field ??= new HttpClient(Proxy, true);
+        set => field = value;
+    }
 
     /*public HttpClientHandler ProxyHandler()
     {
@@ -60,7 +65,7 @@ public class Download
     public static async Task<long> GetFileSizeAsync(string url)
     {
         using var request = new HttpRequestMessage(HttpMethod.Head, url);
-        using var response = await PluginManager.Client.SendAsync(request, Cancel.Token);
+        using var response = await Download.Client.SendAsync(request, Cancel.Token);
         response.EnsureSuccessStatusCode();
         return response.Content.Headers.ContentLength ?? -1;
     }
@@ -68,7 +73,7 @@ public class Download
     public static async Task<bool> FileExistsAsync(string url)
     {
         using var request = new HttpRequestMessage(HttpMethod.Head, url);
-        using var response = await PluginManager.Client.SendAsync(request, Cancel.Token);
+        using var response = await Client.SendAsync(request, Cancel.Token);
         return response.IsSuccessStatusCode;
     }
     public static async Task<long> DownloadFileChunkAsync(string url, long offset, long length, byte[] buffer)
@@ -76,7 +81,7 @@ public class Download
         if (length <= 0) return 0;
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Range = new System.Net.Http.Headers.RangeHeaderValue(offset, offset + length - 1);
-        using var response = await PluginManager.Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, Cancel.Token);
+        using var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, Cancel.Token);
         response.EnsureSuccessStatusCode();
         if (response.StatusCode != HttpStatusCode.PartialContent) throw new InvalidDataException("Request did not return a PartialContent status code.");
         using var stream = await response.Content.ReadAsStreamAsync();
@@ -94,7 +99,7 @@ public class Download
         if (length <= 0) return 0;
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Range = new System.Net.Http.Headers.RangeHeaderValue(offset, offset + length - 1);
-        using var response = await PluginManager.Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, Cancel.Token);
+        using var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, Cancel.Token);
         response.EnsureSuccessStatusCode();
         if (response.StatusCode != HttpStatusCode.PartialContent) throw new InvalidDataException("Request did not return a PartialContent status code.");
         await response.Content.CopyToAsync(stream);
