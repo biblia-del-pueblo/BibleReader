@@ -523,9 +523,17 @@ public class BibleTextBlock : Panel
         var key = new FlowKey(width, cutting, FontSize, FontFamily, style.Foreground, justify, gap,
             text.GetHashCode(), text.Length, segmentHash.ToHashCode(), floatHash.ToHashCode());
 
+        // The same text flowed again in another width or orientation (window resized, device rotated): the reader
+        // stays at the line at the top of the view, not at the same column or offset of a different layout.
+        int? reflowKeep = null;
+        if (_hasLayout && _pendingAnchor is null && _pendingPosition is null && _lines.Count > 0
+            && (_appliedVertical != vertical || Math.Abs(_appliedWidth - width) > 0.5) && string.Equals(_text, text))
+            reflowKeep = VisibleStartIndex();
+
         int partialLines = 0, partialFrom = 0;
-        if (_pendingPosition is not null || (_lines.Count == 0 && _pendingAnchor is null))
+        if (_pendingPosition is not null || reflowKeep is not null || (_lines.Count == 0 && _pendingAnchor is null))
         {
+            if (reflowKeep is { } from) partialFrom = from;
             // Nothing is shown yet, or a verse is wanted: flow only down to it and a few screens beyond, and show that
             // right away; the rest follows.
             if (_pendingPosition is { } wantedAt && ResolveMarker(wantedAt, markers) is { } wantedMark)
@@ -544,6 +552,10 @@ public class BibleTextBlock : Panel
 
         // 3. The lines are ready: only now is the control's state replaced, all at once, with what belongs together.
         bool partial = !flow.Complete;
+
+        int? keepIndex = reflowKeep;
+        _appliedVertical = vertical;
+        _appliedWidth = width;
         _breakStarts = breaks;
         _splitIndex = splitIndex;
         _markers = markers;
@@ -677,6 +689,8 @@ public class BibleTextBlock : Panel
             else if (!partial && !_loadingBook) _pendingPosition = null; // a partial layout may simply not reach it yet
         }
         UpdateBusy();
+        if (keepIndex is { } keep && _pendingAnchor is null && LineAt(keep) is { } keepLine)
+            _pendingAnchor = (false, vertical ? keepLine.Origin.Y : Math.Floor((keepLine.Origin.X + 1) / pitch));
         if (_pendingAnchor is { } anchor && !vertical)
         {
             _firstColumn = (int)Math.Round((anchor.FromSplit ? _splitColumn : 0) + anchor.Value);
@@ -1400,6 +1414,25 @@ public class BibleTextBlock : Panel
     // itself), so selection is implemented here on top of the laid-out lines.
 
     private string _text = string.Empty;
+
+    private bool _appliedVertical; // how the lines now in _lines are arranged
+    private double _appliedWidth;  // and how wide their column is
+
+    /// <summary>Text index of the line at the top of the view (the first column shown), in the layout now applied.</summary>
+    private int? VisibleStartIndex()
+    {
+        if (_pitch <= 0) return null;
+        if (_appliedVertical)
+        {
+            foreach (var pl in _lines)
+                if (pl.Origin.Y + pl.Line.Height > _offsetY + 0.5) return pl.Line.FirstTextSourceIndex;
+            return null;
+        }
+        int column = _scrolling ? _firstColumn : 0;
+        foreach (var pl in _lines)
+            if (Math.Floor((pl.Origin.X + 1) / _pitch) >= column) return pl.Line.FirstTextSourceIndex;
+        return null;
+    }
     private int _anchor, _caret; // selection is [min, max) in flattened-text indices
     private bool _selecting;
 

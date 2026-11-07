@@ -211,7 +211,8 @@ public partial class BibleToolbar : UserControl
     private void UpdateText()
     {
         var position = Position;
-        BookText.Text = position?.Book?.Name ?? string.Empty;
+        BookName.Text = position?.Book?.Name ?? string.Empty;
+        BibleName.Text = position?.Book?.Bible?.Name ?? string.Empty;
         ReferenceText.Text = position is null ? "—"
             : position.Verse > 0 ? $"{position.Chapter}:{position.Verse}"
             : position.Chapter > 0 ? position.Chapter.ToString() : string.Empty;

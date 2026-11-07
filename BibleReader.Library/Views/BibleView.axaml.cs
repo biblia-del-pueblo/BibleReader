@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 
@@ -15,6 +16,47 @@ public partial class BibleView : UserControl
     public BibleView()
     {
         InitializeComponent();
+        SizeChanged += (_, e) => ApplyColumns(e.NewSize);
+    }
+
+    /// <summary>
+    /// Screens whose shorter side is at least this many device-independent pixels (a tablet; a phone has about 360-430)
+    /// show several columns that are paged sideways; narrower ones show one column that scrolls up and down.
+    /// <see cref="double.PositiveInfinity"/> keeps one column everywhere.
+    /// </summary>
+    public double TwoColumnsMinSize { get; set; } = 600;
+
+    /// <summary>
+    /// The least width of a column on a tablet, in device-independent units (the 96 dpi measure of Avalonia, which
+    /// the platform's density scaling is applied to: a 1280 wide tablet screen is 1280 of them). As many columns as
+    /// fit at this width are shown (two or more), and they are then widened to fill the screen: 1280 gives three.
+    /// When not even two fit, one scrolling column is shown instead.
+    /// </summary>
+    public double MinColumnWidth { get; set; } = 350;
+
+    private void ApplyColumns(Size size)
+    {
+        if (size.Width <= 0 || size.Height <= 0) return;
+
+        const double spacing = 32;
+        double available = size.Width - Block.Margin.Left - Block.Margin.Right;
+        double minColumn = Math.Max(1, MinColumnWidth);
+        int columns = Math.Min(size.Width, size.Height) >= TwoColumnsMinSize
+            ? (int)Math.Floor((available + spacing) / (minColumn + spacing))
+            : 1;
+        if (columns >= 2)
+        {
+            // A fixed column width makes the text block page its columns: it shows as many whole columns as fit.
+            // The width is the share of the screen for that many columns (a pixel less, against rounding).
+            Block.ColumnSpacing = spacing;
+            Block.ColumnWidth = Math.Floor((available - (columns - 1) * spacing) / columns) - 1;
+            Block.Orientation = Orientation.Horizontal;
+        }
+        else
+        {
+            Block.Orientation = Orientation.Vertical;
+            Block.ColumnWidth = double.NaN;
+        }
     }
 
     /// <summary>The text block, for settings the view does not expose itself.</summary>

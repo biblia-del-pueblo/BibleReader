@@ -1,5 +1,8 @@
 <Solution>
-  <Project Path="BibleReader.Android/BibleReader.Android.csproj" />
+  <Project Path="BibleMarkdown/BibleMarkdown/BibleMarkdown.csproj" />
+  <Project Path="BibleReader.Android/BibleReader.Android.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
   <Project Path="BibleReader.Browser/BibleReader.Browser.csproj" />
   <Project Path="BibleReader.Desktop/BibleReader.Desktop.csproj" />
   <Project Path="BibleReader.iOS/BibleReader.iOS.csproj" />

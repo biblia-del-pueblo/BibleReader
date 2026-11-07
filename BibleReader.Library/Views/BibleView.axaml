@@ -30,7 +30,7 @@
             <!-- Draws itself and turns with the animation frames, only while it is visible. -->
             <local:BusySpinner Width="36" Height="36"
                                IsVisible="{Binding #Block.IsBusy}"
-                               Thickness="4"
+                               Thickness="6"
                                Brush="{DynamicResource SystemControlHighlightAccentBrush}" />
         </Border>
     </Grid>
