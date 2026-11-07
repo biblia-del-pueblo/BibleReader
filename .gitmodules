@@ -1,0 +1,3 @@
+[submodule "BibleMarkdown"]
+	path = BibleMarkdown
+	url = https://github.com/biblia-del-pueblo/BibleMarkdown.git
