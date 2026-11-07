@@ -1,5 +1,6 @@
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Android.Runtime;
 using Avalonia;
 using Avalonia.Android;
@@ -21,8 +22,9 @@ public class BibleApplication : AvaloniaAndroidApplication<App>
 
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
-        // The app starts right after this, and it needs to know where the Bible's files are.
-        App.BibleDirectory = PrepareBibleDirectory();
+        // The app starts right after this and needs the Bible's files. Copying them from the assets (once per
+        // install) takes a while, so it runs on a worker thread and the app waits for it without blocking.
+        App.BibleDirectory = Task.Run(PrepareBibleDirectory);
 
         return base.CustomizeAppBuilder(builder)
             .WithInterFont();

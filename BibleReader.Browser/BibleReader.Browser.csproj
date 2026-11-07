@@ -8,6 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia.Browser" />
+    <!-- Native WebAssembly builds matching the managed SkiaSharp / HarfBuzzSharp (see Directory.Packages.props). -->
+    <PackageReference Include="SkiaSharp.NativeAssets.WebAssembly" />
+    <PackageReference Include="HarfBuzzSharp.NativeAssets.WebAssembly" />
   </ItemGroup>
 
   <ItemGroup>

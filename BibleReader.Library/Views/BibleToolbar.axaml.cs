@@ -92,7 +92,7 @@ public partial class BibleToolbar : UserControl
         BookGrid.Children.Clear();
         // Front matter (table of contents, preface, glossary…) has no chapters to scroll to.
         foreach (var book in books.Where(book => !IsFrontMatter(book)))
-            BookGrid.Children.Add(CreateButton(Abbreviation(book), book.Name, ReferenceEquals(book, Position?.Book), () => ShowChapters(book)));
+            BookGrid.Children.Add(CreateButton(Abbreviation(book), book.Name, ReferenceEquals(book, Position?.Book), () => ShowChapters(book), book.Class.ToString()));
     }
 
     /// <summary>Second page of the popup: one button per chapter of <paramref name="book"/>.</summary>
@@ -135,10 +135,11 @@ public partial class BibleToolbar : UserControl
     }
 
     /// <summary>One cell of a grid; the look comes from the <c>cell</c> and <c>current</c> styles in the AXAML.</summary>
-    private static Button CreateButton(string text, string? tip, bool isCurrent, Action onClick)
+    private static Button CreateButton(string text, string? tip, bool isCurrent, Action onClick, string? category = null)
     {
         var button = new Button { Content = text };
         button.Classes.Add("cell");
+        if (category is not null) button.Classes.Add(category); // the colour per Bible.Book.Classes value, see the AXAML
         if (isCurrent) button.Classes.Add("current");
         if (tip is not null) ToolTip.SetTip(button, tip);
         button.Click += (_, _) => onClick();

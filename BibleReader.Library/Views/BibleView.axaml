@@ -7,13 +7,13 @@
     <Grid RowDefinitions="Auto,*" Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
         <local:BibleToolbar Target="{Binding #Block}" />
         <!-- Vertical: a single column that scrolls by touch, which is what a phone wants.
-             The font list falls back to what the device has when "Bible Roman" is not installed. -->
+             Bible Roman is the font embedded in this assembly's Assets folder (regular, italic and bold). -->
         <local:BibleTextBlock x:Name="Block"
                               Grid.Row="1"
                               Margin="16,8"
                               Orientation="Vertical"
                               FontSize="18"
-                              FontFamily="Bible Roman, Noto Serif, Inter"
+                              FontFamily="avares://BibleReader.Library/Assets#Bible Roman"
                               Background="{DynamicResource SystemControlBackgroundAltHighBrush}" />
     </Grid>
 </UserControl>

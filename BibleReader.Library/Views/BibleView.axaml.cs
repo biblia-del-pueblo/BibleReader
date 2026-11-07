@@ -33,7 +33,8 @@ public partial class BibleView : UserControl
     /// </summary>
     public async Task OpenAsync(string directory, int bookIndex = -1)
     {
-        var books = new Bible().Open(directory).Books;
+        // Listing the files and reading the book names is work for a worker thread: the first screen is waiting.
+        var books = await Task.Run(() => new Bible().Open(directory).Books);
         Block.Books = books;
         if (bookIndex < 0)
         {

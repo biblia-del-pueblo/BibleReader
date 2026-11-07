@@ -21,5 +21,12 @@
         <!-- AndroidX Core 1.19 contains the Kotlin extensions; an older Core.Ktx next to it duplicates classes (D8 error).
              Keep this at the same version as Xamarin.AndroidX.Core. -->
         <PackageVersion Include="Xamarin.AndroidX.Core.Core.Ktx" Version="1.19.0.1" />
+
+        <!-- Browser (WebAssembly): Avalonia 12.1.5 brings SkiaSharp 3.119.4 and its native WebAssembly library, but the SVG
+             package (Svg.Skia 5.2.3) needs SkiaSharp 4.148.0 / HarfBuzzSharp 14.2.0. The managed code then calls native
+             functions the old library lacks ("undefined symbol: sk_..." when linking). Keep the native WebAssembly
+             packages at the same versions as the managed ones. -->
+        <PackageVersion Include="SkiaSharp.NativeAssets.WebAssembly" Version="4.148.0" />
+        <PackageVersion Include="HarfBuzzSharp.NativeAssets.WebAssembly" Version="14.2.0" />
     </ItemGroup>
 </Project>

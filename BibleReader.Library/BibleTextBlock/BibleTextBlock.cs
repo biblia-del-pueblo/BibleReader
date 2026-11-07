@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Metadata;
 using Avalonia;
@@ -186,7 +187,8 @@ public class BibleTextBlock : Panel
 
     /// <summary>
     /// The mark for <paramref name="pos"/> in the laid-out text: the exact verse, else the next verse of the
-    /// chapter, else the chapter start, else the start of the book. Null when the book is not in the text.
+    /// chapter, else the chapter start, else the start of the book (also for 1:1, so the title shows).
+    /// Null when the book is not in the text.
     /// </summary>
     private (int Index, Bible.VersePosition Pos)? ResolveMarker(Bible.VersePosition pos)
     {
@@ -195,6 +197,9 @@ public class BibleTextBlock : Panel
         {
             if (!ReferenceEquals(m.Pos.Book, pos.Book)) continue;
             bookStart ??= m;
+            // The beginning of a book (1:1, or the chapter 1 button) shows the book's title too, which sits above
+            // chapter 1: the book's first mark is its start. This comes first, as chapter 1 has an exact mark.
+            if (pos.Chapter <= 1 && pos.Verse <= 1 && bookStart.Value.Item2.Chapter == 0) return bookStart;
             if (m.Pos.Chapter != pos.Chapter) continue;
             chapterStart ??= m;
             if (m.Pos.Verse == pos.Verse) return m;
@@ -322,9 +327,11 @@ public class BibleTextBlock : Panel
                 if (first + 1 < books.Count) _ = books[first + 1].Runs;
                 return (books[first], first + 1 < books.Count ? books[first + 1] : null);
             });
+            // Creating the inlines is UI-thread work: done in slices, so the app keeps answering meanwhile.
+            var (content, bookBreak) = await BuildContentAsync(a, b);
             BookIndex = first;
             _pendingAnchor = anchor;
-            SetContent(a, b);
+            SetContent(content, bookBreak);
             BookChanged?.Invoke(this, EventArgs.Empty);
             // Have the neighbours ready: the next switch then only has to lay out.
             _ = Task.Run(() =>
@@ -357,7 +364,7 @@ public class BibleTextBlock : Panel
     private void CheckWindow()
     {
         _checkQueued = false;
-        if (_loadingBook || Books is not { } books || !_hasSplit || _panning || _anim is { IsEnabled: true }) return;
+        if (_loadingBook || _flowRunning is not null || Books is not { } books || !_hasSplit || _panning || _anim is { IsEnabled: true }) return;
         bool vertical = Orientation == Orientation.Vertical;
         double pos = vertical ? _offsetY : _firstColumn;       // where the view starts
         double split = vertical ? _splitY : _splitColumn;      // where the second book starts
@@ -433,16 +440,25 @@ public class BibleTextBlock : Panel
         }
         _resizeTimer?.Stop();
         _commitResize = false;
+        bool wasDirty = _dirty;
         _dirty = false;
         _lastAvailable = availableSize;
-        var result = MeasureCore(availableSize);
+        var result = MeasureCore(availableSize, out bool awaiting);
+        if (awaiting)
+        {
+            // The lines are being flowed on a worker thread: keep what is shown (nothing was changed) and measure
+            // again when they arrive.
+            _dirty = wasDirty;
+            return result;
+        }
         _lastTotal = result;
         _hasLayout = true;
         return result;
     }
 
-    private Size MeasureCore(Size availableSize)
+    private Size MeasureCore(Size availableSize, out bool awaiting)
     {
+        awaiting = false;
         bool widthFinite = !double.IsInfinity(availableSize.Width);
         bool heightFinite = !double.IsInfinity(availableSize.Height);
         double totalWidth = widthFinite ? availableSize.Width : 400;
@@ -465,18 +481,12 @@ public class BibleTextBlock : Panel
             width = Math.Max(1, (totalWidth - (columns - 1) * spacing) / columns);
         }
         // The text is first flowed as ONE tall column of this width; it is cut into columns afterwards.
-        _width = width;
         bool cutting = columns > 1 || unbounded; // false: one column, a page break is just a gap
         double gap = FloatSpacing;
 
         // 1. Measure floats. Each one is anchored at the text index where it was declared and gets placed
         //    while flowing, on the line that contains that index (like CSS float).
-        var (text, segments, anchors, notes) = Flatten();
-        _notes = notes;
-        _text = text;
-        _anchor = Math.Min(_anchor, text.Length);
-        _caret = Math.Min(_caret, text.Length);
-        _floatRects.Clear();
+        var (text, segments, anchors, notes, breaks, splitIndex, markers) = Flatten();
         var pending = new List<(Control Child, Size Size, FloatSide Side, int Anchor)>();
         foreach (var child in Children.OfType<Control>().Where(c => c != _layer && c != _popup && c != _scrollBar && c != _vBar))
         {
@@ -485,111 +495,58 @@ public class BibleTextBlock : Panel
         }
         pending = pending.OrderBy(p => p.Anchor).ToList(); // stable: keeps declaration order for equal anchors
 
-        var placed = new List<(Control Child, Rect Slot)>();
-        double leftBottom = 0, rightBottom = 0; // floats on one side stack; the gap is included
-        void PlaceFloat((Control Child, Size Size, FloatSide Side, int Anchor) f, double lineTop)
+        // 2. Flow the text line by line, narrowing each line by the floats it overlaps (RunFlow). A long text is
+        //    flowed on a worker thread: the first screens are shown as soon as they are ready, the rest follows.
+        bool justify = TextAlignment == Avalonia.Media.TextAlignment.Justify;
+        var style = BaseStyle();
+        var input = new FlowInput(text, segments, pending, breaks, width, gap, cutting, FontSize, style, justify);
+        var segmentHash = new HashCode();
+        foreach (var s in segments) { segmentHash.Add(s.Start); segmentHash.Add(s.End); segmentHash.Add(s.Style); }
+        var floatHash = new HashCode();
+        foreach (var p in pending) { floatHash.Add(p.Child); floatHash.Add(p.Size); floatHash.Add(p.Side); floatHash.Add(p.Anchor); }
+        var key = new FlowKey(width, cutting, FontSize, FontFamily, style.Foreground, justify, gap,
+            text.GetHashCode(), text.Length, segmentHash.ToHashCode(), floatHash.ToHashCode());
+
+        int partialLines = 0;
+        if (_lines.Count == 0 && _pendingAnchor is null && _pendingPosition is null)
         {
-            bool isLeft = f.Side == FloatSide.Left;
-            double y = Math.Max(lineTop, isLeft ? leftBottom : rightBottom);
-            double x = isLeft ? 0 : width - f.Size.Width;
-            placed.Add((f.Child, new Rect(x, y, f.Size.Width, f.Size.Height)));
-            // Rect used for text avoidance: grown by the gap on the text-facing edges.
-            _floatRects.Add(isLeft
-                ? new Rect(x, y, f.Size.Width + gap, f.Size.Height + gap)
-                : new Rect(x - gap, y, f.Size.Width + gap, f.Size.Height + gap));
-            if (isLeft) leftBottom = y + f.Size.Height + gap; else rightBottom = y + f.Size.Height + gap;
+            // Nothing is shown yet and nothing has to be scrolled to: show the first few screens right away.
+            int screen = heightFinite ? (int)(availableSize.Height / Math.Max(1, FontSize * 1.25)) + 1 : 60;
+            int visibleColumns = vertical || !widthFinite ? 1
+                : fixedWidth ? Math.Max(1, (int)((availableSize.Width + spacing) / (width + spacing))) : columns;
+            partialLines = Math.Clamp(screen * visibleColumns * 3, 120, 3000);
+        }
+        var flow = GetFlow(key, input, partialLines);
+        if (flow is null)
+        {
+            awaiting = true;
+            return _hasLayout ? _lastTotal : new Size(totalWidth, heightFinite ? availableSize.Height : 0);
         }
 
-        // 2. Flow the text line by line, narrowing each line by the floats it overlaps.
+        // 3. The lines are ready: only now is the control's state replaced, all at once, with what belongs together.
+        bool partial = !flow.Complete;
+        _breakStarts = breaks;
+        _splitIndex = splitIndex;
+        _markers = markers;
+        _notes = notes;
+        _text = text;
+        _anchor = Math.Min(_anchor, text.Length);
+        _caret = Math.Min(_caret, text.Length);
+        _floatRects.Clear();
+        _floatRects.AddRange(flow.FloatRects);
         _lines.Clear();
-        double textBottom = 0;
-        double top = 0;
-        if (text.Length > 0)
+        _lines.AddRange(flow.Lines);
+        var placed = flow.Placed.ToList();
+        double textBottom = flow.TextBottom;
+        if (partial)
         {
-            var baseProps = ToRunProperties(BaseStyle());
-            var paraProps = new GenericTextParagraphProperties(FlowDirection.LeftToRight, Avalonia.Media.TextAlignment.Left,
-                true, false, baseProps, TextWrapping.Wrap, 0, 0, 0);
-            var source = new RichTextSource(text, segments);
-            var formatter = TextFormatter.Current;
-
-            // Formats the line starting at `from` from a window of text just past where it can end (see
-            // RichTextSource.Limit). A line that ends close to the window's edge is formatted again with a
-            // bigger window, so the break is always decided with enough text after it.
-            TextLine? Format(int from, double lineWidth)
-            {
-                int window = Math.Max(200, (int)(lineWidth / Math.Max(1, FontSize * 0.25)) * 2);
-                while (true)
-                {
-                    source.Limit = Math.Min(text.Length, from + window);
-                    var l = formatter.FormatLine(source, from, lineWidth, paraProps);
-                    if (l is null || source.Limit >= text.Length || from + l.Length <= source.Limit - 80)
-                    {
-                        source.Limit = int.MaxValue;
-                        return l;
-                    }
-                    window *= 2;
-                }
-            }
-
-            int index = 0, gapIndex = -1;
-            while (index < text.Length)
-            {
-                // Probe with full width to learn the line height, then recompute with the real band.
-                var probe = Format(index, width);
-                if (probe is null) break;
-                if (!cutting && top > 0 && gapIndex != index && _breakStarts.Contains(index))
-                {
-                    top += probe.Height * 2; // no next column to break to: leave a visible gap instead
-                    gapIndex = index;
-                }
-
-                var (left, right) = Insets(top, probe.Height);
-                double lineWidth = width - left - right;
-
-                // Float fills the row: drop below the next float edge instead of squeezing text.
-                // Only skip when a float is actually responsible; otherwise (narrow window) the text must
-                // be squeezed into whatever width exists, or the loop would never consume any text.
-                if (lineWidth < FontSize * 3 && (left > 0 || right > 0))
-                {
-                    var blocking = _floatRects.Where(r => r.Bottom > top && r.Top < top + probe.Height).Select(r => r.Bottom).ToList();
-                    if (blocking.Count > 0)
-                    {
-                        top = Math.Max(blocking.Min(), top + 1);
-                        continue;
-                    }
-                }
-                lineWidth = Math.Max(lineWidth, 1);
-
-                // No float beside this line: the probe is already the line.
-                var line = lineWidth == width ? probe : Format(index, lineWidth);
-                if (line is null || line.Length == 0) break;
-
-                // Floats declared inside this line start here: place them at this line's top, then lay the
-                // line out again, now narrowed by them. (Floats are removed from `pending`, so this happens once.)
-                int lineEnd = index + line.Length;
-                bool lastLine = lineEnd >= text.Length;
-                if (pending.Count > 0 && (pending[0].Anchor < lineEnd || lastLine))
-                {
-                    while (pending.Count > 0 && (pending[0].Anchor < lineEnd || lastLine))
-                    {
-                        PlaceFloat(pending[0], top);
-                        pending.RemoveAt(0);
-                    }
-                    continue;
-                }
-
-                if (TextAlignment == Avalonia.Media.TextAlignment.Justify && !lastLine && line.NewLineLength == 0)
-                    line = JustifyLine(line, index, text, segments, lineWidth, paraProps) ?? line;
-
-                _lines.Add(new PlacedLine(line, new Point(left, top), _breakStarts.Contains(index)));
-                top += line.Height;
-                index = lineEnd;
-                textBottom = top;
-            }
+            // Only the first lines are flowed so far: the height of the rest is estimated from them, and the floats
+            // of the text that is not flowed yet wait outside the view.
+            textBottom = flow.EndIndex > 0 ? flow.TextBottom * text.Length / flow.EndIndex : flow.TextBottom;
+            var done = placed.Select(p => p.Child).ToHashSet();
+            foreach (var f in pending.Where(u => !done.Contains(u.Child)))
+                placed.Add((f.Child, new Rect(-100000 - f.Size.Width, 0, f.Size.Width, f.Size.Height)));
         }
-
-        // Floats with no text to attach to (empty text) go at the top.
-        foreach (var f in pending) PlaceFloat(f, top);
         _arranged = placed;
 
         double floatsBottom = _floatRects.Count == 0 ? 0 : _floatRects.Max(r => r.Bottom - gap);
@@ -677,8 +634,9 @@ public class BibleTextBlock : Panel
                 break;
             }
         }
+        if (partial) _hasSplit = false; // the second book is not flowed yet
         _totalColumns = usedColumns;
-        if (_pendingPosition is { } wanted && _markers.Count > 0)
+        if (!partial && _pendingPosition is { } wanted && _markers.Count > 0)
         {
             // Content without the wanted book (a layout before the books arrived) must not use up the request.
             if (ResolveMarker(wanted) is { } found && LineAt(found.Index) is { } target)
@@ -734,6 +692,220 @@ public class BibleTextBlock : Panel
         _layer.InvalidateVisual();
         RequestPositionUpdate();
         return total;
+    }
+
+    // ---- Flowing the lines (on a worker thread for a long text) ---------------------------------------
+    // Flowing two books takes seconds on a phone, and the UI thread must not be blocked that long (the system
+    // reports "not responding"). RunFlow only works on the values in a FlowInput: Avalonia objects may only be
+    // used on the UI thread, so everything it needs is read before it starts.
+
+    private sealed record FlowInput(string Text, List<Segment> Segments,
+        List<(Control Child, Size Size, FloatSide Side, int Anchor)> Pending, HashSet<int> Breaks,
+        double Width, double Gap, bool Cutting, double FontSize, RunStyle Base, bool Justify);
+
+    /// <param name="EndIndex">How much of the text is flowed; the text's length when <paramref name="Complete"/>.</param>
+    private sealed record FlowResult(List<PlacedLine> Lines, List<(Control Child, Rect Slot)> Placed,
+        List<Rect> FloatRects, double TextBottom, int EndIndex, bool Complete);
+
+    /// <summary>Everything that decides how the lines come out; equal keys give the same lines.</summary>
+    private readonly record struct FlowKey(double Width, bool Cutting, double FontSize, FontFamily Family, IBrush? Foreground,
+        bool Justify, double Gap, int TextHash, int TextLength, int SegmentHash, int FloatHash);
+
+    /// <summary>Texts shorter than this are flowed right away, on the UI thread.</summary>
+    private const int AsyncFlowChars = 40_000;
+
+    private (FlowKey Key, FlowResult Result)? _flowCache;
+    private FlowKey? _flowRunning; // set while a worker has not delivered the complete result yet
+    private CancellationTokenSource? _flowCts;
+    private bool _flowFailed;      // flowing on a worker did not work on this platform: flow on the UI thread
+
+    /// <summary>
+    /// The lines for <paramref name="key"/>, or null while a worker is still busy with them (measure is repeated
+    /// when it delivers). <paramref name="partialLines"/> &gt; 0 also delivers the first lines early.
+    /// </summary>
+    private FlowResult? GetFlow(FlowKey key, FlowInput input, int partialLines)
+    {
+        if (_flowCache is { } cached && cached.Key.Equals(key)) return cached.Result;
+        if (_flowRunning is { } running && running.Equals(key)) return null;
+
+        _flowCts?.Cancel(); // the input changed: whatever is still being flowed is out of date
+        _flowCache = null;
+        _flowRunning = null;
+        if (input.Text.Length < AsyncFlowChars || _flowFailed)
+            return RunFlow(input, int.MaxValue, CancellationToken.None);
+
+        var cts = _flowCts = new CancellationTokenSource();
+        var token = cts.Token;
+        _flowRunning = key;
+        _ = Task.Run(() =>
+        {
+            try
+            {
+                if (partialLines > 0)
+                {
+                    var first = RunFlow(input, partialLines, token);
+                    Dispatcher.UIThread.Post(() => FlowDelivered(key, first, token));
+                    if (first.Complete) return;
+                }
+                var all = RunFlow(input, int.MaxValue, token);
+                Dispatcher.UIThread.Post(() => FlowDelivered(key, all, token));
+            }
+            catch (OperationCanceledException) { }
+            catch
+            {
+                Dispatcher.UIThread.Post(() =>
+                {
+                    if (token.IsCancellationRequested) return;
+                    _flowFailed = true; // e.g. a platform whose text stack is not usable from other threads
+                    _flowRunning = null;
+                    InvalidateMeasure();
+                });
+            }
+        });
+        return null;
+    }
+
+    private void FlowDelivered(FlowKey key, FlowResult result, CancellationToken token)
+    {
+        if (token.IsCancellationRequested) return;
+        _flowCache = (key, result);
+        if (result.Complete) _flowRunning = null;
+        InvalidateMeasure();
+    }
+
+    /// <summary>
+    /// Flows the text into one tall column, line by line, narrowing each line by the floats it overlaps. Stops after
+    /// <paramref name="maxLines"/> lines (an incomplete result). Touches no Avalonia object, so it can run anywhere.
+    /// </summary>
+    private static FlowResult RunFlow(FlowInput input, int maxLines, CancellationToken cancel)
+    {
+        string text = input.Text;
+        double width = input.Width, gap = input.Gap;
+        var pending = input.Pending.ToList(); // floats not placed yet, in declaration order
+        var lines = new List<PlacedLine>();
+        var floatRects = new List<Rect>();
+        var placed = new List<(Control Child, Rect Slot)>();
+        double leftBottom = 0, rightBottom = 0; // floats on one side stack; the gap is included
+        double textBottom = 0, top = 0;
+        int index = 0;
+        bool complete = true;
+
+        void PlaceFloat((Control Child, Size Size, FloatSide Side, int Anchor) f, double lineTop)
+        {
+            bool isLeft = f.Side == FloatSide.Left;
+            double y = Math.Max(lineTop, isLeft ? leftBottom : rightBottom);
+            double x = isLeft ? 0 : width - f.Size.Width;
+            placed.Add((f.Child, new Rect(x, y, f.Size.Width, f.Size.Height)));
+            // Rect used for text avoidance: grown by the gap on the text-facing edges.
+            floatRects.Add(isLeft
+                ? new Rect(x, y, f.Size.Width + gap, f.Size.Height + gap)
+                : new Rect(x - gap, y, f.Size.Width + gap, f.Size.Height + gap));
+            if (isLeft) leftBottom = y + f.Size.Height + gap; else rightBottom = y + f.Size.Height + gap;
+        }
+
+        // Space taken from the left and right of a line occupying [lineTop, lineTop + height).
+        (double Left, double Right) Insets(double lineTop, double height)
+        {
+            double left = 0, right = 0;
+            foreach (var r in floatRects)
+            {
+                if (r.Bottom <= lineTop || r.Top >= lineTop + height) continue;
+                if (r.X <= 0.5) left = Math.Max(left, r.Right);
+                else right = Math.Max(right, width - r.X);
+            }
+            return (left, right);
+        }
+
+        if (text.Length > 0)
+        {
+            var baseProps = ToRunProperties(input.Base);
+            var paraProps = new GenericTextParagraphProperties(FlowDirection.LeftToRight, Avalonia.Media.TextAlignment.Left,
+                true, false, baseProps, TextWrapping.Wrap, 0, 0, 0);
+            var source = new RichTextSource(text, input.Segments);
+            var formatter = TextFormatter.Current;
+
+            // Formats the line starting at `from` from a window of text just past where it can end (see
+            // RichTextSource.Limit). A line that ends close to the window's edge is formatted again with a
+            // bigger window, so the break is always decided with enough text after it.
+            TextLine? Format(int from, double lineWidth)
+            {
+                int window = Math.Max(200, (int)(lineWidth / Math.Max(1, input.FontSize * 0.25)) * 2);
+                while (true)
+                {
+                    source.Limit = Math.Min(text.Length, from + window);
+                    var l = formatter.FormatLine(source, from, lineWidth, paraProps);
+                    if (l is null || source.Limit >= text.Length || from + l.Length <= source.Limit - 80)
+                    {
+                        source.Limit = int.MaxValue;
+                        return l;
+                    }
+                    window *= 2;
+                }
+            }
+
+            int gapIndex = -1;
+            while (index < text.Length)
+            {
+                cancel.ThrowIfCancellationRequested();
+                if (lines.Count >= maxLines) { complete = false; break; }
+
+                // Probe with full width to learn the line height, then recompute with the real band.
+                var probe = Format(index, width);
+                if (probe is null) break;
+                if (!input.Cutting && top > 0 && gapIndex != index && input.Breaks.Contains(index))
+                {
+                    top += probe.Height * 2; // no next column to break to: leave a visible gap instead
+                    gapIndex = index;
+                }
+
+                var (left, right) = Insets(top, probe.Height);
+                double lineWidth = width - left - right;
+
+                // Float fills the row: drop below the next float edge instead of squeezing text.
+                // Only skip when a float is actually responsible; otherwise (narrow window) the text must
+                // be squeezed into whatever width exists, or the loop would never consume any text.
+                if (lineWidth < input.FontSize * 3 && (left > 0 || right > 0))
+                {
+                    var blocking = floatRects.Where(r => r.Bottom > top && r.Top < top + probe.Height).Select(r => r.Bottom).ToList();
+                    if (blocking.Count > 0)
+                    {
+                        top = Math.Max(blocking.Min(), top + 1);
+                        continue;
+                    }
+                }
+                lineWidth = Math.Max(lineWidth, 1);
+
+                // No float beside this line: the probe is already the line.
+                var line = lineWidth == width ? probe : Format(index, lineWidth);
+                if (line is null || line.Length == 0) break;
+
+                // Floats declared inside this line start here: place them at this line's top, then lay the
+                // line out again, now narrowed by them. (Floats are removed from `pending`, so this happens once.)
+                int lineEnd = index + line.Length;
+                bool lastLine = lineEnd >= text.Length;
+                if (pending.Count > 0 && (pending[0].Anchor < lineEnd || lastLine))
+                {
+                    while (pending.Count > 0 && (pending[0].Anchor < lineEnd || lastLine))
+                    {
+                        PlaceFloat(pending[0], top);
+                        pending.RemoveAt(0);
+                    }
+                    continue;
+                }
+
+                if (input.Justify && !lastLine && line.NewLineLength == 0)
+                    line = JustifyLine(line, index, text, input.Segments, lineWidth, paraProps) ?? line;
+
+                lines.Add(new PlacedLine(line, new Point(left, top), input.Breaks.Contains(index)));
+                top += line.Height;
+                index = lineEnd;
+                textBottom = top;
+            }
+        }
+
+        // Floats with no text to attach to (empty text) go at the top.
+        if (complete) foreach (var f in pending) PlaceFloat(f, top);
+        return new FlowResult(lines, placed, floatRects, textBottom, index, complete);
     }
 
     // ---- Vertical scrolling -------------------------------------------------------------------------
@@ -1100,21 +1272,6 @@ public class BibleTextBlock : Panel
 
     private List<(Control Child, Rect Slot)> _arranged = new();
 
-    /// <summary>Space taken from the left and right of a line occupying [top, top + height).</summary>
-    private (double Left, double Right) Insets(double top, double height)
-    {
-        double left = 0, right = 0;
-        foreach (var r in _floatRects)
-        {
-            if (r.Bottom <= top || r.Top >= top + height) continue;
-            if (r.X <= 0.5) left = Math.Max(left, r.Right);
-            else right = Math.Max(right, _width - r.X);
-        }
-        return (left, right);
-    }
-
-    private double _width;
-
     protected override Size ArrangeOverride(Size finalSize)
     {
         _layer.Arrange(new Rect(finalSize));
@@ -1359,6 +1516,7 @@ public class BibleTextBlock : Panel
         {
             TextWrapping = TextWrapping.Wrap,
             FontSize = FontSize * 0.85,
+            FontFamily = FontFamily, // a popup is its own visual root: it would not inherit the font from this control
         };
         foreach (var inline in note.CloneContent()) text.Inlines!.Add(inline);
         text[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("SystemControlForegroundBaseHighBrush");
@@ -1465,24 +1623,62 @@ public class BibleTextBlock : Panel
 
     private static readonly IBrush WordsOfJesusBrush = new SolidColorBrush(Color.Parse("#B22222"));
 
-    /// <summary>Replaces the content with one or two (separated by a book <see cref="PageBreak"/>) lists of runs, scrolled to the start.</summary>
-    private void SetContent(Bible.Book first, Bible.Book? second)
+    /// <summary>How long the content is built before the UI gets a turn (input, drawing) in between.</summary>
+    private const int BuildSliceMs = 8;
+
+    /// <summary>
+    /// Turns one or two books into inlines (separated by a book <see cref="PageBreak"/>). Inlines are Avalonia objects,
+    /// so this has to happen on the UI thread; it is done in short slices, with the UI free in between, and the
+    /// inlines are not attached to the control until they are all built.
+    /// </summary>
+    private async Task<(List<Inline> Content, PageBreak? Break)> BuildContentAsync(Bible.Book first, Bible.Book? second)
+    {
+        double size = FontSize;
+        var content = new List<Inline>();
+        var clock = System.Diagnostics.Stopwatch.StartNew();
+
+        async Task AddAsync(IEnumerable<Inline> inlines)
+        {
+            foreach (var inline in inlines) // the work happens while this enumerates
+            {
+                content.Add(inline);
+                if (clock.ElapsedMilliseconds < BuildSliceMs) continue;
+                await Dispatcher.UIThread.InvokeAsync(() => { }, DispatcherPriority.Background); // pending input and drawing go first
+                clock.Restart();
+            }
+        }
+
+        await AddAsync(ToInlines(first, size, upperCase: false));
+        PageBreak? bookBreak = null;
+        if (second is not null)
+        {
+            bookBreak = new PageBreak();
+            content.Add(bookBreak);
+            await AddAsync(ToInlines(second, size, upperCase: false));
+        }
+        return (content, bookBreak);
+    }
+
+    /// <summary>Replaces the content with built inlines (see <see cref="BuildContentAsync"/>).</summary>
+    private void SetContent(List<Inline> content, PageBreak? bookBreak)
     {
         StopAnimation();
         _panning = false;
-        _firstColumn = 0;
-        _offsetX = _offsetY = _overscroll = 0;
+        _overscroll = 0;
+        // When a position is already known (the window slides on while scrolling, or a verse is wanted) the shown
+        // layout stays exactly where it is until the new lines are flowed, and the position is then set from the
+        // anchor. Only a plain start from the top resets the scrolling right away.
+        if (_pendingAnchor is null && _pendingPosition is null)
+        {
+            _firstColumn = 0;
+            _offsetX = _offsetY = 0;
+        }
         _anchor = _caret = 0;
         _hasSplit = false;
-        _bookBreak = null;
+        _bookBreak = bookBreak;
+        // One change notification each: every one walks all the inlines.
         Inlines.Clear();
-        Inlines.AddRange(ToInlines(first, FontSize, upperCase: false));
-        if (second is not null)
-        {
-            _bookBreak = new PageBreak();
-            Inlines.Add(_bookBreak);
-            Inlines.AddRange(ToInlines(second, FontSize, upperCase: false));
-        }
+        Inlines.AddRange(content);
     }
     private static IEnumerable<Inline> ToInlines(Bible.Book book, double size, bool upperCase)
     {
@@ -1679,7 +1875,8 @@ public class BibleTextBlock : Panel
     /// Concatenates <see cref="Inlines"/> (or <see cref="Text"/> when there are none) into one string plus
     /// per-run styles. Whitespace is collapsed like HTML so indented XAML text doesn't show its indentation.
     /// </summary>
-    private (string Text, List<Segment> Segments, Dictionary<Control, int> Anchors, List<NoteRange> Notes) Flatten()
+    private (string Text, List<Segment> Segments, Dictionary<Control, int> Anchors, List<NoteRange> Notes,
+        HashSet<int> Breaks, int SplitIndex, List<(int Index, Bible.VersePosition Pos)> Markers) Flatten()
     {
         var sb = new StringBuilder();
         var segs = new List<Segment>();
@@ -1783,10 +1980,8 @@ public class BibleTextBlock : Panel
             if (last.End - 1 <= last.Start) segs.RemoveAt(segs.Count - 1);
             else segs[^1] = last with { End = last.End - 1 };
         }
-        _breakStarts = breaks;
-        _splitIndex = splitIndex;
-        _markers = markers;
-        return (sb.ToString(), segs, anchors, notes);
+        // The caller stores breaks, split and markers together with the lines they belong to (see MeasureCore).
+        return (sb.ToString(), segs, anchors, notes, breaks, splitIndex, markers);
     }
 
     /// <summary>Index of the segment containing <paramref name="index"/> (segments are contiguous and sorted), or -1.</summary>

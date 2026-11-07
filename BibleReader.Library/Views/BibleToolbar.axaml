@@ -12,6 +12,18 @@
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
         </Style>
+        <!-- Book buttons are tinted by Bible.Book.Class (the class name is added in code). The fills are translucent,
+             so the same colours work on light and dark backgrounds. Prefix and Appendix stay uncoloured. -->
+        <Style Selector="Button.cell.Pentateuch"><Setter Property="Background" Value="#664C8BF5" /></Style>
+        <Style Selector="Button.cell.Historical"><Setter Property="Background" Value="#66A0764A" /></Style>
+        <Style Selector="Button.cell.PoetryAndWisdom"><Setter Property="Background" Value="#6648B58A" /></Style>
+        <Style Selector="Button.cell.MajorProphets"><Setter Property="Background" Value="#66E0903C" /></Style>
+        <Style Selector="Button.cell.MinorProphets"><Setter Property="Background" Value="#66E0C03C" /></Style>
+        <Style Selector="Button.cell.Gospels"><Setter Property="Background" Value="#66D9534F" /></Style>
+        <Style Selector="Button.cell.Acts"><Setter Property="Background" Value="#66D9739F" /></Style>
+        <Style Selector="Button.cell.Epistles"><Setter Property="Background" Value="#668F66D9" /></Style>
+        <Style Selector="Button.cell.Revelation"><Setter Property="Background" Value="#6640B8C8" /></Style>
+        <Style Selector="Button.cell.Apocrypha"><Setter Property="Background" Value="#66909090" /></Style>
         <!-- The book or chapter the text block is at. -->
         <Style Selector="Button.cell.current">
             <Setter Property="FontWeight" Value="Bold" />
@@ -59,7 +71,7 @@
                             <Button Content="‹  Books" Padding="10,4" Background="Transparent" Click="OnBackClick" />
                             <TextBlock x:Name="TitleText" FontWeight="SemiBold" VerticalAlignment="Center" />
                         </StackPanel>
-                        <ScrollViewer MaxHeight="400" HorizontalScrollBarVisibility="Disabled">
+                        <ScrollViewer MaxHeight="500" HorizontalScrollBarVisibility="Disabled">
                             <UniformGrid x:Name="BookGrid" Columns="6" />
                         </ScrollViewer>
                     </StackPanel>

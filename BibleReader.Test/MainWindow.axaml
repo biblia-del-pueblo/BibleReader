@@ -12,7 +12,7 @@
         <!-- The toolbar follows the text block's Position. -->
         <local:BibleToolbar Target="{Binding #text}" />
         <local:BibleTextBlock x:Name ="text" Grid.Row="1" Margin="24" Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
-            FontSize="18" FontFamily="Bible Roman" ColumnWidth="300" ColumnSpacing="24" HorizontalAlignment="Center">
+            FontSize="18" FontFamily="avares://BibleReader.Library/Assets#Bible Roman" ColumnWidth="300" ColumnSpacing="24" HorizontalAlignment="Center">
         </local:BibleTextBlock>
     </Grid>
 </Window>
