@@ -1,9 +1,11 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
+using System.Runtime.CompilerServices;
 
 namespace BibleReader.Library.UI;
 
@@ -33,6 +35,13 @@ public partial class BibleView : UserControl
     /// When not even two fit, one scrolling column is shown instead.
     /// </summary>
     public double MinColumnWidth { get; set; } = 350;
+
+    public IReadOnlyList<Bible.Book>? Books
+    {
+        get => Block.Books;
+        set => Block.Books = value;
+    }
+    public async Task ShowBookAsync(int n)=> await Block.ShowBookAsync(n);
 
     private void ApplyColumns(Size size)
     {

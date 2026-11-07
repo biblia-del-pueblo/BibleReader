@@ -8,11 +8,11 @@
     <!-- No ScrollViewer: the text block fits as many whole columns as the window shows and brings its own
          horizontal scroll bar that moves one column at a time. -->
         <!-- &#173; is a soft hyphen (U+00AD): an invisible break opportunity inside a word. -->
-    <Grid RowDefinitions="Auto,*">
-        <!-- The toolbar follows the text block's Position. -->
+    <!--<Grid RowDefinitions="Auto,*">
         <local:BibleToolbar Target="{Binding #text}" />
         <local:BibleTextBlock x:Name ="text" Grid.Row="1" Margin="24" Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
             FontSize="18" FontFamily="avares://BibleReader.Library/Assets#Bible Roman" ColumnWidth="350" ColumnSpacing="24" HorizontalAlignment="Center">
         </local:BibleTextBlock>
-    </Grid>
+    </Grid>-->
+    <local:BibleView x:Name="bibleView"/>
 </Window>
