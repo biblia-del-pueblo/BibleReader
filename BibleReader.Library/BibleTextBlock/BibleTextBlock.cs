@@ -94,6 +94,13 @@ public class BibleTextBlock : Panel
         AvaloniaProperty.Register<BibleTextBlock, Bible.VersePosition?>(nameof(Position),
             defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
+    /// <summary>
+    /// True while the text asked for is still being prepared: a requested verse that is not on screen yet, or the very
+    /// first text. Show a spinner while it is set.
+    /// </summary>
+    public static readonly DirectProperty<BibleTextBlock, bool> IsBusyProperty =
+        AvaloniaProperty.RegisterDirect<BibleTextBlock, bool>(nameof(IsBusy), o => o.IsBusy);
+
     public static readonly AttachedProperty<FloatSide> SideProperty =
         AvaloniaProperty.RegisterAttached<BibleTextBlock, Control, FloatSide>("Side");
 
@@ -141,6 +148,12 @@ public class BibleTextBlock : Panel
 
     private List<(int Index, Bible.VersePosition Pos)> _markers = new();
     private Bible.VersePosition? _pendingPosition; // to scroll to once the books that contain it are laid out
+
+    private bool _isBusy;
+    public bool IsBusy { get => _isBusy; private set => SetAndRaise(IsBusyProperty, ref _isBusy, value); }
+
+    /// <summary>Busy: a verse is wanted that is not shown yet, or books are set but no text has been laid out.</summary>
+    private void UpdateBusy() => IsBusy = _pendingPosition is not null || (Books is not null && _lines.Count == 0);
     private bool _settingPosition, _positionQueued, _programmatic, _keepPosition;
 
     private void RequestPositionUpdate()
@@ -190,10 +203,11 @@ public class BibleTextBlock : Panel
     /// chapter, else the chapter start, else the start of the book (also for 1:1, so the title shows).
     /// Null when the book is not in the text.
     /// </summary>
-    private (int Index, Bible.VersePosition Pos)? ResolveMarker(Bible.VersePosition pos)
+    private static (int Index, Bible.VersePosition Pos)? ResolveMarker(Bible.VersePosition pos,
+        List<(int Index, Bible.VersePosition Pos)> markers)
     {
         (int, Bible.VersePosition)? nextVerse = null, chapterStart = null, bookStart = null;
-        foreach (var m in _markers)
+        foreach (var m in markers)
         {
             if (!ReferenceEquals(m.Pos.Book, pos.Book)) continue;
             bookStart ??= m;
@@ -229,12 +243,13 @@ public class BibleTextBlock : Panel
         if (index < 0) return;
         _pendingPosition = pos;
         _keepPosition = true;
+        UpdateBusy();
         if (!_loadingBook) _ = SwitchWindowAsync(books, WindowStartFor(books, index), null);
     }
 
     private bool TryScrollTo(Bible.VersePosition pos)
     {
-        if (!_hasLayout || _dirty || ResolveMarker(pos) is not { } mark || LineAt(mark.Index) is not { } line) return false;
+        if (!_hasLayout || _dirty || ResolveMarker(pos, _markers) is not { } mark || LineAt(mark.Index) is not { } line) return false;
         _keepPosition = true;
         _programmatic = true;
         try
@@ -318,6 +333,7 @@ public class BibleTextBlock : Panel
     private async Task SwitchWindowAsync(IReadOnlyList<Bible.Book> books, int first, (bool FromSplit, double Value)? anchor)
     {
         _loadingBook = true;
+        UpdateBusy();
         try
         {
             // The books' Runs are read and parsed lazily, so ask for them off the UI thread.
@@ -340,7 +356,7 @@ public class BibleTextBlock : Panel
                 if (first > 0) _ = books[first - 1].Runs;
             });
         }
-        finally { _loadingBook = false; }
+        finally { _loadingBook = false; UpdateBusy(); }
     }
 
     private void RaiseBoundary(bool atEnd)
@@ -488,7 +504,7 @@ public class BibleTextBlock : Panel
         //    while flowing, on the line that contains that index (like CSS float).
         var (text, segments, anchors, notes, breaks, splitIndex, markers) = Flatten();
         var pending = new List<(Control Child, Size Size, FloatSide Side, int Anchor)>();
-        foreach (var child in Children.OfType<Control>().Where(c => c != _layer && c != _popup && c != _scrollBar && c != _vBar))
+        foreach (var child in Children.OfType<Control>().Where(c => c != _layer && c != _popup && c != _scrollBar && c != _vBar && c != _tail))
         {
             child.Measure(new Size(width, double.PositiveInfinity));
             pending.Add((child, child.DesiredSize, GetSide(child), anchors.TryGetValue(child, out var a) ? a : 0));
@@ -507,16 +523,19 @@ public class BibleTextBlock : Panel
         var key = new FlowKey(width, cutting, FontSize, FontFamily, style.Foreground, justify, gap,
             text.GetHashCode(), text.Length, segmentHash.ToHashCode(), floatHash.ToHashCode());
 
-        int partialLines = 0;
-        if (_lines.Count == 0 && _pendingAnchor is null && _pendingPosition is null)
+        int partialLines = 0, partialFrom = 0;
+        if (_pendingPosition is not null || (_lines.Count == 0 && _pendingAnchor is null))
         {
-            // Nothing is shown yet and nothing has to be scrolled to: show the first few screens right away.
+            // Nothing is shown yet, or a verse is wanted: flow only down to it and a few screens beyond, and show that
+            // right away; the rest follows.
+            if (_pendingPosition is { } wantedAt && ResolveMarker(wantedAt, markers) is { } wantedMark)
+                partialFrom = wantedMark.Index;
             int screen = heightFinite ? (int)(availableSize.Height / Math.Max(1, FontSize * 1.25)) + 1 : 60;
             int visibleColumns = vertical || !widthFinite ? 1
                 : fixedWidth ? Math.Max(1, (int)((availableSize.Width + spacing) / (width + spacing))) : columns;
             partialLines = Math.Clamp(screen * visibleColumns * 3, 120, 3000);
         }
-        var flow = GetFlow(key, input, partialLines);
+        var flow = GetFlow(key, input, partialLines, partialFrom);
         if (flow is null)
         {
             awaiting = true;
@@ -635,17 +654,29 @@ public class BibleTextBlock : Panel
             }
         }
         if (partial) _hasSplit = false; // the second book is not flowed yet
+
+        // While only the first lines are flowed, a spinner at the end of them shows that the rest is coming.
+        _tailRect = null;
+        if (partial && _lines.Count > 0)
+        {
+            var last = _lines[^1];
+            double columnLeft = Math.Floor((last.Origin.X + 1) / pitch) * pitch;
+            _tailRect = new Rect(columnLeft + (width - TailSize) / 2, last.Origin.Y + last.Line.Height + TailSize / 2, TailSize, TailSize);
+        }
+        if (_tail.IsVisible != (_tailRect is not null)) _tail.IsVisible = _tailRect is not null; // before measuring: hidden = zero size
+        if (_tailRect is not null) _tail.Measure(new Size(TailSize, TailSize));
         _totalColumns = usedColumns;
-        if (!partial && _pendingPosition is { } wanted && _markers.Count > 0)
+        if (_pendingPosition is { } wanted && _markers.Count > 0)
         {
             // Content without the wanted book (a layout before the books arrived) must not use up the request.
-            if (ResolveMarker(wanted) is { } found && LineAt(found.Index) is { } target)
+            if (ResolveMarker(wanted, _markers) is { } found && LineAt(found.Index) is { } target)
             {
                 _pendingPosition = null;
                 _pendingAnchor = (false, vertical ? target.Origin.Y : Math.Floor((target.Origin.X + 1) / pitch));
             }
-            else if (!_loadingBook) _pendingPosition = null;
+            else if (!partial && !_loadingBook) _pendingPosition = null; // a partial layout may simply not reach it yet
         }
+        UpdateBusy();
         if (_pendingAnchor is { } anchor && !vertical)
         {
             _firstColumn = (int)Math.Round((anchor.FromSplit ? _splitColumn : 0) + anchor.Value);
@@ -721,9 +752,10 @@ public class BibleTextBlock : Panel
 
     /// <summary>
     /// The lines for <paramref name="key"/>, or null while a worker is still busy with them (measure is repeated
-    /// when it delivers). <paramref name="partialLines"/> &gt; 0 also delivers the first lines early.
+    /// when it delivers). <paramref name="partialLines"/> &gt; 0 also delivers the lines early: down to the text index
+    /// <paramref name="partialFrom"/> and that many lines beyond it.
     /// </summary>
-    private FlowResult? GetFlow(FlowKey key, FlowInput input, int partialLines)
+    private FlowResult? GetFlow(FlowKey key, FlowInput input, int partialLines, int partialFrom)
     {
         if (_flowCache is { } cached && cached.Key.Equals(key)) return cached.Result;
         if (_flowRunning is { } running && running.Equals(key)) return null;
@@ -743,7 +775,7 @@ public class BibleTextBlock : Panel
             {
                 if (partialLines > 0)
                 {
-                    var first = RunFlow(input, partialLines, token);
+                    var first = RunFlow(input, partialLines, token, partialFrom);
                     Dispatcher.UIThread.Post(() => FlowDelivered(key, first, token));
                     if (first.Complete) return;
                 }
@@ -775,9 +807,10 @@ public class BibleTextBlock : Panel
 
     /// <summary>
     /// Flows the text into one tall column, line by line, narrowing each line by the floats it overlaps. Stops after
-    /// <paramref name="maxLines"/> lines (an incomplete result). Touches no Avalonia object, so it can run anywhere.
+    /// <paramref name="maxLines"/> lines beyond the text index <paramref name="minIndex"/> (an incomplete result).
+    /// Touches no Avalonia object, so it can run anywhere.
     /// </summary>
-    private static FlowResult RunFlow(FlowInput input, int maxLines, CancellationToken cancel)
+    private static FlowResult RunFlow(FlowInput input, int maxLines, CancellationToken cancel, int minIndex = 0)
     {
         string text = input.Text;
         double width = input.Width, gap = input.Gap;
@@ -843,11 +876,13 @@ public class BibleTextBlock : Panel
                 }
             }
 
-            int gapIndex = -1;
+            int gapIndex = -1, stopAfter = int.MaxValue;
             while (index < text.Length)
             {
                 cancel.ThrowIfCancellationRequested();
-                if (lines.Count >= maxLines) { complete = false; break; }
+                // Stops maxLines lines after the text index minIndex has been reached (at the start: after maxLines lines).
+                if (stopAfter == int.MaxValue && maxLines != int.MaxValue && index >= minIndex) stopAfter = lines.Count + maxLines;
+                if (lines.Count >= stopAfter) { complete = false; break; }
 
                 // Probe with full width to learn the line height, then recompute with the real band.
                 var probe = Format(index, width);
@@ -1286,6 +1321,14 @@ public class BibleTextBlock : Panel
             else
                 child.Arrange(slot.Translate(new Vector(-_offsetX, -_offsetY)));
         }
+        if (_tailRect is { } tail)
+        {
+            bool scrolling = _scrolling || _vScrolling;
+            bool hidden = _scrolling ? tail.Right <= _offsetX || tail.X >= _offsetX + _viewWidth
+                : _vScrolling && (tail.Bottom <= _offsetY || tail.Y >= _offsetY + _viewHeight);
+            _tail.Arrange(hidden ? new Rect(-100000, 0, tail.Width, tail.Height)
+                : scrolling ? tail.Translate(new Vector(-_offsetX, -_offsetY)) : tail);
+        }
         if (_scrollBar.IsVisible)
             _scrollBar.Arrange(new Rect(0, Math.Max(0, finalSize.Height - _barHeight), _viewWidth, _barHeight));
         if (_vBar.IsVisible)
@@ -1317,6 +1360,10 @@ public class BibleTextBlock : Panel
 
     private readonly TextLayer _layer;
     private readonly Popup _popup;
+
+    private const double TailSize = 32;
+    private readonly BusySpinner _tail; // after the lines flowed so far, while the rest is still being flowed
+    private Rect? _tailRect;            // where it sits, in the coordinates of the text
     private List<NoteRange> _notes = new();
 
     /// <summary>Finds the footnote marker under <paramref name="point"/>, and the marker's bounds.</summary>
@@ -1546,6 +1593,9 @@ public class BibleTextBlock : Panel
             PlacementTarget = this,
         };
         Children.Add(_popup);
+        _tail = new BusySpinner { IsVisible = false, IsHitTestVisible = false, Thickness = 3 };
+        _tail[!BusySpinner.BrushProperty] = new DynamicResourceExtension("SystemControlHighlightAccentBrush");
+        Children.Add(_tail);
         _scrollBar = new ScrollBar { Orientation = Orientation.Horizontal, IsVisible = false, AllowAutoHide = false };
         _scrollBar.ValueChanged += (_, e) =>
         {

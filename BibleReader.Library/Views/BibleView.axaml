@@ -15,5 +15,23 @@
                               FontSize="18"
                               FontFamily="avares://BibleReader.Library/Assets#Bible Roman"
                               Background="{DynamicResource SystemControlBackgroundAltHighBrush}" />
+
+        <!-- Shown over the text while a requested verse (or the first text) is still being prepared. It does not take
+             touches, so the text underneath can still be scrolled. -->
+        <Border Grid.Row="1"
+                IsVisible="{Binding #Block.IsBusy}"
+                IsHitTestVisible="False"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Padding="16"
+                CornerRadius="16"
+                BoxShadow="0 2 12 0 #40000000"
+                Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+            <!-- Draws itself and turns with the animation frames, only while it is visible. -->
+            <local:BusySpinner Width="36" Height="36"
+                               IsVisible="{Binding #Block.IsBusy}"
+                               Thickness="4"
+                               Brush="{DynamicResource SystemControlHighlightAccentBrush}" />
+        </Border>
     </Grid>
 </UserControl>

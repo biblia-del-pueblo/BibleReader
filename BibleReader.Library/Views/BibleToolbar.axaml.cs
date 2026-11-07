@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
 
 namespace BibleReader.Library.UI;
@@ -75,6 +76,56 @@ public partial class BibleToolbar : UserControl
 
         ShowBooks(books);
         BookPopup.IsOpen = true;
+    }
+    
+    /// <summary>The menu of the current position: copy its reference ("Genesis 1:9") or its verse text.</summary>
+    private void OnMenuClick(object? sender, RoutedEventArgs e)
+    {
+        if (Position is not { Book: not null } position) return;
+
+        var menu = new ContextMenu();
+        menu.Items.Add(CreateMenuItem("Copy reference", () => CopyAsync(ReferenceOf(position))));
+        // Only a verse has a text; the start of a book or chapter has none.
+        if (VerseTextOf(position) is { Length: > 0 } text)
+            menu.Items.Add(CreateMenuItem("Copy verse text", () => CopyAsync(text)));
+        menu.Open(MenuButton);
+    }
+
+    private static MenuItem CreateMenuItem(string header, Func<Task> action)
+    {
+        var item = new MenuItem { Header = header };
+        item.Click += async (_, _) => await action();
+        return item;
+    }
+
+    private async Task CopyAsync(string text)
+    {
+        if (TopLevel.GetTopLevel(this)?.Clipboard is { } clipboard) await clipboard.SetTextAsync(text);
+    }
+
+    /// <summary>"Genesis 1:9", "Genesis 1" or "Genesis", as far as the position goes.</summary>
+    private static string ReferenceOf(Bible.VersePosition position)
+    {
+        string name = position.Book?.Name ?? string.Empty;
+        return position.Verse > 0 ? $"{name} {position.Chapter}:{position.Verse}"
+            : position.Chapter > 0 ? $"{name} {position.Chapter}"
+            : name;
+    }
+
+    /// <summary>The words of the verse, without footnotes or markup; empty when the position is not a verse.</summary>
+    private static string VerseTextOf(Bible.VersePosition position)
+    {
+        if (position.Book is not { } book || position.Chapter <= 0 || position.Verse <= 0) return string.Empty;
+        var verse = book.Runs
+            .Where(run => run.Class == Bible.Run.Classes.Chapter && run.Chapter == position.Chapter)
+            .SelectMany(chapter => chapter.Runs ?? [])
+            .FirstOrDefault(run => run.Class == Bible.Run.Classes.Verse && run.Position?.Verse == position.Verse);
+        return verse is null ? string.Empty : Regex.Replace(PlainText(verse), @"\s+", " ").Trim();
+
+        static string PlainText(Bible.Run run) =>
+            run.Class == Bible.Run.Classes.Footnote ? string.Empty
+            : run.Runs?.Any() == true ? string.Concat(run.Runs.Select(PlainText))
+            : run.Text ?? string.Empty;
     }
 
     private void OnPopupClosed(object? sender, EventArgs e) => _closedAt = DateTime.UtcNow;
