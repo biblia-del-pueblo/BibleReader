@@ -24,6 +24,8 @@
         <PackageReference Include="Avalonia.Fonts.Inter" />
         <PackageReference Include="CommunityToolkit.Mvvm" />
         <PackageReference Include="Svg.Controls.Skia.Avalonia" />
+        <PackageReference Include="EstrellasDeEsperanza.AsnycLock" />
+        <PackageReference Include="LibArchive.Net" />
     </ItemGroup>
 
     <ItemGroup>
@@ -36,5 +38,9 @@
         <Compile Update="Views\BibleView.axaml.cs">
             <DependentUpon>BibleView.axaml</DependentUpon>
         </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Downloads\" />
     </ItemGroup>
 </Project>
