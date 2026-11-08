@@ -45,7 +45,17 @@ public partial class BibleToolbar : UserControl
     public static readonly StyledProperty<Bible?> BibleProperty =
         AvaloniaProperty.Register<BibleToolbar, Bible?>(nameof(Bible));
 
+    /// <summary>True while the settings page is shown instead of the text. Set by the "Settings…" menu entry.</summary>
+    public static readonly StyledProperty<bool> ShowSettingsProperty =
+        AvaloniaProperty.Register<BibleToolbar, bool>(nameof(ShowSettings));
+
+    /// <summary>True while neither the online Bibles nor the settings are shown: the host shows the text then.</summary>
+    public static readonly StyledProperty<bool> ShowTextProperty =
+        AvaloniaProperty.Register<BibleToolbar, bool>(nameof(ShowText), true);
+
     public bool ShowOnlineBibles { get => GetValue(ShowOnlineBiblesProperty); set => SetValue(ShowOnlineBiblesProperty, value); }
+    public bool ShowSettings { get => GetValue(ShowSettingsProperty); set => SetValue(ShowSettingsProperty, value); }
+    public bool ShowText { get => GetValue(ShowTextProperty); private set => SetValue(ShowTextProperty, value); }
 
     public BibleTextBlock? Target { get => GetValue(TargetProperty); set => SetValue(TargetProperty, value); }
     public Bible.VersePosition? Position { get => GetValue(PositionProperty); set => SetValue(PositionProperty, value); }
@@ -67,6 +77,17 @@ public partial class BibleToolbar : UserControl
         TargetProperty.Changed.AddClassHandler<BibleToolbar>((bar, e) =>
             bar.OnTargetChanged(e.OldValue as BibleTextBlock, e.NewValue as BibleTextBlock));
         PositionProperty.Changed.AddClassHandler<BibleToolbar>((bar, _) => bar.UpdateText());
+        // The online Bibles and the settings replace the text, one at a time.
+        ShowOnlineBiblesProperty.Changed.AddClassHandler<BibleToolbar>((bar, e) =>
+        {
+            if (e.NewValue is true) bar.ShowSettings = false;
+            bar.ShowText = !bar.ShowOnlineBibles && !bar.ShowSettings;
+        });
+        ShowSettingsProperty.Changed.AddClassHandler<BibleToolbar>((bar, e) =>
+        {
+            if (e.NewValue is true) bar.ShowOnlineBibles = false;
+            bar.ShowText = !bar.ShowOnlineBibles && !bar.ShowSettings;
+        });
     }
 
     public BibleToolbar()
@@ -111,14 +132,19 @@ public partial class BibleToolbar : UserControl
         MenuItems.Children.Clear();
         if (Position is { Book: not null } position)
         {
-            AddMenuEntry("Copy reference", () => CopyAsync(ReferenceOf(position)));
+            AddMenuEntry("copy.svg", "Copy reference", () => CopyAsync(ReferenceOf(position)));
             // Only a verse has a text; the start of a book or chapter has none.
             if (VerseTextOf(position) is { Length: > 0 } text)
-                AddMenuEntry("Copy verse text", () => CopyAsync(text));
+                AddMenuEntry("copy.svg", "Copy verse text", () => CopyAsync(text));
         }
-        AddMenuEntry(ShowOnlineBibles ? "Back to reading" : "Online Bibles…", () =>
+        AddMenuEntry(null, ShowOnlineBibles ? "Back to reading" : "Install Bibles…", () =>
         {
             ShowOnlineBibles = !ShowOnlineBibles;
+            return Task.CompletedTask;
+        });
+        AddMenuEntry(null, ShowSettings ? "Back to reading" : "Settings…", () =>
+        {
+            ShowSettings = !ShowSettings;
             return Task.CompletedTask;
         });
         MenuPopup.IsOpen = true;
@@ -136,13 +162,14 @@ public partial class BibleToolbar : UserControl
         foreach (var bible in bibles.Where(b => !string.IsNullOrEmpty(b.EnglishName)))
         {
             var chosen = bible;
-            var button = new Button { Content = chosen.Name ?? chosen.EnglishName };
+            var button = new Button { Content = ShortenWithEllipsis(chosen.Name ?? chosen.EnglishName, 40) };
             button.Classes.Add("entry");
             if (chosen.EnglishName == current) button.Classes.Add("current");
             button.Click += (_, _) =>
             {
                 BiblesPopup.IsOpen = false;
                 ShowOnlineBibles = false;
+                ShowSettings = false;
                 if (Bible != chosen) Bible = chosen;
             };
             BiblesItems.Children.Add(button);
@@ -154,9 +181,26 @@ public partial class BibleToolbar : UserControl
 
     private void OnBiblesPopupClosed(object? sender, EventArgs e) => _biblesClosedAt = DateTime.UtcNow;
 
-    private void AddMenuEntry(string header, Func<Task> action)
+    private void AddMenuEntry(string? image, string header, Func<Task> action)
     {
-        var button = new Button { Content = header };
+        Button button;
+        if (image == null) button = new Button { Content = header };
+        else
+        {
+            var panel = new StackPanel() { Orientation = Avalonia.Layout.Orientation.Horizontal };
+            var svg = new Avalonia.Svg.Skia.Svg(new Uri("avares://BibleReader.Library/"))   // base URI the Path is resolved against
+            {
+                Path = $"/Assets/{image}",
+                Width = 18,
+                Height = 18                                             // x:Name only exists in XAML; Name is the plain property
+            };
+
+            // Css="{DynamicResource SvgThemeCss}": follow the resource, including live theme switches
+            svg.Bind(Avalonia.Svg.Skia.Svg.CssProperty, svg.GetResourceObservable("SvgThemeCss"));
+            panel.Children.Add(svg);
+            panel.Children.Add(new TextBlock() { Text = header, Margin = new Thickness(8, 0, 0, 0) });
+            button = new Button { Content = panel };
+        }
         button.Classes.Add("entry");
         button.Click += async (_, _) =>
         {
@@ -274,6 +318,7 @@ public partial class BibleToolbar : UserControl
     {
         BookPopup.IsOpen = false;
         ShowOnlineBibles = false; // a chapter is read in the text, not in the online list
+        ShowSettings = false;
         if (Target is null) return;
         // Verse 0 is the start of the chapter; the text block loads the book if it is not shown yet.
         Target.Position = new Bible.VersePosition { Book = book, Chapter = chapter, Verse = 0 };
@@ -282,10 +327,16 @@ public partial class BibleToolbar : UserControl
     private void UpdateText()
     {
         var position = Position;
-        BookName.Text = position?.Book?.Name ?? string.Empty;
-        BibleName.Text = position?.Book?.Bible?.Name ?? string.Empty;
+        BookName.Text = ShortenWithEllipsis(position?.Book?.Name ?? string.Empty, 30);
+        BibleName.Text = ShortenWithEllipsis(position?.Book?.Bible?.Name ?? string.Empty, 35);
         ReferenceText.Text = position is null ? "—"
             : position.Verse > 0 ? $"{position.Chapter}:{position.Verse}"
             : position.Chapter > 0 ? position.Chapter.ToString() : string.Empty;
+    }
+
+    private string ShortenWithEllipsis(string text, int maxLength)
+    {
+        if (text.Length <= maxLength) return text;
+        return text[..(maxLength - 3)] + "...";
     }
 }

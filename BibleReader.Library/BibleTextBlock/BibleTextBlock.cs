@@ -132,6 +132,9 @@ public class BibleTextBlock : Panel
     public TextAlignment TextAlignment { get => GetValue(TextAlignmentProperty); set => SetValue(TextAlignmentProperty, value); }
     public double FloatSpacing { get => GetValue(FloatSpacingProperty); set => SetValue(FloatSpacingProperty, value); }
 
+    /// <summary>Whether the words of Jesus are coloured red. Call <see cref="RebuildAsync"/> after changing it.</summary>
+    public bool ShowWordsOfJesus { get; set; } = true;
+
     public Bible? Bible { get => GetValue(BibleProperty); set => SetValue(BibleProperty, value); }
     public Bible.VersePosition? Position { get => GetValue(PositionProperty); set => SetValue(PositionProperty, value); }
     public Orientation Orientation { get => GetValue(OrientationProperty); set => SetValue(OrientationProperty, value); }
@@ -1763,6 +1766,25 @@ public class BibleTextBlock : Panel
     // ---- Parsing BibleText runs ---------------------------------------------------------------------
 
     private static readonly IBrush WordsOfJesusBrush = new SolidColorBrush(Color.Parse("#B22222"));
+    private static bool _buildWordsOfJesus = true;
+
+    /// <summary>
+    /// Builds the books of the window again, e.g. after <see cref="FontSize"/> or <see cref="ShowWordsOfJesus"/>
+    /// changed (the inlines carry the size and colours they were built with). The reader stays where they are.
+    /// </summary>
+    public async Task RebuildAsync()
+    {
+        if (Books is not { } books || _loadingBook) return;
+        // The new content starts at the top of the window unless a target is pending: ask for the verse the reader is
+        // at. It is resolved when the new text is laid out (which may only happen once the control is visible again),
+        // and Position stays as it is until then. Assigning Position to its own value would do nothing.
+        if (Position is { Book: not null } position)
+        {
+            _pendingPosition = position;
+            _keepPosition = true;
+        }
+        await SwitchWindowAsync(books, BookIndex, null);
+    }
 
     /// <summary>How long the content is built before the UI gets a turn (input, drawing) in between.</summary>
     private const int BuildSliceMs = 8;
@@ -1775,6 +1797,7 @@ public class BibleTextBlock : Panel
     private async Task<(List<Inline> Content, PageBreak? Break)> BuildContentAsync(Bible.Book first, Bible.Book? second)
     {
         double size = FontSize;
+        _buildWordsOfJesus = ShowWordsOfJesus; // read by the static ToInlines; building happens on the UI thread only
         var content = new List<Inline>();
         var clock = System.Diagnostics.Stopwatch.StartNew();
 
@@ -1938,7 +1961,7 @@ public class BibleTextBlock : Panel
         {
             case Bible.Run.Classes.Bold: span.FontWeight = FontWeight.Bold; break;
             case Bible.Run.Classes.Italic: span.FontStyle = FontStyle.Italic; break;
-            case Bible.Run.Classes.WordsOfJesus: span.Foreground = WordsOfJesusBrush; break;
+            case Bible.Run.Classes.WordsOfJesus: if (_buildWordsOfJesus) span.Foreground = WordsOfJesusBrush; break;
             case Bible.Run.Classes.SmallCaps: upperCase = true; break; // the size is reduced per letter, see SmallCapsRuns
             case Bible.Run.Classes.Link:
                 span.TextDecorations = TextDecorations.Underline;

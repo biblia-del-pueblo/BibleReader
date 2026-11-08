@@ -5,57 +5,105 @@
              x:Class="BibleReader.Library.UI.OnlineBiblesView"
              x:DataType="local:OnlineBiblesView">
 
-    <Grid RowDefinitions="Auto,Auto,*" Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
-        <!-- Filter bar: language and free text. -->
-        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="12,8" ColumnSpacing="8">
+    <UserControl.Resources>
+        <!-- One row of a list of Bibles: used by the installed Bibles and by the online ones. -->
+        <DataTemplate x:Key="BibleRow" x:DataType="local:OnlineBibleItem">
+            <Grid ColumnDefinitions="*,Auto" Margin="4">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Bible.Name}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                    <TextBlock Text="{Binding Description}" FontSize="12" Opacity="0.7" TextWrapping="Wrap" />
+                    <TextBlock Text="{Binding Error}" FontSize="12" Foreground="OrangeRed"
+                               IsVisible="{Binding HasError}" TextWrapping="Wrap" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <local:BusySpinner Width="20" Height="20" Thickness="3" IsVisible="{Binding IsBusy}" />
+                    <svg:Svg Path="/Assets/circle-check.svg" Width="16" Height="16" IsVisible="{Binding IsInstalled}"
+                        ToolTip.Tip="Installed" />
+                    <TextBlock Text="Installed" Opacity="0.7" VerticalAlignment="Center"
+                               IsVisible="{Binding IsInstalledAndWide}" />
+                    <Button Click="OnInstallClick" IsVisible="{Binding CanInstall}">
+                        <StackPanel Orientation="Horizontal">
+                            <svg:Svg Path="/Assets/download.svg" Width="16" Height="16"
+                                Css="{DynamicResource SvgThemeCss}" ToolTip.Tip="Install" />
+                            <TextBlock Text="Install" Margin="4,0,0,0"
+                                IsVisible="{Binding $parent[local:OnlineBiblesView].IsWide}" />
+                        </StackPanel>
+                    </Button>
+                    <Button Click="OnDeleteClick"
+                            IsVisible="{Binding CanDelete}">
+                        <StackPanel Orientation="Horizontal">
+                            <svg:Svg Path="/Assets/trash.svg" Width="16" Height="16"
+                                Css="{DynamicResource SvgThemeCss}" ToolTip.Tip="Delete" />
+                            <TextBlock Text="Delete" Margin="4,0,0,0"
+                                IsVisible="{Binding $parent[local:OnlineBiblesView].IsWide}" />
+                        </StackPanel>
+                    </Button>
+                    <StackPanel Orientation="Horizontal" Spacing="4" IsVisible="{Binding IsConfirmingDelete}">
+                        <Button Content="Delete?" Click="OnConfirmDeleteClick" Foreground="OrangeRed" />
+                        <Button Content="Cancel" Click="OnCancelDeleteClick" />
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+        <!-- The Bibles that are installed already, at the top. The header shows the count; the right margin keeps the
+             close button free. -->
+        <Expander x:Name="InstalledExpander" Grid.Row="0" Margin="12,8,52,20" HorizontalAlignment="Stretch" IsExpanded="False">
+            <Expander.Header>
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock x:Name="InstalledHeader" Text="Installed Bibles" VerticalAlignment="Center" />
+                    <!-- Installs a Bible from a zip, 7z or xml file on this device. -->
+                    <Button x:Name="InstallFromFileButton" Grid.Column="1" Click="OnInstallFromFileClick">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <svg:Svg Path="/Assets/upload.svg" Width="16" Height="16" Css="{DynamicResource SvgThemeCss}" />
+                            <TextBlock Text="Install From File ..." VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Expander.Header>
+            <ListBox x:Name="InstalledList" MaxHeight="250" Background="Transparent"
+                     ItemTemplate="{StaticResource BibleRow}" />
+        </Expander>
+
+        <!-- Filter bar for the online Bibles: language and free text. -->
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" Margin="12,8" ColumnSpacing="8">
             <ComboBox x:Name="LanguageBox" MinWidth="200" SelectionChanged="OnLanguageChanged" />
             <TextBox x:Name="SearchBox" Grid.Column="1" PlaceholderText="Search name…" TextChanged="OnSearchChanged" />
             <Button Grid.Column="2" Content="Reload" Click="OnReloadClick" />
         </Grid>
 
-        <TextBlock x:Name="StatusText" Grid.Row="1" Margin="12,0,12,6" Opacity="0.7" />
+        <TextBlock x:Name="StatusText" Grid.Row="2" Margin="12,0,12,6" Opacity="0.7" />
 
-        <ListBox x:Name="List" Grid.Row="2" Background="Transparent">
-            <ListBox.ItemTemplate>
-                <DataTemplate x:DataType="local:OnlineBibleItem">
-                    <Grid ColumnDefinitions="*,Auto" Margin="4">
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="{Binding Bible.Name}" FontWeight="SemiBold" TextWrapping="Wrap" />
-                            <TextBlock Text="{Binding Description}" FontSize="12" Opacity="0.7" TextWrapping="Wrap" />
-                            <TextBlock Text="{Binding Error}" FontSize="12" Foreground="OrangeRed"
-                                       IsVisible="{Binding HasError}" TextWrapping="Wrap" />
-                        </StackPanel>
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                            <local:BusySpinner Width="20" Height="20" Thickness="3" IsVisible="{Binding IsBusy}" />
-                            <svg:Svg Path="/Assets/circle-check.svg" Width="16" Height="16" IsVisible="{Binding IsInstalled}" />
-                            <TextBlock Text="Installed" Opacity="0.7" VerticalAlignment="Center"
-                                       IsVisible="{Binding IsInstalled}" />
-                            <Button Click="OnInstallClick" IsVisible="{Binding CanInstall}">
-                                <StackPanel Orientation="Horizontal">
-                                    <svg:Svg Path="/Assets/download.svg" Width="16" Height="16"
-                                        Css="{DynamicResource SvgThemeCss}" />
-                                    <TextBlock Text="Install" Margin="4,0,0,0" />
-                                </StackPanel>
-                            </Button>
-                            <Button Click="OnDeleteClick"
-                                    IsVisible="{Binding CanDelete}">
-                                <StackPanel Orientation="Horizontal">
-                                    <svg:Svg Path="/Assets/trash.svg" Width="16" Height="16"
-                                        Css="{DynamicResource SvgThemeCss}" />
-                                    <TextBlock Text="Delete" Margin="4,0,0,0" />
-                                </StackPanel>
-                            </Button>
-                            <StackPanel Orientation="Horizontal" Spacing="4" IsVisible="{Binding IsConfirmingDelete}">
-                                <Button Content="Delete?" Click="OnConfirmDeleteClick" Foreground="OrangeRed" />
-                                <Button Content="Cancel" Click="OnCancelDeleteClick" />
-                            </StackPanel>
-                        </StackPanel>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <ListBox x:Name="List" Grid.Row="3" Background="Transparent" ItemTemplate="{StaticResource BibleRow}" />
 
-        <local:BusySpinner x:Name="LoadSpinner" Grid.Row="2" Width="40" Height="40"
+        <local:BusySpinner x:Name="LoadSpinner" Grid.Row="3" Width="40" Height="40"
                            HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="False" />
+
+        <!-- Asks for the name of a Bible installed from a file; it covers the whole view. -->
+        <Border x:Name="NamePanel" Grid.RowSpan="4" IsVisible="False" Background="#80000000">
+            <Border MaxWidth="400" Margin="16" Padding="16" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                    CornerRadius="8" BorderThickness="1"
+                    Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+                    BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Name of the Bible" FontWeight="SemiBold" />
+                    <TextBox x:Name="NameBox" KeyDown="OnNameKeyDown" />
+                    <TextBlock x:Name="NameError" Foreground="OrangeRed" TextWrapping="Wrap" IsVisible="False" />
+                    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+                        <Button Content="Install" Click="OnNameOkClick" />
+                        <Button Content="Cancel" Click="OnNameCancelClick" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Border>
+
+        <!-- Back to reading, in the upper right corner. -->
+        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="8"
+                Padding="8,6" Background="Transparent" BorderThickness="0"
+                ToolTip.Tip="Close" Click="OnCloseClick">
+            <svg:Svg Path="/Assets/close.svg" Width="16" Height="16" Css="{DynamicResource SvgThemeCss}" />
+        </Button>
     </Grid>
 </UserControl>

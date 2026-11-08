@@ -12,19 +12,21 @@
                               Grid.Row="1"
                               Bible="{Binding #Toolbar.Bible}"
                               Margin="16,8"
-                              IsVisible="{Binding !#Toolbar.ShowOnlineBibles}"
+                              IsVisible="{Binding #Toolbar.ShowText}"
                               Orientation="Vertical"
                               FontSize="18"
                               FontFamily="avares://BibleReader.Library/Assets#Bible Roman"
                               Background="{DynamicResource SystemControlBackgroundAltHighBrush}" />
 
         <!-- Replaces the text while the toolbar menu's "Online Bibles…" is chosen. -->
-        <local:OnlineBiblesView Grid.Row="1" BibleDeleted="OnBibleDeleted" IsVisible="{Binding #Toolbar.ShowOnlineBibles}" />
+        <local:OnlineBiblesView Grid.Row="1" BibleDeleted="OnBibleDeleted" CloseRequested="OnCloseOverlay" IsVisible="{Binding #Toolbar.ShowOnlineBibles}" />
+
+        <!-- Replaces the text while the toolbar menu's "Settings…" is chosen. -->
+        <local:SettingsView Grid.Row="1" CloseRequested="OnCloseOverlay" AppearanceChanged="OnAppearanceChanged" IsVisible="{Binding #Toolbar.ShowSettings}" />
 
         <!-- Shown over the text while a requested verse (or the first text) is still being prepared. It does not take
              touches, so the text underneath can still be scrolled. -->
         <Border Grid.Row="1"
-                IsVisible="{Binding #Block.IsBusy}"
                 IsHitTestVisible="False"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -32,6 +34,13 @@
                 CornerRadius="16"
                 BoxShadow="0 2 12 0 #40000000"
                 Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+            <!-- Only over the text: the settings and the online Bibles cover the same area and need no spinner. -->
+            <Border.IsVisible>
+                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                    <Binding Path="#Block.IsBusy" />
+                    <Binding Path="#Toolbar.ShowText" />
+                </MultiBinding>
+            </Border.IsVisible>
             <!-- Draws itself and turns with the animation frames, only while it is visible. -->
             <local:BusySpinner Width="36" Height="36"
                                IsVisible="{Binding #Block.IsBusy}"

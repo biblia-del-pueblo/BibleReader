@@ -18,6 +18,11 @@ namespace BibleReader.Library
         public int CurrentBookIndex { get; set; }
         public int CurrentChapter { get; set; }
         public int CurrentVerse { get; set; }
+        /// <summary>"System" (or null), "Light" or "Dark".</summary>
+        public string? Theme { get; set; }
+        public bool? ShowWordsOfJesus { get; set; }
+        public double? FontSize { get; set; }
+        public string FontFamily { get; set; } = "Bible Roman";
         public string ConfigPath
         {
             get
@@ -65,6 +70,10 @@ namespace BibleReader.Library
                 CurrentBookIndex = settings.CurrentBookIndex;
                 CurrentChapter = settings.CurrentChapter;
                 CurrentVerse = settings.CurrentVerse;
+                Theme = settings.Theme;
+                ShowWordsOfJesus = settings.ShowWordsOfJesus;
+                FontSize = settings.FontSize;
+                FontFamily = settings.FontFamily;
                 ConfigPath = settings.ConfigPath;
             } catch (Exception ex)
             {

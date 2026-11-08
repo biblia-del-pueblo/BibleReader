@@ -20,6 +20,7 @@ namespace BibleReader.Library
         }
 
         public Classes Class { get; set; }
+        public override string Origin => "CrossWire";
 
     }
 }

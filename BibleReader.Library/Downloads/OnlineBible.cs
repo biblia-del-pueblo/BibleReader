@@ -13,6 +13,7 @@ public class OnlineBible: Bible
     protected virtual string CrossWireModuleUrl { get; set; }
     public string Language { get; set; }
     public string LanguageEnglishName { get; set; }
-    public virtual async Task DownloadBible() { }
+    public virtual string Origin => "";
+    public virtual async Task Installl() { }
 
 }

@@ -57,7 +57,7 @@
                         Cursor="Hand"
                         Click="OnMenuClick">
                     <StackPanel Orientation="Horizontal" Spacing="10">
-                        <svg:Svg x:Name="Menu" Path="/Assets/bars.svg" Width="16" Height="16"
+                        <svg:Svg x:Name="Menu" Path="/Assets/bars.svg" Width="18" Height="18"
                             Css="{DynamicResource SvgThemeCss}" />
                     </StackPanel>
                 </Button>
@@ -72,12 +72,12 @@
                         Click="OnPositionClick">
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <StackPanel>
-                            <TextBlock x:Name="BookName" FontWeight="SemiBold" VerticalAlignment="Center" />
-                            <TextBlock x:Name="BibleName" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="10" />
+                            <TextBlock x:Name="BookName" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="18"/>
+                            <TextBlock x:Name="BibleName" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="12" />
                         </StackPanel>
                         <TextBlock x:Name="ReferenceText" Opacity="0.8" VerticalAlignment="Center" />
                         <!-- Direct Svg tag -->
-                        <svg:Svg Path="/Assets/down-arrow.svg" Width="16" Height="16"
+                        <svg:Svg Path="/Assets/down-arrow.svg" Width="18" Height="18"
                                 Css="{DynamicResource SvgThemeCss}" />
                         <TextBlock Opacity="0.6" VerticalAlignment="Center" />
                     </StackPanel>
@@ -92,7 +92,7 @@
                         ToolTip.Tip="Installed Bibles"
                         Click="OnBiblesClick">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <svg:Svg Path="/Assets/bookshelf.svg" Width="26" Height="26"
+                        <svg:Svg Path="/Assets/bookshelf.svg" Width="30" Height="30"
                                 Css="{DynamicResource SvgThemeCss}" />
                     </StackPanel>
                 </Button>

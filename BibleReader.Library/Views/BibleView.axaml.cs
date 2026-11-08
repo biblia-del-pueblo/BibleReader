@@ -30,6 +30,35 @@ public partial class BibleView : UserControl
             try { Settings.Current.Save(); } catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Could not save the settings: {ex}"); }
         };
         AttachedToVisualTree += (_, _) => RestoreBible();
+
+        // Pinching with two fingers changes the font size; the single finger still scrolls (see BibleTextBlock).
+        Block.GestureRecognizers.Add(new Avalonia.Input.PinchGestureRecognizer());
+        Block.AddHandler(Avalonia.Input.InputElement.PinchEvent, OnPinch);
+        Block.AddHandler(Avalonia.Input.InputElement.PinchEndedEvent, OnPinchEnded);
+    }
+
+    public const double MinFontSize = 12, MaxFontSize = 40;
+    private double _pinchStartSize;
+
+    /// <summary>
+    /// <see cref="Avalonia.Input.PinchEventArgs.Scale"/> is the spread of the fingers relative to where the pinch started,
+    /// so the size is the one at the start times it. The text itself is only built again a moment after the fingers stop
+    /// moving (<see cref="OnAppearanceChanged"/>).
+    /// </summary>
+    private void OnPinch(object? sender, Avalonia.Input.PinchEventArgs e)
+    {
+        if (_pinchStartSize <= 0) _pinchStartSize = Settings.Current.FontSize ?? SettingsView.DefaultFontSize;
+        double size = Math.Round(Math.Clamp(_pinchStartSize * e.Scale, MinFontSize, MaxFontSize));
+        e.Handled = true;
+        if (Settings.Current.FontSize == size) return;
+        Settings.Current.FontSize = size;
+        OnAppearanceChanged(this, EventArgs.Empty);
+    }
+
+    private void OnPinchEnded(object? sender, Avalonia.Input.PinchEndedEventArgs e)
+    {
+        _pinchStartSize = 0;
+        try { Settings.Current.Save(); } catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Could not save the settings: {ex}"); }
     }
 
     private bool _restored;
@@ -63,6 +92,8 @@ public partial class BibleView : UserControl
     {
         if (_restored) return;
         _restored = true;
+        SettingsView.ApplyTheme(Settings.Current.Theme);
+        ApplyAppearance(); // before the first Bible is opened below, so its text is built with these
         if (Block.Bible is not null || Settings.Current.CurrentBible is not { Length: > 0 } name) return;
         if (Settings.Current.Bibles?.FirstOrDefault(b => b.EnglishName == name) is not { } bible) return;
         var settings = Settings.Current;
@@ -122,6 +153,42 @@ public partial class BibleView : UserControl
             Block.Orientation = Orientation.Vertical;
             Block.ColumnWidth = double.NaN;
         }
+    }
+
+    private Avalonia.Threading.DispatcherTimer? _appearanceTimer;
+
+    /// <summary>Takes the font size, font and words of Jesus from the settings (the text is not rebuilt here).</summary>
+    private void ApplyAppearance()
+    {
+        var settings = Settings.Current;
+        Block.FontSize = settings.FontSize ?? SettingsView.DefaultFontSize;
+        Block.FontFamily = SettingsView.FamilyOf(settings.FontFamily);
+        Block.ShowWordsOfJesus = settings.ShowWordsOfJesus ?? true;
+    }
+
+    /// <summary>The settings changed: the text is built again a moment after the last change (a slider fires often).</summary>
+    private void OnAppearanceChanged(object? sender, EventArgs e)
+    {
+        _appearanceTimer ??= new Avalonia.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(300) };
+        _appearanceTimer.Tick -= OnAppearanceTimer;
+        _appearanceTimer.Tick += OnAppearanceTimer;
+        _appearanceTimer.Stop();
+        _appearanceTimer.Start();
+    }
+
+    private async void OnAppearanceTimer(object? sender, EventArgs e)
+    {
+        _appearanceTimer?.Stop();
+        ApplyAppearance();
+        try { await Block.RebuildAsync(); }
+        catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Could not rebuild the text: {ex}"); }
+    }
+
+    /// <summary>The close button of the online Bibles or the settings: back to the text.</summary>
+    private void OnCloseOverlay(object? sender, EventArgs e)
+    {
+        Toolbar.ShowOnlineBibles = false;
+        Toolbar.ShowSettings = false;
     }
 
     /// <summary>A deleted Bible can no longer be read: when it is the one shown, the toolbar and the text block drop it.</summary>

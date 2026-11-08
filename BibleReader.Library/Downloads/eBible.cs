@@ -13,6 +13,7 @@ public class eBible : OnlineBible
 {
     const string Url = "https://ebible.org/find";
 
+    public override string Origin => "eBible";
     static async Task<string> GetListAsync() => await Download.DownloadStringAsync(Url);
 
     public static async Task<IEnumerable<eBible>> GetBiblesAsync()
@@ -55,7 +56,7 @@ public class eBible : OnlineBible
             .ToList();
     }
 
-    public override async Task DownloadBible()
+    public override async Task Installl()
     {
         var details = await Download.DownloadStringAsync(DetailsUrl);
         var html = new HtmlAgilityPack.HtmlDocument();
@@ -68,10 +69,7 @@ public class eBible : OnlineBible
         var srcpath = Path.Combine(path, "src");
         await Download.DownloadAndUnzip(swordUrl, srcpath);
         // ImportFromSWORD(mdpath, srcpath) writes the markdown books to mdpath, and does nothing unless FromSource is set.
-        var fromSource = BibleMarkdown.Program.FromSource;
-        BibleMarkdown.Program.FromSource = true;
-        try { await Task.Run(() => BibleMarkdown.Program.ImportFromSWORD(path, srcpath, true)); }
-        finally { BibleMarkdown.Program.FromSource = fromSource; }
+        await Task.Run(() => BibleMarkdown.Program.ImportFromSWORD(path, srcpath, true));
         if (!Directory.EnumerateFiles(path, "*.md").Any())
             throw new InvalidDataException("The SWORD module was downloaded, but no books could be imported from it.");
     }
