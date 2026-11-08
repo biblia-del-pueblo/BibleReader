@@ -2023,7 +2023,10 @@ public class BibleTextBlock : Panel
             case Bible.Run.Classes.Bold: span.FontWeight = FontWeight.Bold; break;
             case Bible.Run.Classes.Italic: span.FontStyle = FontStyle.Italic; break;
             case Bible.Run.Classes.Greek: span.FontFamily = GreekFont; break;
-            case Bible.Run.Classes.Hebrew: span.FontFamily = HebrewFont; break;
+            case Bible.Run.Classes.Hebrew:
+                span.FontFamily = HebrewFont;
+                span.FontSize = size * HebrewScale; // Frank Ruehl CLM looks small next to the Latin fonts
+                break;
             case Bible.Run.Classes.WordsOfJesus: if (_buildWordsOfJesus) span.Foreground = WordsOfJesusBrush; break;
             case Bible.Run.Classes.SmallCaps: upperCase = true; break; // the size is reduced per letter, see SmallCapsRuns
             case Bible.Run.Classes.Link:
@@ -2060,6 +2063,7 @@ public class BibleTextBlock : Panel
     // Greek text is set in Cardo and Hebrew in Frank Ruehl CLM, whatever font the reader chose for the rest.
     private static readonly FontFamily GreekFont = new("avares://BibleReader.Library/Assets#Cardo");
     private static readonly FontFamily HebrewFont = new("avares://BibleReader.Library/Assets#Frank Ruehl CLM");
+    private const double HebrewScale = 1.5;
 
     /// <summary>
     /// Small capitals: the first letter of every word is a capital of the regular size, the other letters are

@@ -4,7 +4,7 @@
         x:Class="BibleReader.Desktop.MainWindow"
         Width="780" Height="600"
         Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
-        Icon="Assets\CrossBible-logo.ico">
+        Icon="Assets\logo.ico">
     <!-- No ScrollViewer: the text block fits as many whole columns as the window shows and brings its own
          horizontal scroll bar that moves one column at a time. -->
         <!-- &#173; is a soft hyphen (U+00AD): an invisible break opportunity inside a word. -->

@@ -14,10 +14,15 @@
 
     <ItemGroup>
         <None Remove="Assets\CrossBible-logo.ico" />
+        <None Remove="Assets\logo.icns" />
+        <None Remove="Assets\logo.ico" />
+        <None Remove="Assets\logo.svg" />
     </ItemGroup>
 
     <ItemGroup>
-        <AvaloniaResource Include="Assets\CrossBible-logo.ico" />
+      <AvaloniaResource Include="Assets\logo.icns" />
+      <AvaloniaResource Include="Assets\logo.ico" />
+      <AvaloniaResource Include="Assets\logo.svg" />
     </ItemGroup>
 
     <ItemGroup>

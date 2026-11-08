@@ -343,6 +343,8 @@ public class Bible
         }
     }
 
+    // Greek and Coptic (U+0370-03FF), Greek Extended / polytonic (U+1F00-1FFF); Hebrew (U+0590-05FF), Hebrew
+    // presentation forms (U+FB1D-FB4F).
     static Run.Classes ScriptClassOf(char ch) => ch switch
     {
         >= 'Ͱ' and <= 'Ͽ' or >= 'ἀ' and <= '῿' => Run.Classes.Greek,
@@ -350,11 +352,15 @@ public class Bible
         _ => Run.Classes.Text,
     };
 
+    static bool IsCombiningMark(char ch) =>
+        char.GetUnicodeCategory(ch) is System.Globalization.UnicodeCategory.NonSpacingMark
+            or System.Globalization.UnicodeCategory.SpacingCombiningMark;
+
     /// <summary>
     /// Splits plain text into pieces of <see cref="Run.Classes.Text"/>, <see cref="Run.Classes.Greek"/> and
-    /// <see cref="Run.Classes.Hebrew"/>. Spaces, punctuation and digits belong to no script and stay with the piece
-    /// before them, so a Greek phrase is not broken up at every space; a letter of another script ends the piece.
-    /// Text without Greek or Hebrew comes back as one piece.
+    /// <see cref="Run.Classes.Hebrew"/>. Only whole words are Greek or Hebrew: a piece holds the letters (with their
+    /// accents and vowel points) of one word, never a space, punctuation or a digit. Everything else, and every letter
+    /// of another script, is <see cref="Run.Classes.Text"/>. Text without Greek or Hebrew comes back as one piece.
     /// </summary>
     public static IEnumerable<(string Text, Run.Classes Class)> SplitScripts(string text)
     {
@@ -362,8 +368,12 @@ public class Bible
         int start = 0;
         for (int i = 0; i < text.Length; i++)
         {
-            var kind = ScriptClassOf(text[i]);
-            if (kind == Run.Classes.Text && !char.IsLetter(text[i])) continue; // neutral
+            var ch = text[i];
+            var kind = ScriptClassOf(ch);
+            // Only letters count as Greek/Hebrew (the blocks also hold punctuation such as the Greek question mark
+            // and the Hebrew maqaf); combining marks stay with the letter they sit on, in whatever piece that is.
+            if (IsCombiningMark(ch)) continue;
+            if (kind != Run.Classes.Text && !char.IsLetter(ch)) kind = Run.Classes.Text;
             if (kind == current) continue;
             if (i > start) yield return (text[start..i], current);
             start = i;
