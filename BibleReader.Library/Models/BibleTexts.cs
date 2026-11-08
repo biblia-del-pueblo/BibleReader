@@ -2,6 +2,7 @@
 using Avalonia.Controls.Platform;
 using Avalonia.Controls.Templates;
 using Avalonia.Media;
+using BibleMarkdown;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
@@ -241,7 +242,12 @@ public class Bible
         public string Text { get; set; }
         public string Url { get; set; }
         public IEnumerable<Run> Runs { get; set; }
+        /// <summary>The Strong's numbers of a <see cref="Classes.WordWithStrong"/> run, separated by spaces ("H7225 G746").</summary>
         public string StrongNumber { get; set; }
+        /// <summary>The lemma of a <see cref="Classes.WordWithStrong"/> run, if the text gives one.</summary>
+        public string Lemma { get; set; }
+        /// <summary>The morphology code of a <see cref="Classes.WordWithStrong"/> run, if the text gives one.</summary>
+        public string Morph { get; set; }
         public VersePosition Position { get; set; }
         public VersePosition Reference { get; set; }
         public Color MarkerColor { get; set; }
@@ -268,13 +274,21 @@ public class Bible
     const string SmallCapsEnd = @"\]\{\.smallcaps\}";
     const string WordsOfJesusEnd = @"\]\{\.wj\}";
     const string LinkEnd = @"\]\([a-zA-Z]+://.*?\)";
+    // Strong's numbers in the USFM style of Creator.UsfmStrongs: a word followed by "_" attributes, "_G1234" / "_H7225"
+    // (Strong's number), "_&lemma" and "_%morphology"; "_" also joins the words of a phrase that has one number:
+    // "In_the_beginning_H7225_&lemma_%HNcfsa". Words with a "_" but no such attribute are plain text.
+    const string StrongsAttribute = @"_(?:[GH][0-9]+|&[\p{L}\p{M}]+|%[0-9a-zA-Z-]+)(?![%&\p{Nd}\p{L}\p{M}-])";
+    const string StrongsPart = @"_[%&\p{Nd}\p{L}\p{M}-]+";
+    const string StrongsWord = @"(?<![\p{L}\p{M}_])(?=[\p{L}\p{M}]+(?:" + StrongsPart + "){0,}?" + StrongsAttribute +
+        @")[\p{L}\p{M}]+(?:" + StrongsPart + ")+";
     static readonly Regex TextParts = new(
         @"\*\*(?<bold>.*?)\*\*|\*(?<italic>.*?)\*|" +
         @"\^\[(?<footnote>" + Balanced + @")\]|" +
         @"\[(?<smallcaps>" + Balanced + @")" + SmallCapsEnd + "|" +
         @"\[(?<wordsofjesus>" + Balanced + @")" + WordsOfJesusEnd + "|" +
         @"\[(?<link>" + Balanced + @")\]\((?<linkurl>[a-zA-Z]+://.*?)\)|" +
-        @"(?<normal>.*?(?=\*\*.*?\*\*|\*.*?\*|\^\[" + Balanced + @"\]|" +
+        "(?<strongs>" + StrongsWord + ")|" +
+        @"(?<normal>.*?(?=" + StrongsWord + @"|\*\*.*?\*\*|\*.*?\*|\^\[" + Balanced + @"\]|" +
         @"\[" + Balanced + SmallCapsEnd + @"|\[" + Balanced + WordsOfJesusEnd + @"|\[" + Balanced + LinkEnd + @"|$))",
         RegexOptions.Singleline | RegexOptions.Compiled);
 
@@ -331,6 +345,8 @@ public class Bible
                     Position = position,
                     Runs = ParseText(m.Groups["wordsofjesus"].Value, Run.Classes.WordsOfJesus, position).ToList()
                 };
+            else if (m.Groups["strongs"].Success)
+                yield return ParseStrongsWord(m.Groups["strongs"].Value, position);
             else if (m.Groups["normal"].Success)
                 foreach (var (part, partClass) in SplitScripts(m.Groups["normal"].Value))
                     yield return new Run
@@ -341,6 +357,37 @@ public class Bible
                         Runs = Enumerable.Empty<Run>()
                     };
         }
+    }
+
+    static readonly Regex StrongsAttributes = new(@"_[GH][0-9]+|_&[\p{L}\p{M}]+|_%[0-9a-zA-Z-]+", RegexOptions.Compiled);
+
+    /// <summary>
+    /// A word (or phrase) with Strong's attributes, e.g. <c>beginning_H7225_&amp;lemma_%morph</c>: the run's text is the
+    /// word without the attributes (other "_" become spaces), the numbers, lemma and morphology are kept on the run.
+    /// </summary>
+    static Run ParseStrongsWord(string word, VersePosition position)
+    {
+        var text = StrongsAttributes.Replace(word, "").Replace('_', ' ');
+        var numbers = Regex.Matches(word, @"(?<=_)[GH][0-9]+(?![%&\p{Nd}\p{L}\p{M}-])").Select(n => n.Value);
+        var lemma = Regex.Match(word, @"(?<=_&)[\p{L}\p{M}]+");
+        var morph = Regex.Match(word, @"(?<=_%)[0-9a-zA-Z-]+");
+        return new Run
+        {
+            Class = Run.Classes.WordWithStrong,
+            Text = text,
+            StrongNumber = string.Join(' ', numbers),
+            Lemma = lemma.Success ? lemma.Value : null,
+            Morph = morph.Success ? morph.Value : null,
+            Position = position,
+            // The word itself may be Greek or Hebrew: it keeps its font like any other text.
+            Runs = SplitScripts(text).Select(part => new Run
+            {
+                Class = part.Class,
+                Text = part.Text,
+                Position = position,
+                Runs = Enumerable.Empty<Run>()
+            }).ToList()
+        };
     }
 
     // Greek and Coptic (U+0370-03FF), Greek Extended / polytonic (U+1F00-1FFF); Hebrew (U+0590-05FF), Hebrew

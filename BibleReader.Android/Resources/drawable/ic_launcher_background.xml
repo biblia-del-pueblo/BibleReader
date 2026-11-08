@@ -1,5 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The green gradient of the logo, so the edges of the mask are filled in the logo's colours (no white box). -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <gradient android:angle="270" android:startColor="#3CB543" android:centerColor="#157423" android:endColor="#0B390D" />
-</shape>
+<!-- The logo's green fills the whole mask of the adaptive icon, so no white box shows around the logo. -->
+<color xmlns:android="http://schemas.android.com/apk/res/android" android:color="#4CC844" />

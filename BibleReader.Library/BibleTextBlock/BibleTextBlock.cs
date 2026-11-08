@@ -2022,6 +2022,7 @@ public class BibleTextBlock : Panel
         {
             case Bible.Run.Classes.Bold: span.FontWeight = FontWeight.Bold; break;
             case Bible.Run.Classes.Italic: span.FontStyle = FontStyle.Italic; break;
+            case Bible.Run.Classes.WordWithStrong: span.TextDecorations = StrongsUnderline; break;
             case Bible.Run.Classes.Greek: span.FontFamily = GreekFont; break;
             case Bible.Run.Classes.Hebrew:
                 span.FontFamily = HebrewFont;
@@ -2059,6 +2060,19 @@ public class BibleTextBlock : Panel
     }
 
     private const double SmallCapsScale = 0.85;
+
+    /// <summary>The dotted gray underline of words that have a Strong's number.</summary>
+    private static readonly TextDecorationCollection StrongsUnderline = new()
+    {
+        new TextDecoration
+        {
+            Location = TextDecorationLocation.Underline,
+            Stroke = new SolidColorBrush(Colors.Gray),
+            StrokeThickness = 1.2,
+            StrokeDashArray = new Avalonia.Collections.AvaloniaList<double> { 1, 2 },
+            StrokeLineCap = PenLineCap.Round,
+        },
+    };
 
     // Greek text is set in Cardo and Hebrew in Frank Ruehl CLM, whatever font the reader chose for the rest.
     private static readonly FontFamily GreekFont = new("avares://BibleReader.Library/Assets#Cardo");
