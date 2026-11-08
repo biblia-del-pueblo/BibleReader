@@ -4,60 +4,77 @@
              x:Class="BibleReader.Library.UI.SettingsView">
 
     <Grid Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
-    <ScrollViewer>
-        <StackPanel Margin="16,12" Spacing="16" MaxWidth="600" HorizontalAlignment="Left">
-            <TextBlock Text="Settings" FontSize="22" FontWeight="SemiBold" />
+        <ScrollViewer>
+            <StackPanel Margin="16,12" Spacing="16" MaxWidth="600" HorizontalAlignment="Left">
+                <TextBlock Text="Settings" FontSize="22" FontWeight="SemiBold" />
 
-            <!-- Appearance -->
-            <StackPanel Spacing="6">
-                <TextBlock Text="Theme" FontWeight="SemiBold" />
-                <ComboBox x:Name="ThemeBox" MinWidth="200" SelectionChanged="OnThemeChanged">
-                    <ComboBoxItem Content="System" Tag="System" />
-                    <ComboBoxItem Content="Light" Tag="Light" />
-                    <ComboBoxItem Content="Dark" Tag="Dark" />
-                </ComboBox>
-            </StackPanel>
+                <!-- Appearance -->
+                <StackPanel Spacing="16" Orientation="Horizontal">
+                    <TextBlock Text="Theme:" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <ComboBox x:Name="ThemeBox" MinWidth="200" SelectionChanged="OnThemeChanged"
+                              VerticalAlignment="Center">
+                        <ComboBoxItem Content="System" Tag="System" />
+                        <ComboBoxItem Content="Light" Tag="Light" />
+                        <ComboBoxItem Content="Dark" Tag="Dark" />
+                    </ComboBox>
+                </StackPanel>
 
-            <!-- Reading -->
-            <StackPanel Spacing="6">
-                <Grid ColumnDefinitions="*,Auto">
-                    <TextBlock Text="Font size" FontWeight="SemiBold" />
-                    <TextBlock x:Name="FontSizeText" Grid.Column="1" Opacity="0.7" />
+                <!-- Reading -->
+                <Grid ColumnDefinitions="Auto,Auto,Auto" ColumnSpacing="8">
+                    <TextBlock Text="Font:" FontWeight="SemiBold"  VerticalAlignment="Center" />
+                    <ComboBox x:Name="FontBox" Grid.Column="1" MinWidth="200" MaxWidth="400"
+                              SelectionChanged="OnFontChanged" VerticalAlignment="Center" />
+                    <Button x:Name="InstallFontButton" Grid.Column="2" Click="OnInstallFontClick" VerticalAlignment="Center" ToolTip.Tip="Install Font ...">
+                        <svg:Svg Path="/Assets/upload.svg" Width="18" Height="18" Css="{DynamicResource SvgThemeCss}" VerticalAlignment="Center" />
+                    </Button>
                 </Grid>
-                <Slider x:Name="FontSizeSlider" Minimum="12" Maximum="40" SmallChange="1" LargeChange="2"
-                        TickFrequency="1" IsSnapToTickEnabled="True" />
+
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                    <TextBlock Text="Font Size:" Grid.Column="0" FontWeight="SemiBold"  VerticalAlignment="Center" />
+                    <Slider x:Name="FontSizeSlider" Grid.Column="1" Minimum="12" Maximum="40" SmallChange="1" LargeChange="2"
+                        TickFrequency="1" IsSnapToTickEnabled="True"  VerticalAlignment="Center" />
+                    <TextBlock x:Name="FontSizeText" Grid.Column="2" Opacity="0.7"  VerticalAlignment="Center" />
+                </Grid>
+
+                <!-- Installs a font file, or the fonts in a zip, into the Fonts folder of the settings. -->
+                <TextBlock x:Name="FontStatus" Opacity="0.7" TextWrapping="Wrap" VerticalAlignment="Center" />
+
+                <StackPanel Spacing="16" Orientation="Horizontal">
+                    <CheckBox x:Name="JesusBox" Content="Show words of Jesus in red"
+                              IsCheckedChanged="OnJesusChanged" />
+                    <CheckBox x:Name="GreenVerseBox" Content="Show verse numbers in green"
+                              IsCheckedChanged="OnGreenVerseChanged" />
+                </StackPanel>
+
+                <!-- Online Bibles are only listed when this is ticked. -->
+                <CheckBox x:Name="NoPersecutionBox" Content="In my country there is no persecution"
+                          IsCheckedChanged="OnNoPersecutionChanged" />
+
+                <!-- A short example of the text with the font settings above; it follows them at once (see UpdateSample). -->
+                <Border Padding="12" CornerRadius="6" BorderThickness="1"
+                        BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                    <TextBlock x:Name="SampleText" TextWrapping="Wrap">
+                        <Run x:Name="VerseNumberRun" Text="16 " FontWeight="Bold" />
+                        <Run Text="Then Jesus went about all Galilee, teaching in their synagogues. " />
+                        <Run x:Name="JesusRun" Text="Follow me, and I will make you fishers of men." />
+                    </TextBlock>
+                </Border>
+
+                <!-- Information -->
+                <StackPanel Spacing="6">
+                    <StackPanel Spacing="16" Orientation="Horizontal">
+                        <TextBlock Text="Storage:" FontWeight="SemiBold" />
+                        <TextBlock x:Name="PathText" Opacity="0.7" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <TextBlock x:Name="BiblesText" Opacity="0.7" />
+                </StackPanel>
             </StackPanel>
-
-            <StackPanel Spacing="6">
-                <TextBlock Text="Font" FontWeight="SemiBold" />
-                <ComboBox x:Name="FontBox" MinWidth="200" MaxWidth="400" SelectionChanged="OnFontChanged" />
-            </StackPanel>
-
-            <CheckBox x:Name="JesusBox" Content="Show words of Jesus in red"
-                      IsCheckedChanged="OnJesusChanged" />
-
-            <!-- A short example of the text with the font settings above; it follows them at once (see UpdateSample). -->
-            <Border Padding="12" CornerRadius="6" BorderThickness="1"
-                    BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
-                <TextBlock x:Name="SampleText" TextWrapping="Wrap">
-                    <Run Text="Then Jesus went about all Galilee, teaching in their synagogues. " />
-                    <Run x:Name="JesusRun" Text="Follow me, and I will make you fishers of men." />
-                </TextBlock>
-            </Border>
-
-            <!-- Information -->
-            <StackPanel Spacing="6">
-                <TextBlock Text="Storage" FontWeight="SemiBold" />
-                <TextBlock x:Name="PathText" Opacity="0.7" TextWrapping="Wrap" />
-                <TextBlock x:Name="BiblesText" Opacity="0.7" />
-            </StackPanel>
-        </StackPanel>
-    </ScrollViewer>
-    <!-- Back to reading, in the upper right corner. -->
-    <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="8"
-            Padding="8,6" Background="Transparent" BorderThickness="0"
-            ToolTip.Tip="Close" Click="OnCloseClick">
-        <svg:Svg Path="/Assets/close.svg" Width="16" Height="16" Css="{DynamicResource SvgThemeCss}" />
-    </Button>
+        </ScrollViewer>
+        <!-- Back to reading, in the upper right corner. -->
+        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="8"
+                Padding="8,6" Background="Transparent" BorderThickness="0"
+                ToolTip.Tip="Close" Click="OnCloseClick">
+            <svg:Svg Path="/Assets/close.svg" Width="16" Height="16" Css="{DynamicResource SvgThemeCss}" />
+        </Button>
     </Grid>
 </UserControl>

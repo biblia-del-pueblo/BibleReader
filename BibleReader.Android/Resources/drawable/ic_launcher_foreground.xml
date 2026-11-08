@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The adaptive layer is 108dp and only the middle 72dp-66dp is guaranteed to show; 12dp inset keeps the book and cross in view while filling the icon as much as is safe. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/logo"
+    android:inset="12dp" />

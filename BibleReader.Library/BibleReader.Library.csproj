@@ -11,11 +11,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="ViewModels\ReaderModel.cs" />
+        <Compile Remove="Models\ReaderModel.cs" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="ViewModels\ReaderModel.cs" />
+        <None Include="Models\ReaderModel.cs" />
     </ItemGroup>
 
     <ItemGroup>

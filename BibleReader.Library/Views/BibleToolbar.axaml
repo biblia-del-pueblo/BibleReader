@@ -11,6 +11,7 @@
             <Setter Property="Padding" Value="4,8" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="18" />
         </Style>
         <!-- Book buttons are tinted by Bible.Book.Class (the class name is added in code). The fills are translucent,
              so the same colours work on light and dark backgrounds. Prefix and Appendix stay uncoloured. -->
@@ -145,7 +146,7 @@
                             <Button Content="‹  Books" Padding="10,4" Background="Transparent" Click="OnBackClick" />
                             <TextBlock x:Name="TitleText" FontWeight="SemiBold" VerticalAlignment="Center" />
                         </StackPanel>
-                        <ScrollViewer MaxHeight="500" HorizontalScrollBarVisibility="Disabled">
+                        <ScrollViewer MaxHeight="600" HorizontalScrollBarVisibility="Disabled">
                             <UniformGrid x:Name="BookGrid" Columns="6" />
                         </ScrollViewer>
                     </StackPanel>

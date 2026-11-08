@@ -15,6 +15,10 @@
         <AndroidResource Include="logo.png">
             <Link>Resources\drawable\logo.png</Link>
         </AndroidResource>
+        <!-- The launcher icon before Android 8 (adaptive icons need API 26): the plain logo. -->
+        <AndroidResource Include="logo.png">
+            <Link>Resources\mipmap-xxxhdpi\ic_launcher.png</Link>
+        </AndroidResource>
     </ItemGroup>
 
     <ItemGroup>

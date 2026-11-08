@@ -1,22 +1,24 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using BibleReader.Library.Downloads;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace BibleReader.Library.UI;
 
 /// <summary>One row of <see cref="OnlineBiblesView"/>: an eBible plus its install state.</summary>
 public partial class OnlineBibleItem : ObservableObject
 {
-    public OnlineBibleItem(OnlineBible bible, OnlineBiblesView view)
+    public OnlineBibleItem(InstallableBook bible, OnlineBiblesView view)
     {
         Bible = bible;
         IsInstalled = CheckInstalled(bible);
@@ -24,7 +26,7 @@ public partial class OnlineBibleItem : ObservableObject
     }
 
     OnlineBiblesView View { get; set; }
-    public OnlineBible Bible { get; }
+    public InstallableBook Bible { get; }
 
     public string Description =>
         string.Join(" · ", new[] { Bible.LanguageEnglishName, Bible.Language, Bible.CountryName, Bible.Origin }
@@ -54,7 +56,7 @@ public partial class OnlineBibleItem : ObservableObject
     public void NotifyWideChanged() => OnPropertyChanged(nameof(IsInstalledAndWide));
 
     /// <summary>Installed means the Bible's folder holds converted books (the folder alone is created on access).</summary>
-    private static bool CheckInstalled(OnlineBible bible)
+    private static bool CheckInstalled(InstallableBook bible)
     {
         if (string.IsNullOrEmpty(bible.EnglishName)) return false;
         var dir = bible.ConfigPath;
@@ -75,10 +77,10 @@ public partial class OnlineBiblesView : UserControl
     private bool _loading;
 
     /// <summary>Raised after a Bible was installed, so the host can add it to its list.</summary>
-    public event EventHandler<OnlineBible>? BibleInstalled;
+    public event EventHandler<InstallableBook>? BibleInstalled;
 
     /// <summary>Raised after a Bible was deleted, so the host can remove it from its list.</summary>
-    public event EventHandler<OnlineBible>? BibleDeleted;
+    public event EventHandler<InstallableBook>? BibleDeleted;
 
     /// <summary>The width above which the rows show the "Install" caption next to the button's icon.</summary>
     private const double WideWidth = 500;
@@ -102,14 +104,31 @@ public partial class OnlineBiblesView : UserControl
     {
         InitializeComponent();
         DataContext = this;
-        SizeChanged += (_, e) => IsWide = e.NewSize.Width > WideWidth;
-        AttachedToVisualTree += async (_, _) =>
+        LanguageBox.PropertyChanged += (_, e) =>
         {
-            UpdateInstalled();
-            if (_items.Count == 0) await LoadAsync();
+            if (e.Property == ComboBox.TextProperty) ApplyFilter();
         };
+        SizeChanged += (_, e) => IsWide = e.NewSize.Width > WideWidth;
+        AttachedToVisualTree += (_, _) => OnShown();
         // The page is kept while it is hidden, so what is installed may have changed since it was last shown.
-        PropertyChanged += (_, e) => { if (e.Property == IsVisibleProperty && IsVisible) UpdateInstalled(); };
+        PropertyChanged += (_, e) => { if (e.Property == IsVisibleProperty && IsVisible) OnShown(); };
+    }
+
+    private bool _loadStarted;
+
+    /// <summary>
+    /// Called when the view is attached or becomes visible. The view is created (and attached) hidden together with
+    /// the reader, so the list is only fetched the first time it is actually shown.
+    /// </summary>
+    private async void OnShown()
+    {
+        if (!IsVisible || TopLevel.GetTopLevel(this) is null) return;
+        UpdateInstalled();
+        // The setting is changed in the settings page, so it is read again every time this view is shown.
+        ApplyFilter(); // without the confirmation this shows the hint instead of a list
+        if (!Settings.Current.InMyCountryThereIsNoPersecution || _loadStarted || _items.Count > 0) return;
+        _loadStarted = true;
+        await LoadAsync();
     }
 
     /// <summary>Raised when the close button is clicked, so the host can show the text again.</summary>
@@ -122,7 +141,7 @@ public partial class OnlineBiblesView : UserControl
     {
         // The same rows as the online list: an installed Bible can be deleted from here too.
         var items = (Settings.Current.Bibles ?? new List<Bible>())
-            .OfType<OnlineBible>()
+            .OfType<InstallableBook>()
             .Where(b => !string.IsNullOrEmpty(b.EnglishName))
             .OrderBy(b => string.IsNullOrWhiteSpace(b.Name) ? b.EnglishName : b.Name, StringComparer.CurrentCultureIgnoreCase)
             .Select(b => new OnlineBibleItem(b, this))
@@ -138,7 +157,7 @@ public partial class OnlineBiblesView : UserControl
     private TaskCompletionSource<string?>? _nameRequest;
 
     /// <summary>
-    /// Picks a zip, 7z or xml file, asks for a name and installs it as a <see cref="BibleArchive"/>: the books are
+    /// Picks a zip, 7z or xml file, asks for a name and installs it as a <see cref="BookArchive"/>: the books are
     /// imported into the Bible's folder and the Bible is added to the settings like an online one.
     /// </summary>
     private async void OnInstallFromFileClick(object? sender, RoutedEventArgs e)
@@ -147,7 +166,7 @@ public partial class OnlineBiblesView : UserControl
         _installingFromFile = true;
         InstallFromFileButton.IsEnabled = false;
         string? temporary = null;
-        BibleArchive? bible = null;
+        BookArchive? bible = null;
         try
         {
             var files = await storage.OpenFilePickerAsync(new FilePickerOpenOptions
@@ -175,7 +194,7 @@ public partial class OnlineBiblesView : UserControl
 
             LoadSpinner.IsVisible = true;
             StatusText.Text = $"Installing {name}…";
-            bible = new BibleArchive { File = path, Name = name, EnglishName = name, Language = "", LanguageEnglishName = "" };
+            bible = new BookArchive { File = path, Name = name, EnglishName = name, Language = "", LanguageEnglishName = "" };
             await bible.Installl();
             if (!Directory.EnumerateFiles(bible.ConfigPath, "*.md").Any())
                 throw new InvalidDataException("No books could be imported from the file.");
@@ -251,13 +270,16 @@ public partial class OnlineBiblesView : UserControl
 
     public async Task LoadAsync()
     {
-        if (_loading) return;
+        if (_loading || !Settings.Current.InMyCountryThereIsNoPersecution) return;
         _loading = true;
         LoadSpinner.IsVisible = true;
         StatusText.Text = "Loading Bibles from ebible.org…";
         try
         {
-            var bibles = await Task.Run(async () => (await eBible.GetBiblesAsync()).ToList());
+            var bibles = await Task.Run(async () => (await eBible.GetBiblesAsync())
+                .OrderBy(b => b.LanguageEnglishName)
+                .ThenBy(b => b.Name)
+                .ToList());
             _items = bibles.Select(b => new OnlineBibleItem(b, this)).ToList();
             FillLanguages();
             ApplyFilter();
@@ -290,11 +312,11 @@ public partial class OnlineBiblesView : UserControl
         }
         var selected = LanguageBox.SelectedItem as string;
         LanguageBox.ItemsSource = new[] { AllLanguages }.Concat(languages).ToList();
-        LanguageBox.SelectedItem = selected is not null && ((IEnumerable<string>)LanguageBox.ItemsSource).Contains(selected)
-            ? selected : AllLanguages;
+        if (selected is not null && ((IEnumerable<string>)LanguageBox.ItemsSource).Contains(selected)) LanguageBox.SelectedItem = selected;
+        else LanguageBox.Text = "";
     }
 
-    private static string LanguageOf(OnlineBible bible) =>
+    private static string LanguageOf(InstallableBook bible) =>
         string.IsNullOrWhiteSpace(bible.LanguageEnglishName) ? bible.Language : bible.LanguageEnglishName;
 
     private void OnLanguageChanged(object? sender, SelectionChangedEventArgs e) => ApplyFilter();
@@ -304,10 +326,27 @@ public partial class OnlineBiblesView : UserControl
     private void ApplyFilter()
     {
         if (LanguageBox is null || SearchBox is null || StatusText is null) return; // during InitializeComponent
-        var language = LanguageBox.SelectedItem as string;
+        if (!Settings.Current.InMyCountryThereIsNoPersecution)
+        {
+            List.ItemsSource = Array.Empty<OnlineBibleItem>();
+            StatusText.Text = "To list the online Bibles, tick \"In my country there is no persecution\" in the settings.";
+            return;
+        }
+        var language = LanguageBox.Text?.Trim();
+        if (string.IsNullOrEmpty(language)) language = AllLanguages;
+        if (Regex.IsMatch(language, "[a-z]{2,3}(?:-[A-Z]{2})?"))
+        {
+            try
+            {
+                var culture = CultureInfo.GetCultureInfo(language);
+                language = Regex.Replace(culture.NativeName, @"\s+|\(.*?\)", "", RegexOptions.Singleline);
+            }
+            catch { }
+        }
         var text = SearchBox.Text?.Trim();
         var filtered = _items.Where(i =>
-            (language is null or AllLanguages || LanguageOf(i.Bible).Contains(language)) &&
+            (language == AllLanguages || i.Bible.Language.Contains(language, StringComparison.CurrentCultureIgnoreCase) ||
+            i.Bible.LanguageEnglishName.Contains(language, StringComparison.CurrentCultureIgnoreCase)) &&
             (string.IsNullOrEmpty(text) ||
              (i.Bible.Name?.Contains(text, StringComparison.CurrentCultureIgnoreCase) ?? false) ||
              (i.Bible.EnglishName?.Contains(text, StringComparison.CurrentCultureIgnoreCase) ?? false)))

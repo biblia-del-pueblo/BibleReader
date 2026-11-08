@@ -130,19 +130,19 @@ public partial class BibleToolbar : UserControl
         if ((DateTime.UtcNow - _menuClosedAt).TotalMilliseconds < 300) return;
 
         MenuItems.Children.Clear();
-        if (Position is { Book: not null } position)
+        /*if (Position is { Book: not null } position)
         {
             AddMenuEntry("copy.svg", "Copy reference", () => CopyAsync(ReferenceOf(position)));
             // Only a verse has a text; the start of a book or chapter has none.
             if (VerseTextOf(position) is { Length: > 0 } text)
                 AddMenuEntry("copy.svg", "Copy verse text", () => CopyAsync(text));
-        }
-        AddMenuEntry(null, ShowOnlineBibles ? "Back to reading" : "Install Bibles…", () =>
+        }*/
+        AddMenuEntry(ShowOnlineBibles ? null : "download.svg", ShowOnlineBibles ? "Back to reading" : "Install Bibles…", () =>
         {
             ShowOnlineBibles = !ShowOnlineBibles;
             return Task.CompletedTask;
         });
-        AddMenuEntry(null, ShowSettings ? "Back to reading" : "Settings…", () =>
+        AddMenuEntry(ShowSettings ? null : "gear.svg", ShowSettings ? "Back to reading" : "Settings…", () =>
         {
             ShowSettings = !ShowSettings;
             return Task.CompletedTask;

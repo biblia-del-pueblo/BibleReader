@@ -18,6 +18,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.Media.TextFormatting;
 using Avalonia.Platform.Storage;
+using System.Text.RegularExpressions;
 
 namespace BibleReader.Library.UI;
 
@@ -134,6 +135,8 @@ public class BibleTextBlock : Panel
 
     /// <summary>Whether the words of Jesus are coloured red. Call <see cref="RebuildAsync"/> after changing it.</summary>
     public bool ShowWordsOfJesus { get; set; } = true;
+    /// <summary>Whether verse numbers are green; like <see cref="ShowWordsOfJesus"/> it applies when the text is rebuilt.</summary>
+    public bool ShowVerseNumbersInGreen { get; set; }
 
     public Bible? Bible { get => GetValue(BibleProperty); set => SetValue(BibleProperty, value); }
     public Bible.VersePosition? Position { get => GetValue(PositionProperty); set => SetValue(PositionProperty, value); }
@@ -1115,6 +1118,8 @@ public class BibleTextBlock : Panel
     /// <summary>Finger lifted while panning: choose the column to settle on (a short flick is enough).</summary>
     private void OnScrollInertiaStarting(object? sender, ScrollGestureInertiaStartingEventArgs e)
     {
+        // Vertical mode: Avalonia's own inertia runs on (the same as in a ScrollViewer): the gesture events it
+        // raises carry on arriving in OnScrollGesture, so a fast swipe travels further than a slow one.
         if (!_panning) return;
         SettlePan(e.Inertia.X);
         e.Handled = true; // no free-running inertia: the columns snap
@@ -1142,7 +1147,7 @@ public class BibleTextBlock : Panel
         if (e.Pointer?.Type != PointerType.Touch) return;
         var position = e.GetPosition(this);
         if (OverScrollBar(position)) return;
-        if (HitFootnote(ToContent(position), out var bounds) is { } note)
+        if (HitFootnoteNear(ToContent(position), out var bounds) is { } note)
         {
             bounds = bounds.Translate(new Vector(-_offsetX, -_offsetY));
             e.Handled = true;
@@ -1468,6 +1473,43 @@ public class BibleTextBlock : Panel
         return null;
     }
 
+    /// <summary>How far (in device-independent pixels) from a footnote marker a finger still counts as hitting it.</summary>
+    private const double TouchSlop = 24;
+
+    /// <summary>
+    /// Like <see cref="HitFootnote"/>, but with a fat finger: the marker's bounds are grown by
+    /// <see cref="TouchSlop"/> on every side (about a 48 dp target), and when several markers are in reach the one
+    /// whose centre is nearest wins.
+    /// </summary>
+    private Footnote? HitFootnoteNear(Point point, out Rect bounds)
+    {
+        bounds = default;
+        if (_notes.Count == 0) return null;
+        Footnote? best = null;
+        double bestDistance = double.MaxValue;
+        foreach (var pl in _lines)
+        {
+            var line = pl.Line;
+            if (point.Y < pl.Origin.Y - TouchSlop || point.Y >= pl.Origin.Y + line.Height + TouchSlop) continue;
+            int first = line.FirstTextSourceIndex, end = first + line.Length;
+            foreach (var n in _notes)
+            {
+                int start = Math.Max(n.Start, first), stop = Math.Min(n.End, end);
+                if (stop <= start) continue; // the marker is not on this line
+                var rects = line.GetTextBounds(start, stop - start);
+                if (rects.Count == 0) continue;
+                var rect = rects[0].Rectangle.Translate(new Vector(pl.Origin.X, pl.Origin.Y));
+                if (!rect.Inflate(TouchSlop).Contains(point)) continue;
+                double distance = Math.Abs(rect.Center.X - point.X) + Math.Abs(rect.Center.Y - point.Y);
+                if (distance >= bestDistance) continue;
+                best = n.Note;
+                bestDistance = distance;
+                bounds = rect;
+            }
+        }
+        return best;
+    }
+
     private static readonly Cursor HandCursor = new(StandardCursorType.Hand);
 
     // ---- Text selection -------------------------------------------------------------------------------
@@ -1648,6 +1690,9 @@ public class BibleTextBlock : Panel
         e.Handled = true;
     }
 
+    /// <summary>The popup's text is this much smaller than the text of the reader.</summary>
+    private const double FootnoteScale = 0.85;
+
     private void ShowFootnote(Footnote note, Rect bounds)
     {
         _popup.IsOpen = false;
@@ -1656,10 +1701,10 @@ public class BibleTextBlock : Panel
         var text = new SelectableTextBlock // selectable so the footnote text can be copied
         {
             TextWrapping = TextWrapping.Wrap,
-            FontSize = FontSize * 0.85,
+            FontSize = FontSize * FootnoteScale,
             FontFamily = FontFamily, // a popup is its own visual root: it would not inherit the font from this control
         };
-        foreach (var inline in note.CloneContent()) text.Inlines!.Add(inline);
+        foreach (var inline in note.CloneContent(FootnoteScale)) text.Inlines!.Add(inline);
         text[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("SystemControlForegroundBaseHighBrush");
 
         var card = new Border
@@ -1767,6 +1812,8 @@ public class BibleTextBlock : Panel
 
     private static readonly IBrush WordsOfJesusBrush = new SolidColorBrush(Color.Parse("#B22222"));
     private static bool _buildWordsOfJesus = true;
+    private static readonly IBrush VerseNumberBrush = new SolidColorBrush(Color.Parse("#2E8B57"));
+    private static bool _buildGreenVerses;
 
     /// <summary>
     /// Builds the books of the window again, e.g. after <see cref="FontSize"/> or <see cref="ShowWordsOfJesus"/>
@@ -1797,6 +1844,7 @@ public class BibleTextBlock : Panel
     private async Task<(List<Inline> Content, PageBreak? Break)> BuildContentAsync(Bible.Book first, Bible.Book? second)
     {
         double size = FontSize;
+        _buildGreenVerses = ShowVerseNumbersInGreen;
         _buildWordsOfJesus = ShowWordsOfJesus; // read by the static ToInlines; building happens on the UI thread only
         var content = new List<Inline>();
         var clock = System.Diagnostics.Stopwatch.StartNew();
@@ -1885,10 +1933,22 @@ public class BibleTextBlock : Panel
                             foreach (var child in ToInlines(run.Runs.Skip(1), size, upperCase))
                                 note.Inlines!.Add(child);
                         }
-                        else
+                        else 
                         {
-                            foreach (var child in ToInlines(run.Runs, size, upperCase))
-                                note.Inlines!.Add(child);
+                            if (firstRun.Text.StartsWith($"{run.Position.Chapter}:{run.Position.Verse}"))
+                            {
+                                firstRun.Text = Regex.Replace(firstRun.Text, $@"{run.Position.Chapter}:{run.Position.Verse}\s*", "");
+                            }
+                            if (string.IsNullOrWhiteSpace(firstRun.Text))
+                            {
+                                foreach (var child in ToInlines(run.Runs.Skip(1), size, upperCase))
+                                    note.Inlines!.Add(child);
+                            }
+                            else
+                            {
+                                foreach (var child in ToInlines(run.Runs, size, upperCase))
+                                    note.Inlines!.Add(child);
+                            }
                         }
                     }
                     else if (!string.IsNullOrEmpty(run.Text))
@@ -1932,7 +1992,8 @@ public class BibleTextBlock : Panel
                 {
                     Position = run.Position,
                     FontWeight = FontWeight.Bold,
-                    Foreground = run.MarkerColor.A != 0 ? new SolidColorBrush(run.MarkerColor) : null,
+                    Foreground = _buildGreenVerses ? VerseNumberBrush
+                        : run.MarkerColor.A != 0 ? new SolidColorBrush(run.MarkerColor) : null,
                 };
                 if (run.Runs?.Any() == true)
                     foreach (var child in ToInlines(run.Runs, size, upperCase)) yield return child;
@@ -1961,6 +2022,8 @@ public class BibleTextBlock : Panel
         {
             case Bible.Run.Classes.Bold: span.FontWeight = FontWeight.Bold; break;
             case Bible.Run.Classes.Italic: span.FontStyle = FontStyle.Italic; break;
+            case Bible.Run.Classes.Greek: span.FontFamily = GreekFont; break;
+            case Bible.Run.Classes.Hebrew: span.FontFamily = HebrewFont; break;
             case Bible.Run.Classes.WordsOfJesus: if (_buildWordsOfJesus) span.Foreground = WordsOfJesusBrush; break;
             case Bible.Run.Classes.SmallCaps: upperCase = true; break; // the size is reduced per letter, see SmallCapsRuns
             case Bible.Run.Classes.Link:
@@ -1993,6 +2056,10 @@ public class BibleTextBlock : Panel
     }
 
     private const double SmallCapsScale = 0.85;
+
+    // Greek text is set in Cardo and Hebrew in Frank Ruehl CLM, whatever font the reader chose for the rest.
+    private static readonly FontFamily GreekFont = new("avares://BibleReader.Library/Assets#Cardo");
+    private static readonly FontFamily HebrewFont = new("avares://BibleReader.Library/Assets#Frank Ruehl CLM");
 
     /// <summary>
     /// Small capitals: the first letter of every word is a capital of the regular size, the other letters are

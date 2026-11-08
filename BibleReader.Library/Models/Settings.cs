@@ -21,6 +21,10 @@ namespace BibleReader.Library
         /// <summary>"System" (or null), "Light" or "Dark".</summary>
         public string? Theme { get; set; }
         public bool? ShowWordsOfJesus { get; set; }
+        /// <summary>The user confirmed that there is no persecution of Christians in their country; only then are online Bibles listed.</summary>
+        public bool InMyCountryThereIsNoPersecution { get; set; }
+        /// <summary>Show the verse numbers in green (off when null).</summary>
+        public bool? ShowVerseNumbersInGreen { get; set; }
         public double? FontSize { get; set; }
         public string FontFamily { get; set; } = "Bible Roman";
         public string ConfigPath
@@ -63,7 +67,8 @@ namespace BibleReader.Library
                 var settings = JsonConvert.DeserializeObject<Settings>(json, new JsonSerializerSettings()
                 {
                     TypeNameHandling = TypeNameHandling.Auto,
-                    Converters = new List<JsonConverter> { new VersionConverter(), new StringEnumConverter() }
+                    Converters = new List<JsonConverter> { new VersionConverter(), new StringEnumConverter() },
+                    Formatting = Formatting.Indented
                 });
                 Bibles = settings.Bibles;
                 CurrentBible = settings.CurrentBible;
@@ -72,6 +77,8 @@ namespace BibleReader.Library
                 CurrentVerse = settings.CurrentVerse;
                 Theme = settings.Theme;
                 ShowWordsOfJesus = settings.ShowWordsOfJesus;
+                InMyCountryThereIsNoPersecution = settings.InMyCountryThereIsNoPersecution;
+                ShowVerseNumbersInGreen = settings.ShowVerseNumbersInGreen;
                 FontSize = settings.FontSize;
                 FontFamily = settings.FontFamily;
                 ConfigPath = settings.ConfigPath;

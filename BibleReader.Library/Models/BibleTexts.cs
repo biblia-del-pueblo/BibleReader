@@ -7,8 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Net;
+using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BibleReader.Library;
 
@@ -260,12 +261,26 @@ public class Bible
             .SelectMany(run => run.Append(run.All));
     }
     
+    // Footnotes ^[...], small caps [...]{.smallcaps}, words of Jesus [...]{.wj} and links [...](url) may contain
+    // nested [ and ]: a balancing group counts them (a "[" pushes onto the stack c, a "]" pops, and the construct only
+    // ends at the "]" that finds the stack empty).
+    const string Balanced = @"(?>\[(?<c>)|[^\[\]]+|\](?<-c>))*(?(c)(?!))";
+    const string SmallCapsEnd = @"\]\{\.smallcaps\}";
+    const string WordsOfJesusEnd = @"\]\{\.wj\}";
+    const string LinkEnd = @"\]\([a-zA-Z]+://.*?\)";
+    static readonly Regex TextParts = new(
+        @"\*\*(?<bold>.*?)\*\*|\*(?<italic>.*?)\*|" +
+        @"\^\[(?<footnote>" + Balanced + @")\]|" +
+        @"\[(?<smallcaps>" + Balanced + @")" + SmallCapsEnd + "|" +
+        @"\[(?<wordsofjesus>" + Balanced + @")" + WordsOfJesusEnd + "|" +
+        @"\[(?<link>" + Balanced + @")\]\((?<linkurl>[a-zA-Z]+://.*?)\)|" +
+        @"(?<normal>.*?(?=\*\*.*?\*\*|\*.*?\*|\^\[" + Balanced + @"\]|" +
+        @"\[" + Balanced + SmallCapsEnd + @"|\[" + Balanced + WordsOfJesusEnd + @"|\[" + Balanced + LinkEnd + @"|$))",
+        RegexOptions.Singleline | RegexOptions.Compiled);
+
     public static IEnumerable<Run> ParseText(string text, Run.Classes textClass, VersePosition position)
     {
-        foreach (Match m in Regex.Matches(text, @"\*\*(?<bold>.*?)\*\*|\*(?<italic>.*?)\*|\^\[(?<footnote>.*?)\]|" +
-            @"\[(?<smallcaps>.*?)\]\{.smallcaps\}|\[(?<wordsofjesus>.*?)\]\{.wj\}|" +
-            @"\[(?<link>(.*?))\]\((?<linkurl>[a-zA-Z]+://.*?)\)|" + 
-            @"(?<normal>.*?(?=\*\*.*?\*\*|\*.*?\*|\^\[.*?\]|\[.*?\]\{.smallcaps\}|\[.*?\]\{.wj\}|\[.*?\]\([a-zA-Z]+://.*?\)|$))", RegexOptions.Singleline))
+        foreach (Match m in TextParts.Matches(text))
         {
             if (m.Groups["bold"].Success)
                 yield return new Run
@@ -317,14 +332,44 @@ public class Bible
                     Runs = ParseText(m.Groups["wordsofjesus"].Value, Run.Classes.WordsOfJesus, position).ToList()
                 };
             else if (m.Groups["normal"].Success)
-                yield return new Run
-                {
-                    Class = Run.Classes.Text,
-                    Text = m.Groups["normal"].Value,
-                    Position = position,
-                    Runs = Enumerable.Empty<Run>()
-                };
+                foreach (var (part, partClass) in SplitScripts(m.Groups["normal"].Value))
+                    yield return new Run
+                    {
+                        Class = partClass,
+                        Text = part,
+                        Position = position,
+                        Runs = Enumerable.Empty<Run>()
+                    };
         }
+    }
+
+    static Run.Classes ScriptClassOf(char ch) => ch switch
+    {
+        >= 'Ͱ' and <= 'Ͽ' or >= 'ἀ' and <= '῿' => Run.Classes.Greek,
+        >= '֐' and <= '׿' or >= 'יִ' and <= 'ﭏ' => Run.Classes.Hebrew,
+        _ => Run.Classes.Text,
+    };
+
+    /// <summary>
+    /// Splits plain text into pieces of <see cref="Run.Classes.Text"/>, <see cref="Run.Classes.Greek"/> and
+    /// <see cref="Run.Classes.Hebrew"/>. Spaces, punctuation and digits belong to no script and stay with the piece
+    /// before them, so a Greek phrase is not broken up at every space; a letter of another script ends the piece.
+    /// Text without Greek or Hebrew comes back as one piece.
+    /// </summary>
+    public static IEnumerable<(string Text, Run.Classes Class)> SplitScripts(string text)
+    {
+        var current = Run.Classes.Text;
+        int start = 0;
+        for (int i = 0; i < text.Length; i++)
+        {
+            var kind = ScriptClassOf(text[i]);
+            if (kind == Run.Classes.Text && !char.IsLetter(text[i])) continue; // neutral
+            if (kind == current) continue;
+            if (i > start) yield return (text[start..i], current);
+            start = i;
+            current = kind;
+        }
+        if (start < text.Length || text.Length == 0) yield return (text[start..], current);
     }
     static IEnumerable<Run> ParseVerse(Match verse, VersePosition position)
     {
@@ -384,7 +429,7 @@ public class Bible
         do
         {
             replaced = false;
-            markdown = Regex.Replace(markdown, @"\^(?<mark>[a-zA-Z]+)\^(?!\[)(?<text>.*?)(?:\^\k<mark>(?<footnote>\^\[(?>\[(?<c>)|[^\[\]]+|\](?<-c>))*(?(c)(?!))\]))[ \t]*\r?\n?", m =>
+            markdown = Regex.Replace(markdown, @"\^(?<mark>[a-zA-Z]+)\^(?!\[)(?<text>.*?)(?:(?<own>^)?\^\k<mark>(?<footnote>\^\[(?>\[(?<c>)|[^\[\]]+|\](?<-c>))*(?(c)(?!))\]))[ \t]*(?(own)\r?\n?)", m =>
             {
                 replaced = true;
                 return $"{m.Groups["footnote"].Value}{m.Groups["text"].Value}";
@@ -415,7 +460,7 @@ public class Bible
         {
             if (field == null)
             {
-                field = Path.Combine(Settings.Current.ConfigPath, WebUtility.UrlEncode(EnglishName));
+                field = Path.Combine(Settings.Current.ConfigPath, "Bibles", WebUtility.UrlEncode(EnglishName));
             }
             return field;
         }
@@ -467,7 +512,7 @@ public class Bible
             {
                 book.Book.Abbrevation = book.Id.Attribute("bshort")?.Value;
                 book.Book.Description = book.Id.Attribute("desc")?.Value;
-                var bid = book.Id.Attribute("id")?.Value ?? book.EnId.Attribute("bshort")?.Value;
+                var bid = book.Id.Attribute("id")?.Value ?? book.EnId.Attribute("bshort")?.Value ?? book.EnId.Attribute("abbr")?.Value;
                 book.Book.Id = bid;
                 if (string.IsNullOrEmpty(bid))
                 {

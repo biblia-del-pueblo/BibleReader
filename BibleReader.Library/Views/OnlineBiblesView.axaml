@@ -57,7 +57,7 @@
                     <!-- Installs a Bible from a zip, 7z or xml file on this device. -->
                     <Button x:Name="InstallFromFileButton" Grid.Column="1" Click="OnInstallFromFileClick">
                         <StackPanel Orientation="Horizontal" Spacing="6">
-                            <svg:Svg Path="/Assets/upload.svg" Width="16" Height="16" Css="{DynamicResource SvgThemeCss}" />
+                            <svg:Svg Path="/Assets/upload.svg" Width="18" Height="18" Css="{DynamicResource SvgThemeCss}" />
                             <TextBlock Text="Install From File ..." VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
@@ -68,11 +68,17 @@
         </Expander>
 
         <!-- Filter bar for the online Bibles: language and free text. -->
-        <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" Margin="12,8" ColumnSpacing="8">
-            <ComboBox x:Name="LanguageBox" MinWidth="200" SelectionChanged="OnLanguageChanged" />
-            <TextBox x:Name="SearchBox" Grid.Column="1" PlaceholderText="Search name…" TextChanged="OnSearchChanged" />
-            <Button Grid.Column="2" Content="Reload" Click="OnReloadClick" />
-        </Grid>
+        <StackPanel Grid.Row="1" Margin="12,8" Spacing="8">
+            <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="8">
+                <ComboBox x:Name="LanguageBox" MinWidth="200" IsEditable="True" SelectionChanged="OnLanguageChanged"
+                    PlaceholderText="Language…"/>
+                <svg:Svg Grid.Column="1" Path="/Assets/filter.svg" Width="18" Height="18" Css="{DynamicResource SvgThemeCss}" />
+                <TextBox x:Name="SearchBox" Grid.Column="2" PlaceholderText="Search name…" TextChanged="OnSearchChanged" />
+                <Button Grid.Column="3" Click="OnReloadClick" ToolTip.Tip="Reload">
+                    <svg:Svg Path="/Assets/cycle.svg" Width="18" Height="18" Css="{DynamicResource SvgThemeCss}" />
+                </Button>
+            </Grid>
+        </StackPanel>
 
         <TextBlock x:Name="StatusText" Grid.Row="2" Margin="12,0,12,6" Opacity="0.7" />
 

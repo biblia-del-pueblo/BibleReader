@@ -32,19 +32,24 @@ public class Footnote : Span
     /// A copy of the content that can be shown in the popup. An inline can only have one parent, so the
     /// footnote's own inlines stay put and the popup gets clones carrying the locally set formatting.
     /// </summary>
-    internal IEnumerable<Inline> CloneContent() => (Inlines ?? []).Select(Clone);
+    /// <param name="sizeScale">
+    /// How much smaller the popup's text is than the text the content was built for. Explicit sizes (the small
+    /// letters of small caps, titles) are absolute, so they are scaled the same way; otherwise the small letters
+    /// would end up as big as the popup's normal text and small caps would not show.
+    /// </param>
+    internal IEnumerable<Inline> CloneContent(double sizeScale = 1) => (Inlines ?? []).Select(i => Clone(i, sizeScale));
 
-    private static Inline Clone(Inline inline)
+    private static Inline Clone(Inline inline, double sizeScale)
     {
         Inline copy = inline switch
         {
             LineBreak => new LineBreak(),
             Run run => new Run(run.Text),
-            Span span => CloneSpan(span),
+            Span span => CloneSpan(span, sizeScale),
             _ => new Run(string.Empty), // InlineUIContainer & co. have no popup representation
         };
         if (inline.IsSet(TextElement.FontFamilyProperty)) copy.FontFamily = inline.FontFamily;
-        if (inline.IsSet(TextElement.FontSizeProperty)) copy.FontSize = inline.FontSize;
+        if (inline.IsSet(TextElement.FontSizeProperty)) copy.FontSize = inline.FontSize * sizeScale;
         if (inline.IsSet(TextElement.FontStyleProperty)) copy.FontStyle = inline.FontStyle;
         if (inline.IsSet(TextElement.FontWeightProperty)) copy.FontWeight = inline.FontWeight;
         if (inline.IsSet(TextElement.ForegroundProperty)) copy.Foreground = inline.Foreground;
@@ -52,10 +57,10 @@ public class Footnote : Span
         return copy;
     }
 
-    private static Span CloneSpan(Span span)
+    private static Span CloneSpan(Span span, double sizeScale)
     {
         var copy = new Span();
-        foreach (var child in span.Inlines ?? []) copy.Inlines!.Add(Clone(child));
+        foreach (var child in span.Inlines ?? []) copy.Inlines!.Add(Clone(child, sizeScale));
         return copy;
     }
 }

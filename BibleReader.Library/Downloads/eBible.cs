@@ -4,12 +4,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 using System.IO;
+using BibleReader.Library.Downloads;
 
 
 namespace BibleReader.Library;
 
 
-public class eBible : OnlineBible
+public class eBible : InstallableBook
 {
     const string Url = "https://ebible.org/find";
 
@@ -69,8 +70,15 @@ public class eBible : OnlineBible
         var srcpath = Path.Combine(path, "src");
         await Download.DownloadAndUnzip(swordUrl, srcpath);
         // ImportFromSWORD(mdpath, srcpath) writes the markdown books to mdpath, and does nothing unless FromSource is set.
-        await Task.Run(() => BibleMarkdown.Program.ImportFromSWORD(path, srcpath, true));
-        if (!Directory.EnumerateFiles(path, "*.md").Any())
+        await Task.Run(() => {
+            var importer = new BibleMarkdown.Importer()
+            {
+                Postprocess = BookArchive.PostprocessMarkdownSmallCaps
+            };
+            importer.FromSWORD(path, srcpath, true);
+            importer.PostprocessMarkdown(path);
+        });
+    if (!Directory.EnumerateFiles(path, "*.md").Any())
             throw new InvalidDataException("The SWORD module was downloaded, but no books could be imported from it.");
     }
 }

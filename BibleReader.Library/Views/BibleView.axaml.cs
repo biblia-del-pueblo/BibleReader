@@ -164,6 +164,7 @@ public partial class BibleView : UserControl
         Block.FontSize = settings.FontSize ?? SettingsView.DefaultFontSize;
         Block.FontFamily = SettingsView.FamilyOf(settings.FontFamily);
         Block.ShowWordsOfJesus = settings.ShowWordsOfJesus ?? true;
+        Block.ShowVerseNumbersInGreen = settings.ShowVerseNumbersInGreen ?? false;
     }
 
     /// <summary>The settings changed: the text is built again a moment after the last change (a slider fires often).</summary>
@@ -192,7 +193,7 @@ public partial class BibleView : UserControl
     }
 
     /// <summary>A deleted Bible can no longer be read: when it is the one shown, the toolbar and the text block drop it.</summary>
-    private void OnBibleDeleted(object? sender, OnlineBible bible)
+    private void OnBibleDeleted(object? sender, InstallableBook bible)
     {
         if (Toolbar.Bible?.EnglishName == bible.EnglishName) Toolbar.Bible = null;
         if (Block.Bible?.EnglishName == bible.EnglishName) Block.Bible = null; // also when it was opened with OpenAsync

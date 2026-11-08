@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BibleReader.Library
 {
-    public class CrossWireBook: OnlineBible
+    public class CrossWireBook: InstallableBook
     {
         const string Url = "https://crosswire.org/sword/modules";
 
