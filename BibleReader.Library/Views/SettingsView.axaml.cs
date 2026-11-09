@@ -21,7 +21,8 @@ public partial class SettingsView : UserControl
     public const string InterFont = "Inter";
     /// <summary>All the fonts in this assembly's Assets folder (by family name); Bible Roman is the default.</summary>
     private static readonly string[] AssetFonts = { EmbeddedFont, "Cardo", "Frank Ruehl CLM" };
-    public const double DefaultFontSize = 18;
+    /// <summary>The size of the reading text until the reader chooses one: 18, larger when the system has set a larger font size.</summary>
+    public static double DefaultFontSize => Math.Clamp(Math.Round(18 * UiScale.Factor), 12, 40);
 
     private bool _loading;
 
@@ -37,6 +38,7 @@ public partial class SettingsView : UserControl
         FlowDirection = Localizer.FlowDirection; // mirrored for Arabic and Hebrew
         // The fonts that ship with the app first, then the ones installed on the system.
         FillFonts();
+        UiSizeSlider.PropertyChanged += (_, e) => { if (e.Property == RangeBase.ValueProperty) OnUiSizeChanged(); };
         FontSizeSlider.PropertyChanged += (_, e) => { if (e.Property == RangeBase.ValueProperty) OnFontSizeChanged(); };
         AttachedToVisualTree += (_, _) => Reload();
         PropertyChanged += (_, e) => { if (e.Property == IsVisibleProperty && IsVisible) Reload(); };
@@ -122,6 +124,8 @@ public partial class SettingsView : UserControl
         {
             var settings = Settings.Current;
             ThemeBox.SelectedIndex = settings.Theme switch { "Light" => 1, "Dark" => 2, _ => 0 };
+            UiSizeSlider.Value = Math.Round((settings.UiSize ?? UiScale.Factor) * 100 / 5) * 5; // the size in use: the chosen one, or the system's
+            UiSizeText.Text = $"{UiSizeSlider.Value:0}%";
             LanguageBox.SelectedItem = LanguageBox.Items.OfType<ComboBoxItem>().FirstOrDefault(i => (string?)i.Tag == (settings.Language ?? "System"))
                 ?? LanguageBox.Items.OfType<ComboBoxItem>().First();
             double size = settings.FontSize ?? DefaultFontSize;
@@ -137,6 +141,43 @@ public partial class SettingsView : UserControl
             BiblesText.Text = count == 1 ? Localizer.Get("OneBibleInstalled") : Localizer.Format("BiblesInstalled", count);
         }
         finally { _loading = false; }
+    }
+
+    private Avalonia.Threading.DispatcherTimer? _uiSizeTimer;
+
+    /// <summary>
+    /// The slider of the interface size moved. The size is saved at once, but taken (and the main window made again) a
+    /// moment after the last move: a slider changes with every step of a drag.
+    /// </summary>
+    private void OnUiSizeChanged()
+    {
+        if (_loading) return;
+        double percent = Math.Round(UiSizeSlider.Value);
+        UiSizeText.Text = $"{percent:0}%";
+        Settings.Current.UiSize = percent / 100;
+        Save();
+        _uiSizeTimer ??= new Avalonia.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(700) };
+        _uiSizeTimer.Tick -= OnUiSizeTimer;
+        _uiSizeTimer.Tick += OnUiSizeTimer;
+        _uiSizeTimer.Stop();
+        _uiSizeTimer.Start();
+    }
+
+    private void OnUiSizeTimer(object? sender, EventArgs e) => TakeUiSize();
+
+    private void OnUiSizeResetClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        _uiSizeTimer?.Stop();
+        Settings.Current.UiSize = null; // the size of the system
+        Save();
+        TakeUiSize();
+    }
+
+    private void TakeUiSize()
+    {
+        _uiSizeTimer?.Stop();
+        BibleToolbar.ReturnToSettings = true; // the new window shows this page again
+        if (!UiScale.Change()) BibleToolbar.ReturnToSettings = false; // nobody opens it again: the next start
     }
 
     /// <summary>The reader chose a language: it is saved and taken, and the app opens its main window again in it.</summary>

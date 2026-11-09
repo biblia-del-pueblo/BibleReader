@@ -261,4 +261,10 @@
   <data name="NoStrongsEntry" xml:space="preserve">
     <value>No entry for {0}. Switch a Strong's dictionary on with the Strongs button.</value>
   </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Interface size:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Reset to the system size</value>
+  </data>
 </root>

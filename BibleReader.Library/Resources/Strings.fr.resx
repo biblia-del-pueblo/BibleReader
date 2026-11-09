@@ -261,4 +261,10 @@
   <data name="NoStrongsEntry" xml:space="preserve">
     <value>Aucune entrée pour {0}. Activez un dictionnaire Strong avec le bouton Strongs.</value>
   </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Taille de l’interface :</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Revenir à la taille du système</value>
+  </data>
 </root>

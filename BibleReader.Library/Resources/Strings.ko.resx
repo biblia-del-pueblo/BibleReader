@@ -261,4 +261,10 @@
   <data name="NoStrongsEntry" xml:space="preserve">
     <value>{0}에 대한 항목이 없습니다. Strongs 버튼으로 스트롱 사전을 켜세요.</value>
   </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>인터페이스 크기:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>시스템 크기로 되돌리기</value>
+  </data>
 </root>

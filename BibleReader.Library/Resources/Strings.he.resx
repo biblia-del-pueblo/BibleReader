@@ -261,4 +261,10 @@
   <data name="NoStrongsEntry" xml:space="preserve">
     <value>אין ערך עבור {0}. הפעילו מילון סטרונג בכפתור Strongs.</value>
   </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>גודל הממשק:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>איפוס לגודל המערכת</value>
+  </data>
 </root>

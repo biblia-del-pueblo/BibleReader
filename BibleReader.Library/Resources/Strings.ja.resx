@@ -261,4 +261,10 @@
   <data name="NoStrongsEntry" xml:space="preserve">
     <value>{0} の項目がありません。Strongs ボタンでストロング辞典をオンにしてください。</value>
   </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>インターフェースのサイズ:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>システムのサイズに戻す</value>
+  </data>
 </root>

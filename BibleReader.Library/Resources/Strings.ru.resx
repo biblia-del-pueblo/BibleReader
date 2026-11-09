@@ -261,4 +261,10 @@
   <data name="NoStrongsEntry" xml:space="preserve">
     <value>Нет статьи для {0}. Включите словарь Стронга кнопкой Strongs.</value>
   </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Размер интерфейса:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Вернуть размер системы</value>
+  </data>
 </root>

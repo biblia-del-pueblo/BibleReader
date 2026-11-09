@@ -374,15 +374,15 @@ public partial class BibleToolbar : UserControl
         foreach (var result in results)
         {
             var found = result;
-            var verse = new TextBlock { TextWrapping = TextWrapping.Wrap, FontSize = 14 };
-            foreach (var inline in BibleTextBlock.MarkdownInlines(BibleMarkdown.WordIndex.WithoutFootnotes(found.Markdown), 14))
+            var verse = new TextBlock { TextWrapping = TextWrapping.Wrap, FontSize = UiScale.Size(14) };
+            foreach (var inline in BibleTextBlock.MarkdownInlines(BibleMarkdown.WordIndex.WithoutFootnotes(found.Markdown), UiScale.Size(14)))
                 verse.Inlines!.Add(inline);
             var content = new StackPanel
             {
                 Spacing = 2,
                 Children =
                 {
-                    new TextBlock { Text = $"{found.Position.Book.Name} {found.Position.Chapter}:{found.Position.Verse}", FontWeight = FontWeight.SemiBold, FontSize = 12, Opacity = 0.7 },
+                    new TextBlock { Text = $"{found.Position.Book.Name} {found.Position.Chapter}:{found.Position.Verse}", FontWeight = FontWeight.SemiBold, FontSize = UiScale.Size(12), Opacity = 0.7 },
                     verse,
                 },
             };

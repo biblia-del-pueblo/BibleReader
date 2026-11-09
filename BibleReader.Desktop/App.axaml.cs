@@ -21,12 +21,14 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        UiScale.SetSystemFactor(this, 1); // there is no font size of the system here: the size of the settings is used
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             desktop.MainWindow = new MainWindow();
 
         // A change of language builds all the texts again: a new main window is opened (in the place of the old one,
         // which is closed), and it opens the Bible where the reader was.
         Localizer.LanguageChanged += (_, _) => Dispatcher.UIThread.Post(OpenMainWindowAgain);
+        UiScale.Changed += (_, _) => Dispatcher.UIThread.Post(OpenMainWindowAgain);
 
         base.OnFrameworkInitializationCompleted();
     }

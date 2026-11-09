@@ -261,4 +261,10 @@
   <data name="NoStrongsEntry" xml:space="preserve">
     <value>Kein Eintrag für {0}. Schalte mit der Strongs-Schaltfläche ein Strong-Wörterbuch ein.</value>
   </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Größe der Oberfläche:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Auf die Systemgröße zurücksetzen</value>
+  </data>
 </root>

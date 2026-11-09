@@ -261,4 +261,10 @@
   <data name="NoStrongsEntry" xml:space="preserve">
     <value>没有 {0} 的词条。请用 Strongs 按钮打开斯特朗词典。</value>
   </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>界面大小：</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>恢复为系统大小</value>
+  </data>
 </root>

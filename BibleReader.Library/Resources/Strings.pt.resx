@@ -261,4 +261,10 @@
   <data name="NoStrongsEntry" xml:space="preserve">
     <value>Não há verbete para {0}. Ative um dicionário Strong com o botão Strongs.</value>
   </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Tamanho da interface:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Restaurar o tamanho do sistema</value>
+  </data>
 </root>

@@ -261,4 +261,10 @@
   <data name="NoStrongsEntry" xml:space="preserve">
     <value>لا يوجد مدخل لـ {0}. فعّل قاموس سترونغ بزر Strongs.</value>
   </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>حجم الواجهة:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>إعادة التعيين إلى حجم النظام</value>
+  </data>
 </root>

@@ -261,4 +261,10 @@
   <data name="NoStrongsEntry" xml:space="preserve">
     <value>Δεν υπάρχει λήμμα για το {0}. Ενεργοποιήστε ένα λεξικό Strong με το κουμπί Strongs.</value>
   </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Μέγεθος διεπαφής:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Επαναφορά στο μέγεθος του συστήματος</value>
+  </data>
 </root>

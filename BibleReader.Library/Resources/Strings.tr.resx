@@ -261,4 +261,10 @@
   <data name="NoStrongsEntry" xml:space="preserve">
     <value>{0} için madde yok. Strongs düğmesiyle bir Strong sözlüğünü açın.</value>
   </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Arayüz boyutu:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Sistem boyutuna sıfırla</value>
+  </data>
 </root>

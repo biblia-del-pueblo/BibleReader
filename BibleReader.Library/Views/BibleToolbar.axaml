@@ -74,8 +74,8 @@
                         Click="OnPositionClick">
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <StackPanel>
-                            <TextBlock x:Name="BookName" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="18"/>
-                            <TextBlock x:Name="BibleName" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="12" />
+                            <TextBlock x:Name="BookName" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="{loc:Size 18}"/>
+                            <TextBlock x:Name="BibleName" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="{loc:Size 12}" />
                         </StackPanel>
                         <TextBlock x:Name="ReferenceText" Opacity="0.8" VerticalAlignment="Center" />
                         <!-- Direct Svg tag -->
@@ -118,7 +118,7 @@
                         ToolTip.Tip="{loc:Loc StrongsDictionaries}"
                         Click="OnStrongsClick">
                     <!-- Two Greek or Hebrew letters, after the testament of the position (see UpdateText). -->
-                    <TextBlock x:Name="StrongsLetters" FontSize="20" VerticalAlignment="Center" />
+                    <TextBlock x:Name="StrongsLetters" FontSize="{loc:Size 20}" VerticalAlignment="Center" />
                 </Button>
             </StackPanel>
 
@@ -172,7 +172,7 @@
                                 <svg:Svg Path="/Assets/magnifying-glass.svg" Width="16" Height="16" Css="{DynamicResource SvgThemeCss}" />
                             </Button>
                         </Grid>
-                        <TextBlock x:Name="SearchStatus" Opacity="0.7" FontSize="12" IsVisible="False" />
+                        <TextBlock x:Name="SearchStatus" Opacity="0.7" FontSize="{loc:Size 12}" IsVisible="False" />
                         <ScrollViewer MaxHeight="420" HorizontalScrollBarVisibility="Disabled">
                             <StackPanel x:Name="SearchResults" />
                         </ScrollViewer>

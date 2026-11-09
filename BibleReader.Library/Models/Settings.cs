@@ -25,6 +25,8 @@ namespace BibleReader.Library
         public bool InMyCountryThereIsNoPersecution { get; set; }
         /// <summary>The language of the texts: "en", "de" ...; null for the language of the device. It is taken when the app starts.</summary>
         public string? Language { get; set; }
+        /// <summary>The size of the text of the interface as a factor (1.25 is 25% larger); null for the size of the system (see <see cref="UiScale"/>).</summary>
+        public double? UiSize { get; set; }
         /// <summary>Show the verse numbers in green (off when null).</summary>
         public bool? ShowVerseNumbersInGreen { get; set; }
         public double? FontSize { get; set; }
@@ -85,6 +87,7 @@ namespace BibleReader.Library
                 FontFamily = settings.FontFamily;
                 ConfigPath = settings.ConfigPath;
                 Language = settings.Language;
+                UiSize = settings.UiSize;
                 Localizer.Apply(Language);
                 // The dictionaries were switched on or off while the file was read, before the list was replaced.
                 BibleReader.Library.Downloads.StrongsDictionaries.Refresh();
