@@ -1,0 +1,7 @@
+<Project>
+    <!-- BibleReader.Msix builds the desktop app and the projects it uses for x64 and ARM64, self-contained, with a runtime
+         identifier; every project needs to have it restored. Other builds (AnyCPU) are not affected. -->
+    <PropertyGroup Condition="'$(Platform)' == 'x64' or '$(Platform)' == 'ARM64'">
+        <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+    </PropertyGroup>
+</Project>

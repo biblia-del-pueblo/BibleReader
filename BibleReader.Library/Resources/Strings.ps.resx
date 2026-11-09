@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>د کرښې په پای کې کلمې ماتې کړئ</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>آیا ستاسو په هېواد کې مسیحیان ځورول کیږي؟ آنلاین انجیلونه یوازې هلته لیست کیږي چې ځورونه نه وي.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>هو، ځورونه شته</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>نه، ځورونه نشته</value>
+  </data>
 </root>

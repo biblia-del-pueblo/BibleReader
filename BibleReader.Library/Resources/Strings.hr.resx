@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>Sve</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Traži</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Zatvori</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Odustani</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Postavke</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>Instalirane Biblije</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>Strongovi rječnici</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>Pretraži Bibliju…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  Knjige</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>Još nema instaliranih Biblija</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>Još nema instaliranih Strongovih rječnika</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>Prvo otvori Bibliju.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Pretraživanje… (pri prvom pretraživanju neke Biblije izrađuje se njezin indeks, što kratko traje)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Pretraživanje nije uspjelo: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>Nema pronađenih stihova.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} stihova, najbolje podudaranje prvo</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>Instaliraj Biblije…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>Natrag na čitanje</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Postavke…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>Instalirano</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>Instaliraj</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Izbriši</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>Izbrisati?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>Instalirane Biblije ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>Instaliraj iz datoteke ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>Jezik…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>Svi jezici</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>Filtriraj po vrsti</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>Prikazano: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>Traži naziv…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Ponovno učitaj</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>Naziv Biblije</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>Instaliraj Bibliju iz datoteke</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>Arhive Biblija</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>Instaliranje {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>Iz datoteke nije bilo moguće uvesti nijednu knjigu.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} je instalirana</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>Instalacija iz datoteke nije uspjela: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>Unesi naziv.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>Biblija s ovim nazivom već je instalirana.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>Učitavanje Biblija s ebible.org i crosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>Popis nije bilo moguće učitati: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>Za prikaz mrežnih Biblija označi „{0}” u postavkama.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} od {1} modula</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Brisanje nije uspjelo: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>Instalacija nije uspjela: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>Biblija</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>Komentar</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>Rječnik</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>Knjiga</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>Karta</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>Dodatak</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Tema:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Sustavna</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Svijetla</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Tamna</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Jezik:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>Jezik će se promijeniti kad se aplikacija ponovno pokrene.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Font:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>Instaliraj font ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>Veličina fonta:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>Prikaži Isusove riječi crveno</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>Prikaži brojeve stihova zeleno</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>U mojoj zemlji nema progona</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>I Isus je obilazio svu Galileju, učeći u njihovim sinagogama.</value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>Hajdete za mnom i učinit ću vas ribarima ljudi.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Pohrana:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>Instaliraj fontove</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>Fontovi ili zip s fontovima</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>Nije pronađen upotrebljiv font u {0}</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>Instalirano: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. Nema upotrebljivog fonta u {0}</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>Font nije bilo moguće instalirati: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>1 instalirana Biblija</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>{0} instaliranih Biblija</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>Nema unosa za {0}. Uključi Strongov rječnik gumbom Strongs.</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Veličina sučelja:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Vrati na veličinu sustava</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>Natrag</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>Naprijed</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>Još nema povijesti</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>Rastavljaj riječi na kraju retka</value>
+  </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>Progone li se kršćani u tvojoj zemlji? Mrežne Biblije prikazuju se samo ondje gdje nema progona.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Da, postoje progoni</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>Ne, nema progona</value>
+  </data>
+</root>

@@ -29,6 +29,8 @@
         <PackageVersion Include="SkiaSharp.NativeAssets.WebAssembly" Version="4.148.0" />
         <PackageVersion Include="HarfBuzzSharp.NativeAssets.WebAssembly" Version="14.2.0" />
         <PackageVersion Include="LibArchive.Net" Version="0.3.1" />
+        <!-- For BibleReader.Msix, which packages the desktop app for the Microsoft Store. -->
+        <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7705" />
         <PackageVersion Include="EstrellasDeEsperanza.AsyncLock" Version="4.2.1" />
         <PackageVersion Include="NHyphenator" Version="2.0.0" />
         <PackageVersion Include="HtmlAgilityPack" Version="1.13.1" />

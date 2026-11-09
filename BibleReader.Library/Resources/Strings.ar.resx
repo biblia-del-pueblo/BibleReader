@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>تقسيم الكلمات في نهاية السطر</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>هل يتعرّض المسيحيون للاضطهاد في بلدك؟ لا تُعرض الكتب المقدسة عبر الإنترنت إلا حيث لا يوجد اضطهاد.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>نعم، يوجد اضطهاد</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>لا، لا يوجد اضطهاد</value>
+  </data>
 </root>

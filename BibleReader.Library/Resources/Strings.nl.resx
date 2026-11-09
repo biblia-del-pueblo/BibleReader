@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>Woorden aan het einde van een regel afbreken</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>Worden christenen in jouw land vervolgd? Online bijbels worden alleen getoond waar geen vervolging is.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Ja, er is vervolging</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>Nee, er is geen vervolging</value>
+  </data>
 </root>

@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>Всички</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Търсене</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Затвори</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Отказ</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>Инсталирани Библии</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>Речници на Strong</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>Търсене в Библията…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  Книги</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>Все още няма инсталирани Библии</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>Все още няма инсталирани речници на Strong</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>Първо отворете Библия.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Търсене… (при първото търсене в дадена Библия се създава нейният индекс, което отнема малко време)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Търсенето не успя: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>Не са намерени стихове.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} стиха, най-доброто съвпадение първо</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>Инсталиране на Библии…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>Обратно към четенето</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Настройки…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>Инсталирана</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>Инсталиране</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Изтриване</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>Да се изтрие?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>Инсталирани Библии ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>Инсталиране от файл ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>Език…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>Всички езици</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>Филтриране по вид</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>Показани: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>Търсене по име…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Презареждане</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>Име на Библията</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>Инсталиране на Библия от файл</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>Архиви с Библии</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>Инсталиране на {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>От файла не можаха да се импортират книги.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} е инсталирана</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>Инсталирането от файл не успя: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>Моля, въведете име.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>Библия с това име вече е инсталирана.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>Зареждане на Библии от ebible.org и crosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>Списъкът не можа да се зареди: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>За да се покажат онлайн Библиите, отбележете „{0}“ в настройките.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} от {1} модула</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Изтриването не успя: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>Инсталирането не успя: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>Библия</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>Коментар</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>Речник</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>Книга</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>Карта</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>Добавка</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Тема:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Системна</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Светла</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Тъмна</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Език:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>Езикът ще се промени при следващото стартиране на приложението.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Шрифт:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>Инсталиране на шрифт ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>Размер на шрифта:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>Словата на Исус в червено</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>Номерата на стиховете в зелено</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>В моята страна няма преследване</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>И Исус обикаляше цяла Галилея, като поучаваше в синагогите им.</value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>Елате след Мен и ще ви направя ловци на човеци.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Хранилище:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>Инсталиране на шрифтове</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>Шрифтове или zip архив с шрифтове</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>Не е намерен използваем шрифт в {0}</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>Инсталирани: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. Няма използваем шрифт в {0}</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>Шрифтът не можа да се инсталира: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>1 инсталирана Библия</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>{0} инсталирани Библии</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>Няма статия за {0}. Включете речник на Strong с бутона Strongs.</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Размер на интерфейса:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Връщане към системния размер</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>Напред</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>Все още няма история</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>Пренасяне на думите в края на реда</value>
+  </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>Преследват ли се християните във вашата страна? Онлайн Библиите се показват само там, където няма преследване.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Да, има преследване</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>Не, няма преследване</value>
+  </data>
+</root>

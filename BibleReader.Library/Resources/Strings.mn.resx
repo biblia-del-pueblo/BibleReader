@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>Мөрийн төгсгөлд үгийг таслах</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>Таны улсад христиануудыг хавчдаг уу? Онлайн Библийг зөвхөн хавчлага байхгүй газарт жагсаана.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Тийм, хавчлага байдаг</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>Үгүй, хавчлага байхгүй</value>
+  </data>
 </root>

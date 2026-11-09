@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>ตัดคำท้ายบรรทัด</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>ในประเทศของคุณมีการข่มเหงคริสเตียนหรือไม่ พระคัมภีร์ออนไลน์จะแสดงรายการเฉพาะในที่ที่ไม่มีการข่มเหงเท่านั้น</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>ใช่ มีการข่มเหง</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>ไม่ ไม่มีการข่มเหง</value>
+  </data>
 </root>

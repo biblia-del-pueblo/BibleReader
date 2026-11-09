@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>줄 끝에서 단어 나누기</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>당신의 나라에서 그리스도인이 박해를 받습니까? 온라인 성경은 박해가 없는 곳에서만 목록에 표시됩니다.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>예, 박해가 있습니다</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>아니요, 박해가 없습니다</value>
+  </data>
 </root>

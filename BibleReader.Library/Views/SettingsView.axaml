@@ -40,6 +40,14 @@
                         <ComboBoxItem Content="Italiano" Tag="it" />
                         <ComboBoxItem Content="Nederlands" Tag="nl" />
                         <ComboBoxItem Content="Polski" Tag="pl" />
+                        <ComboBoxItem Content="Română" Tag="ro" />
+                        <ComboBoxItem Content="Български" Tag="bg" />
+                        <ComboBoxItem Content="Hrvatski" Tag="hr" />
+                        <ComboBoxItem Content="Srpski" Tag="sr" />
+                        <ComboBoxItem Content="Shqip" Tag="sq" />
+                        <ComboBoxItem Content="Čeština" Tag="cs" />
+                        <ComboBoxItem Content="Slovenčina" Tag="sk" />
+                        <ComboBoxItem Content="Magyar" Tag="hu" />
                         <ComboBoxItem Content="Dansk" Tag="da" />
                         <ComboBoxItem Content="Svenska" Tag="sv" />
                         <ComboBoxItem Content="Norsk bokmål" Tag="nb" />

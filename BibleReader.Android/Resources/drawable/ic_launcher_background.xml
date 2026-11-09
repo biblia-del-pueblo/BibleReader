@@ -1,3 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The logo's green fills the whole mask of the adaptive icon, so no white box shows around the logo. -->
-<color xmlns:android="http://schemas.android.com/apk/res/android" android:color="#4CC844" />
+<!-- The logo's gold fills the whole mask of the adaptive icon, so no white box shows around the logo. -->
+<color xmlns:android="http://schemas.android.com/apk/res/android" android:color="#B97D1A" />

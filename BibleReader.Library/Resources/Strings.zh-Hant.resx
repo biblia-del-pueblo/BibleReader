@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>在行尾斷開單詞（連字符）</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>你所在的國家有迫害基督徒的情況嗎？只有在沒有迫害的地方才會列出線上聖經。</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>是，有迫害</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>否，沒有迫害</value>
+  </data>
 </root>

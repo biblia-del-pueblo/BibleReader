@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>පේළි අගදී වචන බෙදන්න</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>ඔබේ රටේ කිතුනුවන්ට පීඩා කරනවාද? මාර්ගගත බයිබල් ලැයිස්තුගත කරන්නේ පීඩාවක් නැති තැන්වල පමණි.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>ඔව්, පීඩා තිබේ</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>නැහැ, පීඩා නැත</value>
+  </data>
 </root>

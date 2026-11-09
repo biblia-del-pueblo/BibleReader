@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>Të gjitha</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Kërko</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Mbyll</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Anulo</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Cilësimet</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>Bibla të instaluara</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>Fjalorët e Strong-ut</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>Kërko në Bibël…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  Librat</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>Ende nuk ka Bibla të instaluara</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>Ende nuk ka fjalorë të Strong-ut të instaluar</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>Hap fillimisht një Bibël.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Po kërkohet… (kërkimi i parë në një Bibël krijon indeksin e saj, gjë që zgjat pak)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Kërkimi dështoi: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>Nuk u gjetën vargje.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} vargje, përputhja më e mirë e para</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>Instalo Bibla…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>Kthehu te leximi</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Cilësimet…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>E instaluar</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>Instalo</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Fshi</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>Ta fshij?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>Bibla të instaluara ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>Instalo nga skedari ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>Gjuha…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>Të gjitha gjuhët</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>Filtro sipas llojit</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>Po shfaqet: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>Kërko emrin…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Ringarko</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>Emri i Biblës</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>Instalo një Bibël nga një skedar</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>Arkiva Biblash</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>Po instalohet {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>Nga skedari nuk u importua asnjë libër.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} u instalua</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>Instalimi nga skedari dështoi: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>Shkruaj një emër.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>Një Bibël me këtë emër është instaluar tashmë.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>Po ngarkohen Biblat nga ebible.org dhe crosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>Lista nuk mund të ngarkohej: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>Për të listuar Biblat në internet, shëno „{0}” te cilësimet.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} nga {1} module</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Fshirja dështoi: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>Instalimi dështoi: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>Bibël</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>Koment</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>Fjalor</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>Libër</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>Hartë</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>Shtesë</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Tema:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Sistemi</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>E çelët</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>E errët</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Gjuha:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>Gjuha ndryshon kur aplikacioni niset sërish.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Shkronjat:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>Instalo shkronja ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>Madhësia e shkronjave:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>Shfaq fjalët e Jezusit me të kuqe</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>Shfaq numrat e vargjeve me të gjelbër</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>Në vendin tim nuk ka persekutim</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>Dhe Jezusi përshkonte gjithë Galilenë, duke mësuar në sinagogat e tyre.</value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>Ejani pas meje dhe unë do t’ju bëj peshkatarë njerëzish.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Ruajtja:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>Instalo shkronja</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>Shkronja ose zip me shkronja</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>Nuk u gjet asnjë shkronjë e përdorshme në {0}</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>U instaluan: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. Nuk ka shkronja të përdorshme në {0}</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>Shkronja nuk mund të instalohej: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>1 Bibël e instaluar</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>{0} Bibla të instaluara</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>Nuk ka hyrje për {0}. Aktivizo një fjalor të Strong-ut me butonin Strongs.</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Madhësia e ndërfaqes:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Rivendos madhësinë e sistemit</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>Prapa</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>Përpara</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>Ende nuk ka histori</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>Ndaji fjalët në fund të rreshtit</value>
+  </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>A persekutohen të krishterët në vendin tënd? Biblat në internet listohen vetëm aty ku nuk ka persekutim.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Po, ka persekutim</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>Jo, nuk ka persekutim</value>
+  </data>
+</root>

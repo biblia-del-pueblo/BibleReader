@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>Avstava ord vid radbyte</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>Förföljs kristna i ditt land? Nätbiblar visas bara där det inte finns någon förföljelse.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Ja, det finns förföljelse</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>Nej, det finns ingen förföljelse</value>
+  </data>
 </root>

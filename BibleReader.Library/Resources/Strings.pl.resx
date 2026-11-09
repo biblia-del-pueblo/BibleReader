@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>Dziel wyrazy na końcu wiersza</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>Czy w Twoim kraju prześladuje się chrześcijan? Biblie online są wyświetlane tylko tam, gdzie nie ma prześladowań.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Tak, są prześladowania</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>Nie, nie ma prześladowań</value>
+  </data>
 </root>

@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>Hatiin ang mga salita sa dulo ng linya</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>May pag-uusig ba sa mga Kristiyano sa iyong bansa? Ang mga online na Bibliya ay inililista lamang kung saan walang pag-uusig.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Oo, may pag-uusig</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>Hindi, walang pag-uusig</value>
+  </data>
 </root>

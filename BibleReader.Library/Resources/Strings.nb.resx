@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>Del ord ved linjeskift</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>Blir kristne forfulgt i landet ditt? Nettbibler vises bare der det ikke er forfølgelse.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Ja, det er forfølgelse</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>Nei, det er ingen forfølgelse</value>
+  </data>
 </root>

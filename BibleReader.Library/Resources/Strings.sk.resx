@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>Všetko</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Hľadať</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Zavrieť</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Zrušiť</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Nastavenia</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>Nainštalované Biblie</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>Strongove slovníky</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>Hľadať v Biblii…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  Knihy</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>Zatiaľ nie sú nainštalované žiadne Biblie</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>Zatiaľ nie sú nainštalované žiadne Strongove slovníky</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>Najprv otvorte Bibliu.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Hľadanie… (prvé hľadanie v Biblii vytvára jej register, čo chvíľu trvá)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Hľadanie zlyhalo: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>Nenašli sa žiadne verše.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} veršov, najlepšia zhoda prvá</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>Nainštalovať Biblie…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>Späť na čítanie</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Nastavenia…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>Nainštalované</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>Nainštalovať</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Odstrániť</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>Odstrániť?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>Nainštalované Biblie ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>Nainštalovať zo súboru ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>Jazyk…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>Všetky jazyky</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>Filtrovať podľa druhu</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>Zobrazené: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>Hľadať názov…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Načítať znova</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>Názov Biblie</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>Nainštalovať Bibliu zo súboru</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>Archívy Biblií</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>Inštaluje sa {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>Zo súboru sa nepodarilo importovať žiadne knihy.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} nainštalované</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>Inštalácia zo súboru zlyhala: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>Zadajte názov.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>Biblia s týmto názvom je už nainštalovaná.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>Načítavajú sa Biblie z ebible.org a crosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>Zoznam sa nepodarilo načítať: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>Ak chcete zobraziť online Biblie, zaškrtnite v nastaveniach „{0}“.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} z {1} modulov</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Odstránenie zlyhalo: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>Inštalácia zlyhala: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>Biblia</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>Komentár</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>Slovník</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>Kniha</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>Mapa</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>Doplnok</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Motív:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Systémový</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Svetlý</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Tmavý</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Jazyk:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>Jazyk sa zmení po ďalšom spustení aplikácie.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Písmo:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>Nainštalovať písmo ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>Veľkosť písma:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>Zobraziť Ježišove slová červenou</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>Zobraziť čísla veršov zelenou</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>V mojej krajine nie je prenasledovanie</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>A Ježiš obchádzal celú Galileu a učil v ich synagógach.</value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>Poďte za mnou a urobím vás rybármi ľudí.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Úložisko:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>Nainštalovať písma</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>Písma alebo zip s písmami</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>V {0} sa nenašlo žiadne použiteľné písmo</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>Nainštalované: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. V {0} nie je žiadne použiteľné písmo</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>Písmo sa nepodarilo nainštalovať: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>1 nainštalovaná Biblia</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>Nainštalované Biblie: {0}</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>Pre {0} nie je žiadne heslo. Zapnite Strongov slovník tlačidlom Strongs.</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Veľkosť rozhrania:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Obnoviť systémovú veľkosť</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>Späť</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>Dopredu</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>Zatiaľ žiadna história</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>Deliť slová na konci riadku</value>
+  </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>Sú vo vašej krajine kresťania prenasledovaní? Online Biblie sa zobrazujú iba tam, kde prenasledovanie nie je.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Áno, prenasledovanie existuje</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>Nie, prenasledovanie neexistuje</value>
+  </data>
+</root>

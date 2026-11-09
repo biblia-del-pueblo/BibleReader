@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>Բառերը տողի վերջում բաժանել</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>Ձեր երկրում քրիստոնյաները հալածվո՞ւմ են։ Առցանց Աստվածաշնչերը ցուցադրվում են միայն այնտեղ, որտեղ հալածանք չկա։</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Այո, հալածանք կա</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>Ոչ, հալածանք չկա</value>
+  </data>
 </root>

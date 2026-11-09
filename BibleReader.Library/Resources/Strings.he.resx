@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>חלוקת מילים בסוף שורה</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>האם נוצרים נרדפים במדינתך? כתבי הקודש המקוונים מוצגים רק במקום שבו אין רדיפות.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>כן, יש רדיפות</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>לא, אין רדיפות</value>
+  </data>
 </root>

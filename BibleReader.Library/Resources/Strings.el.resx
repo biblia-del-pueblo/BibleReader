@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>Συλλαβισμός λέξεων στο τέλος της γραμμής</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>Υπάρχει δίωξη των χριστιανών στη χώρα σας; Οι διαδικτυακές Βίβλοι εμφανίζονται μόνο όπου δεν υπάρχει δίωξη.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Ναι, υπάρχει δίωξη</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>Όχι, δεν υπάρχει δίωξη</value>
+  </data>
 </root>

@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>سطر کے آخر میں الفاظ توڑیں</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>کیا آپ کے ملک میں مسیحیوں پر ظلم ہوتا ہے؟ آن لائن بائبلیں صرف وہیں فہرست میں دکھائی جاتی ہیں جہاں ظلم نہیں ہے۔</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>ہاں، ظلم ہوتا ہے</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>نہیں، ظلم نہیں ہوتا</value>
+  </data>
 </root>

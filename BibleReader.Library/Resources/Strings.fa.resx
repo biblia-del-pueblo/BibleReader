@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>شکستن واژه‌ها در پایان سطر</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>آیا در کشور شما مسیحیان آزار و اذیت می‌شوند؟ کتاب‌های مقدس آنلاین فقط در جاهایی فهرست می‌شوند که آزار و اذیتی وجود ندارد.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>بله، آزار و اذیت وجود دارد</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>نه، آزار و اذیتی وجود ندارد</value>
+  </data>
 </root>

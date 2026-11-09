@@ -434,6 +434,10 @@ $RECYCLE.BIN/
 *.cab
 *.msi
 *.msix
+# ... but not the BibleReader.Msix project folder, which the pattern above also matches by name
+!BibleReader.Msix/
+BibleReader.Msix/AppPackages/
+BibleReader.Msix/BundleArtifacts/
 *.msm
 *.msp
 

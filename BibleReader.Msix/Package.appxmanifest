@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Before the first submission, take Identity Name, Publisher and PublisherDisplayName from Partner Center
+     (Product management > Product identity), or let Visual Studio do it: right click the project >
+     Publish > Associate App with the Store. The values below are placeholders. -->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:uap18="http://schemas.microsoft.com/appx/manifest/uap/windows10/18"
+  IgnorableNamespaces="uap rescap uap18">
+
+  <Identity
+    Name="EstrellasDeEsperanza.CrossBible"
+    Publisher="CN=00000000-0000-0000-0000-000000000000"
+    Version="1.0.0.0" />
+
+  <Properties>
+    <DisplayName>CrossBible</DisplayName>
+    <PublisherDisplayName>Estrellas de Esperanza</PublisherDisplayName>
+    <Logo>Images\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <!-- The languages the app is translated into (BibleReader.Library/Resources). -->
+  <Resources>
+    <Resource Language="ar" />
+    <Resource Language="da" />
+    <Resource Language="de" />
+    <Resource Language="el" />
+    <Resource Language="en" />
+    <Resource Language="es" />
+    <Resource Language="fa" />
+    <Resource Language="fi" />
+    <Resource Language="fil" />
+    <Resource Language="fr" />
+    <Resource Language="he" />
+    <Resource Language="hi" />
+    <Resource Language="hy" />
+    <Resource Language="id" />
+    <Resource Language="it" />
+    <Resource Language="ja" />
+    <Resource Language="km" />
+    <Resource Language="ko" />
+    <Resource Language="mn" />
+    <Resource Language="nb" />
+    <Resource Language="ne" />
+    <Resource Language="nl" />
+    <Resource Language="pl" />
+    <Resource Language="ro" />
+    <Resource Language="bg" />
+    <Resource Language="hr" />
+    <Resource Language="sr-Latn" />
+    <Resource Language="sq" />
+    <Resource Language="cs" />
+    <Resource Language="sk" />
+    <Resource Language="hu" />
+    <Resource Language="ps" />
+    <Resource Language="pt" />
+    <Resource Language="ru" />
+    <Resource Language="si" />
+    <Resource Language="sv" />
+    <Resource Language="th" />
+    <Resource Language="tr" />
+    <Resource Language="ur" />
+    <Resource Language="vi" />
+    <Resource Language="zh-Hans" />
+    <Resource Language="zh-Hant" />
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="$targetentrypoint$" uap18:RuntimeBehavior="windowsApp" uap18:TrustLevel="mediumIL">
+      <uap:VisualElements
+        DisplayName="CrossBible"
+        Description="CrossBible is a cross platform bible reader. It runs on Windows, Linux, macOS, Android and iOS. It can download a lot of free bibles for many languages from ebible.org and crosswire.com. It displays the bible text in columns for easier reading, as your print bible does."
+        BackgroundColor="#B97D1A"
+        Square150x150Logo="Images\Square150x150Logo.png"
+        Square44x44Logo="Images\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png" />
+        <uap:SplashScreen Image="Images\SplashScreen.png" />
+        <uap:InitialRotationPreference>
+          <uap:Rotation Preference="landscape"/>
+          <uap:Rotation Preference="portrait"/></uap:InitialRotationPreference>
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <!-- Downloading Bibles. -->
+    <Capability Name="internetClient" />
+    <!-- A desktop app (Avalonia, .NET) packaged with the Desktop Bridge. -->
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>

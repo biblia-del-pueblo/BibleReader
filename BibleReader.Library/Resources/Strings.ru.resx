@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>Переносить слова в конце строки</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>Преследуют ли христиан в вашей стране? Онлайн-Библии показываются только там, где нет преследований.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Да, есть преследования</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>Нет, преследований нет</value>
+  </data>
 </root>

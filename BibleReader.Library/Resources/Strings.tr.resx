@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>Satır sonunda kelimeleri heceleyerek böl</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>Ülkenizde Hristiyanlar zulüm görüyor mu? Çevrimiçi Kutsal Kitaplar yalnızca zulmün olmadığı yerlerde listelenir.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Evet, zulüm var</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>Hayır, zulüm yok</value>
+  </data>
 </root>

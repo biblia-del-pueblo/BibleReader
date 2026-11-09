@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>Dividir palabras al final de la línea</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>¿Hay persecución de los cristianos en tu país? Las Biblias en línea solo se muestran donde no la hay.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Sí, hay persecución</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>No, no hay persecución</value>
+  </data>
 </root>

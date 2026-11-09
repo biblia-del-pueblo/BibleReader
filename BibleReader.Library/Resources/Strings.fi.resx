@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>Tavuta sanat rivin lopussa</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>Vainotaanko kristittyjä maassasi? Verkkoraamatut näytetään vain siellä, missä vainoa ei ole.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Kyllä, vainoa on</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>Ei, vainoa ei ole</value>
+  </data>
 </root>

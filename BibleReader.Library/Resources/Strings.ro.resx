@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>Toate</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Caută</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Închide</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Anulează</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Setări</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>Biblii instalate</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>Dicționare Strong</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>Caută în Biblie…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  Cărți</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>Nicio Biblie instalată încă</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>Niciun dicționar Strong instalat încă</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>Deschide mai întâi o Biblie.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Se caută… (la prima căutare într-o Biblie se creează indexul, ceea ce durează puțin)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Căutarea a eșuat: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>Nu s-au găsit versete.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} versete, cea mai bună potrivire prima</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>Instalează Biblii…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>Înapoi la citit</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Setări…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>Instalată</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>Instalează</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Șterge</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>Ștergi?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>Biblii instalate ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>Instalează din fișier ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>Limbă…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>Toate limbile</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>Filtrează după tip</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>Se afișează: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>Caută nume…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Reîncarcă</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>Numele Bibliei</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>Instalează o Biblie dintr-un fișier</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>Arhive biblice</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>Se instalează {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>Din fișier nu s-a putut importa nicio carte.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} instalată</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>Instalarea din fișier a eșuat: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>Introdu un nume.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>O Biblie cu acest nume este deja instalată.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>Se încarcă Bibliile de pe ebible.org și crosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>Lista nu a putut fi încărcată: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>Pentru a lista Bibliile online, bifează „{0}” în setări.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} din {1} module</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Ștergerea a eșuat: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>Instalarea a eșuat: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>Biblie</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>Comentariu</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>Dicționar</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>Carte</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>Hartă</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>Supliment</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Temă:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Sistem</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Luminoasă</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Întunecată</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Limbă:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>Limba se schimbă la repornirea aplicației.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Font:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>Instalează font ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>Dimensiunea fontului:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>Arată cuvintele lui Isus în roșu</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>Arată numerele versetelor în verde</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>În țara mea nu există persecuție</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>Isus străbătea toată Galileea, învățând în sinagogile lor.</value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>Veniți după Mine și vă voi face pescari de oameni.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Stocare:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>Instalează fonturi</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>Fonturi sau arhivă zip cu fonturi</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>Nu s-a găsit niciun font utilizabil în {0}</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>Instalate: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. Niciun font utilizabil în {0}</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>Fontul nu a putut fi instalat: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>1 Biblie instalată</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>{0} Biblii instalate</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>Nicio intrare pentru {0}. Pornește un dicționar Strong cu butonul Strongs.</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Dimensiunea interfeței:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Revino la dimensiunea sistemului</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>Înapoi</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>Înainte</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>Încă nu există istoric</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>Desparte cuvintele în silabe la capăt de rând</value>
+  </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>Sunt persecutați creștinii în țara ta? Bibliile online sunt listate doar acolo unde nu există persecuție.</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>Da, există persecuție</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>Nu, nu există persecuție</value>
+  </data>
+</root>

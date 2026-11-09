@@ -12,6 +12,20 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
     </PropertyGroup>
 
+    <!-- BibleReader.Msix packages this app for the Microsoft Store for x64 and ARM64. The app is self-contained there:
+         the people who get it from the Store do not have the .NET runtime. A normal build (AnyCPU) is not affected. -->
+    <PropertyGroup>
+        <Platforms>AnyCPU;x64;ARM64</Platforms>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Platform)' == 'x64'">
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+        <SelfContained>true</SelfContained>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Platform)' == 'ARM64'">
+        <RuntimeIdentifier>win-arm64</RuntimeIdentifier>
+        <SelfContained>true</SelfContained>
+    </PropertyGroup>
+
     <ItemGroup>
         <None Remove="Assets\CrossBible-logo.ico" />
         <None Remove="Assets\logo.icns" />

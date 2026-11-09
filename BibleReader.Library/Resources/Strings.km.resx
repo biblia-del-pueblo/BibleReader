@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>កាត់ពាក្យនៅចុងបន្ទាត់</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>តើគ្រិស្តបរិស័ទត្រូវបានបៀតបៀននៅក្នុងប្រទេសរបស់អ្នកឬទេ? ព្រះគម្ពីរអនឡាញត្រូវបានរាយបញ្ជីតែនៅកន្លែងដែលគ្មានការបៀតបៀនប៉ុណ្ណោះ។</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>បាទ/ចាស មានការបៀតបៀន</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>ទេ មិនមានការបៀតបៀនទេ</value>
+  </data>
 </root>

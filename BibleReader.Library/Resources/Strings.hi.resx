@@ -279,4 +279,13 @@
   <data name="Hyphenation" xml:space="preserve">
     <value>पंक्ति के अंत में शब्द तोड़ें</value>
   </data>
+  <data name="PersecutionQuestion" xml:space="preserve">
+    <value>क्या आपके देश में मसीहियों का उत्पीड़न होता है? ऑनलाइन बाइबिलें केवल वहीं सूचीबद्ध की जाती हैं जहाँ उत्पीड़न नहीं है।</value>
+  </data>
+  <data name="PersecutionYes" xml:space="preserve">
+    <value>हाँ, उत्पीड़न है</value>
+  </data>
+  <data name="PersecutionNo" xml:space="preserve">
+    <value>नहीं, उत्पीड़न नहीं है</value>
+  </data>
 </root>
