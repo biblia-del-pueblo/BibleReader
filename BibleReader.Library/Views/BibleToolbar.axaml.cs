@@ -136,8 +136,29 @@ public partial class BibleToolbar : UserControl
         AddHandler(PointerReleasedEvent, OnSwipeReleased, RoutingStrategies.Tunnel);
         BookPopup.PlacementTarget = PositionButton; // a reference to a named sibling, set here rather than as a binding
         UpdateHistoryButtons(); // the history of the last session
+        UpdateStrongsSelected();
         UpdateText();
     }
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        BibleReader.Library.Downloads.StrongsDictionaries.AnyChanged += OnStrongsAnyChanged;
+        UpdateStrongsSelected(); // it may have changed while the bar was away
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        BibleReader.Library.Downloads.StrongsDictionaries.AnyChanged -= OnStrongsAnyChanged;
+        base.OnDetachedFromVisualTree(e);
+    }
+
+    // Raised when a dictionary is switched on or off, installed or deleted, possibly on another thread.
+    private void OnStrongsAnyChanged(object? sender, EventArgs e) => Avalonia.Threading.Dispatcher.UIThread.Post(UpdateStrongsSelected);
+
+    /// <summary>The Strongs button is selected while any of the Strong's dictionaries of <see cref="Settings.Bibles"/> is switched on.</summary>
+    private void UpdateStrongsSelected() =>
+        StrongsButton.Classes.Set("selected", StrongsDictionariesInstalled().Any(d => d.IsEnabled));
 
     private void OnTargetChanged(BibleTextBlock? old, BibleTextBlock? target)
     {

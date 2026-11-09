@@ -11,8 +11,14 @@ namespace BibleReader.Library.Downloads
             (Settings.Current.Bibles ?? new List<Bible>())
                 .OfType<IStrongDictionary>()
                 .SelectMany(d => key.Split(' ')
-                    .Select(k => d.IsEnabled ? d.LookupStrong(k) : null))
+                    .Select(k => d.IsEnabled ? d.LookupStrong(NormalizeKey(k)) : null))
                 .Where(markdown => markdown != null));
+
+        /// <summary>
+        /// The key of the dictionaries has no leading zeros ("H430"), but some modules write the numbers with four digits
+        /// ("H0430", as the Reina Valera 1909 with Strong's numbers of CrossWire does).
+        /// </summary>
+        static string NormalizeKey(string key) => System.Text.RegularExpressions.Regex.Replace(key.Trim(), "^([GgHh])0+(?=[0-9])", m => m.Groups[1].Value.ToUpperInvariant());
 
         static bool? any;
 

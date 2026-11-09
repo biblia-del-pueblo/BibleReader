@@ -34,6 +34,9 @@
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
         </Style>
+        <!-- The Strongs button looks selected while a Strong's dictionary is switched on (see UpdateStrongsSelected). -->
+        <Style Selector="Button.strongs"><Setter Property="Background" Value="Transparent" /></Style>
+        <Style Selector="Button.strongs.selected"><Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" /></Style>
         <!-- The book or chapter the text block is at. -->
         <Style Selector="Button.cell.current">
             <Setter Property="FontWeight" Value="Bold" />
@@ -132,10 +135,10 @@
                 </Button>
                 <!-- The installed Strong's dictionaries: opens a list in which they are switched on and off. -->
                 <Button x:Name="StrongsButton"
+                        Classes="strongs"
                         VerticalAlignment="Center"
                         Padding="8,4"
                         BorderThickness="0"
-                        Background="Transparent"
                         Cursor="Hand"
                         ToolTip.Tip="{loc:Loc StrongsDictionaries}"
                         Click="OnStrongsClick">
