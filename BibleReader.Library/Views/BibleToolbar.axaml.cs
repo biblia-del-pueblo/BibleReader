@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using BibleReader.Library.Downloads;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Input.Platform;
+using Avalonia.Media;
 using Avalonia.Interactivity;
 
 namespace BibleReader.Library.UI;
@@ -69,6 +72,7 @@ public partial class BibleToolbar : UserControl
     private DateTime _closedAt = DateTime.MinValue;
     private DateTime _menuClosedAt = DateTime.MinValue;
     private DateTime _biblesClosedAt = DateTime.MinValue;
+    private DateTime _strongsClosedAt = DateTime.MinValue;
 
     private Bible.Book? _chaptersFor; // the book whose chapters the popup shows (null: the book page)
 
@@ -95,6 +99,10 @@ public partial class BibleToolbar : UserControl
         InitializeComponent();
         MenuPopup.PlacementTarget = MenuButton;
         BiblesPopup.PlacementTarget = BiblesButton;
+        StrongsPopup.PlacementTarget = StrongsButton;
+        SearchPopup.PlacementTarget = SearchButton;
+        // Tunnelled: the presses are seen before the button and the popup that it light-dismisses can handle them.
+        StrongsButton.AddHandler(PointerPressedEvent, OnStrongsPressed, RoutingStrategies.Tunnel);
         BookPopup.PlacementTarget = PositionButton; // a reference to a named sibling, set here rather than as a binding
         UpdateText();
     }
@@ -159,7 +167,8 @@ public partial class BibleToolbar : UserControl
         BiblesItems.Children.Clear();
         var bibles = Settings.Current.Bibles ?? new List<Bible>();
         string? current = Position?.Book?.Bible?.Name;
-        foreach (var bible in bibles.Where(b => !string.IsNullOrEmpty(b.EnglishName)))
+        // Strong's dictionaries are not read like a Bible: they are switched on and off in the Strongs list.
+        foreach (var bible in bibles.Where(b => !string.IsNullOrEmpty(b.EnglishName) && b is not IStrongDictionary))
         {
             var chosen = bible;
             var button = new Button { Content = ShortenWithEllipsis(chosen.Name ?? chosen.EnglishName, 40) };
@@ -180,6 +189,212 @@ public partial class BibleToolbar : UserControl
     }
 
     private void OnBiblesPopupClosed(object? sender, EventArgs e) => _biblesClosedAt = DateTime.UtcNow;
+
+    /// <summary>
+    /// Lists the installed Strong's dictionaries (the <see cref="IStrongDictionary"/> entries of
+    /// <see cref="Settings.Bibles"/>); checking one sets its <see cref="IStrongDictionary.IsEnabled"/>.
+    /// </summary>
+    private async void OnStrongsClick(object? sender, RoutedEventArgs e)
+    {
+        if ((DateTime.UtcNow - _strongsToggledAt).TotalMilliseconds < 600) return; // the end of a double click
+        if (StrongsPopup.IsOpen) { StrongsPopup.IsOpen = false; return; }
+        // Pressing the button already light-dismissed the open popup; don't reopen it with the same click.
+        if ((DateTime.UtcNow - _strongsClosedAt).TotalMilliseconds < 300) return;
+
+        // The popup opens only when no second press follows: opening it at once and closing it again for a double
+        // click would make it flicker.
+        var pending = _strongsOpening = new object();
+        await Task.Delay(StrongsOpenDelay);
+        if (!ReferenceEquals(pending, _strongsOpening)) return;
+
+        StrongsItems.Children.Clear();
+        _strongsBoxes.Clear();
+        var dictionaries = StrongsDictionariesInstalled();
+        if (dictionaries.Count > 0)
+        {
+            // "All" switches all the dictionaries on, or, when they all are, off; it is unchecked when none is on and
+            // shows a dash when some are.
+            _strongsAllBox = new CheckBox { Content = "All", IsThreeState = true, Margin = new Thickness(4, 2), FontWeight = FontWeight.SemiBold };
+            _strongsAllBox.Click += (_, _) => SetAllStrongs(!dictionaries.All(d => d.IsEnabled));
+            StrongsItems.Children.Add(_strongsAllBox);
+            StrongsItems.Children.Add(new Border { Height = 1, Margin = new Thickness(0, 2), Opacity = 0.3, Background = Brushes.Gray });
+        }
+        foreach (var dictionary in dictionaries)
+        {
+            var chosen = dictionary;
+            var name = (chosen as Bible) is { } book && !string.IsNullOrEmpty(book.Name ?? book.EnglishName)
+                ? book.Name ?? book.EnglishName : chosen.GetType().Name;
+            var box = new CheckBox { Content = ShortenWithEllipsis(name, 40), IsChecked = chosen.IsEnabled, Margin = new Thickness(4, 2) };
+            box.IsCheckedChanged += (_, _) =>
+            {
+                if (_syncingStrongs) return;
+                chosen.IsEnabled = box.IsChecked == true;
+                StrongsDictionariesChanged();
+            };
+            _strongsBoxes.Add((chosen, box));
+            StrongsItems.Children.Add(box);
+        }
+        if (dictionaries.Count == 0)
+            StrongsItems.Children.Add(new TextBlock { Text = "No Strong's dictionaries installed yet", Opacity = 0.7, Margin = new Thickness(4, 8) });
+        SyncStrongsBoxes();
+        StrongsPopup.IsOpen = true;
+    }
+
+    private readonly List<(IStrongDictionary Dictionary, CheckBox Box)> _strongsBoxes = new();
+    private CheckBox? _strongsAllBox;
+    private bool _syncingStrongs;
+
+    private static List<IStrongDictionary> StrongsDictionariesInstalled() =>
+        (Settings.Current.Bibles ?? new List<Bible>()).OfType<IStrongDictionary>().ToList();
+
+    /// <summary>A dictionary was switched on or off: tell <see cref="StrongsDictionaries.Any"/>, save, and show the state of the list.</summary>
+    private void StrongsDictionariesChanged()
+    {
+        StrongsDictionaries.Refresh(); // whatever the dictionary does itself, Any is told that one was switched on or off
+        try { Settings.Current.Save(); }
+        catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Could not save the settings: {ex}"); }
+        SyncStrongsBoxes();
+    }
+
+    /// <summary>Switches all the installed dictionaries on or off.</summary>
+    private void SetAllStrongs(bool enabled)
+    {
+        var dictionaries = StrongsDictionariesInstalled();
+        if (dictionaries.Count == 0) return;
+        foreach (var dictionary in dictionaries) dictionary.IsEnabled = enabled;
+        StrongsDictionariesChanged();
+    }
+
+    /// <summary>Shows the state of the dictionaries in the check boxes, without the boxes changing the dictionaries back.</summary>
+    private void SyncStrongsBoxes()
+    {
+        _syncingStrongs = true;
+        try
+        {
+            foreach (var (dictionary, box) in _strongsBoxes) box.IsChecked = dictionary.IsEnabled;
+            if (_strongsAllBox is not null)
+                _strongsAllBox.IsChecked = _strongsBoxes.All(b => b.Dictionary.IsEnabled) ? true
+                    : _strongsBoxes.Any(b => b.Dictionary.IsEnabled) ? null : false;
+        }
+        finally { _syncingStrongs = false; }
+    }
+
+    private const ulong DoubleClickMilliseconds = 500;
+    private static readonly TimeSpan StrongsOpenDelay = TimeSpan.FromMilliseconds(350);
+    private object? _strongsOpening; // the opening of the popup that waits for a possible second press
+    private ulong _strongsPressedAt;
+    private DateTime _strongsToggledAt = DateTime.MinValue;
+
+    /// <summary>
+    /// Two presses of the button in quick succession switch all the dictionaries on, or, when they all are on, off.
+    /// The presses are timed here, not taken from the Tapped events: the first press opens the popup, and with the
+    /// popup open the second one does not arrive as a double tap.
+    /// </summary>
+    private void OnStrongsPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (_strongsPressedAt != 0 && e.Timestamp - _strongsPressedAt < DoubleClickMilliseconds)
+        {
+            _strongsPressedAt = 0;
+            _strongsOpening = null; // the popup that was about to open does not
+            _strongsToggledAt = DateTime.UtcNow; // the click that ends this press must not open the popup either
+            StrongsPopup.IsOpen = false;
+            SetAllStrongs(!StrongsDictionariesInstalled().All(d => d.IsEnabled));
+            return;
+        }
+        _strongsPressedAt = e.Timestamp;
+    }
+
+    private void OnStrongsPopupClosed(object? sender, EventArgs e) => _strongsClosedAt = DateTime.UtcNow;
+
+    // ---- Search ----------------------------------------------------------------------------------------
+
+    private DateTime _searchClosedAt = DateTime.MinValue;
+    private object? _searchRunning; // the search whose results are wanted: an older one that ends later is dropped
+
+    private void OnSearchClick(object? sender, RoutedEventArgs e)
+    {
+        if (SearchPopup.IsOpen) { SearchPopup.IsOpen = false; return; }
+        // Pressing the button already light-dismissed the open popup; don't reopen it with the same click.
+        if ((DateTime.UtcNow - _searchClosedAt).TotalMilliseconds < 300) return;
+        SearchPopup.IsOpen = true;
+    }
+
+    private void OnSearchPopupOpened(object? sender, EventArgs e) => SearchBox.Focus();
+
+    private void OnSearchPopupClosed(object? sender, EventArgs e) => _searchClosedAt = DateTime.UtcNow;
+
+    private void OnSearchKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter) return;
+        e.Handled = true;
+        _ = SearchAsync();
+    }
+
+    private void OnSearchGoClick(object? sender, RoutedEventArgs e) => _ = SearchAsync();
+
+    /// <summary>
+    /// Searches the Bible that is shown for the words in the box (<see cref="InstallableBook.Search"/>) and lists the
+    /// verses, the best match first, with the words in bold. Choosing a verse goes to it.
+    /// </summary>
+    private async Task SearchAsync()
+    {
+        var phrase = SearchBox.Text?.Trim();
+        if (string.IsNullOrEmpty(phrase)) return;
+        SearchStatus.IsVisible = true;
+
+        var shown = Position?.Book?.Bible ?? Bible;
+        if (shown is null) { SearchStatus.Text = "Open a Bible first."; return; }
+
+        // The Bible that is read is a plain Bible; the installed one of the same folder does the search.
+        var searchable = (Settings.Current.Bibles ?? new List<Bible>()).OfType<InstallableBook>()
+            .FirstOrDefault(b => b.EnglishName == shown.EnglishName || b.EnglishName == shown.Name)
+            ?? new InstallableBook { EnglishName = shown.EnglishName ?? shown.Name, Name = shown.Name };
+
+        var running = _searchRunning = new object();
+        SearchResults.Children.Clear();
+        SearchStatus.Text = "Searching… (the first search of a Bible makes its index, which takes a moment)";
+        List<InstallableBook.SearchResult> results;
+        try { results = await searchable.Search(phrase); }
+        catch (Exception ex)
+        {
+            if (ReferenceEquals(running, _searchRunning)) SearchStatus.Text = "Search failed: " + ex.Message;
+            return;
+        }
+        if (!ReferenceEquals(running, _searchRunning)) return;
+
+        SearchStatus.Text = results.Count == 0 ? "No verses found." : $"{results.Count} verses, best match first";
+        foreach (var result in results)
+        {
+            var found = result;
+            var verse = new TextBlock { TextWrapping = TextWrapping.Wrap, FontSize = 14 };
+            foreach (var inline in BibleTextBlock.MarkdownInlines(BibleMarkdown.WordIndex.WithoutFootnotes(found.Markdown), 14))
+                verse.Inlines!.Add(inline);
+            var content = new StackPanel
+            {
+                Spacing = 2,
+                Children =
+                {
+                    new TextBlock { Text = $"{found.Position.Book.Name} {found.Position.Chapter}:{found.Position.Verse}", FontWeight = FontWeight.SemiBold, FontSize = 12, Opacity = 0.7 },
+                    verse,
+                },
+            };
+            var button = new Button { Content = content };
+            button.Classes.Add("entry");
+            button.Click += (_, _) => GoToSearchResult(found);
+            SearchResults.Children.Add(button);
+        }
+    }
+
+    private void GoToSearchResult(InstallableBook.SearchResult result)
+    {
+        SearchPopup.IsOpen = false;
+        ShowOnlineBibles = false;
+        ShowSettings = false;
+        if (Target is null) return;
+        // the book of the text block (the search made its own list of the books of the folder)
+        var book = Target.Books?.FirstOrDefault(b => b.Index == result.Position.Book.Index) ?? result.Position.Book;
+        Target.Position = new Bible.VersePosition { Book = book, Chapter = result.Position.Chapter, Verse = result.Position.Verse };
+    }
 
     private void AddMenuEntry(string? image, string header, Func<Task> action)
     {
@@ -324,9 +539,52 @@ public partial class BibleToolbar : UserControl
         Target.Position = new Bible.VersePosition { Book = book, Chapter = chapter, Verse = 0 };
     }
 
+    private static readonly FontFamily GreekFont = new("avares://BibleReader.Library/Assets#Cardo");
+    private static readonly FontFamily HebrewFont = new("avares://BibleReader.Library/Assets#Frank Ruehl CLM");
+
+    /// <summary>Alpha, beta and aleph, bet: the language of the Strong's numbers of the testament that is read.</summary>
+    private void UpdateStrongsLetters(Bible.Book? book)
+    {
+        // The Old Testament has Hebrew Strong's numbers (H), the New Testament Greek ones (G). The books of the
+        // Apocrypha are Greek; front and back matter say nothing, so the letters stay as they are.
+        bool? hebrew = book?.Class switch
+        {
+            Bible.Book.Classes.Pentateuch or Bible.Book.Classes.Historical or Bible.Book.Classes.PoetryAndWisdom
+                or Bible.Book.Classes.MajorProphets or Bible.Book.Classes.MinorProphets => true,
+            Bible.Book.Classes.Gospels or Bible.Book.Classes.Acts or Bible.Book.Classes.Epistles
+                or Bible.Book.Classes.Revelation or Bible.Book.Classes.Apocrypha => false,
+            _ => null,
+        };
+        if (hebrew is null && !string.IsNullOrEmpty(StrongsLetters.Text)) return;
+        StrongsLetters.FontFamily = hebrew == true ? HebrewFont : GreekFont;
+        StrongsLetters.FontSize = hebrew == true ? 30 : 20;
+        StrongsLetters.Text = hebrew == true ? "אב" : "αβ";
+    }
+
+    private Bible? _watchedBible;
+
+    /// <summary>Follows <see cref="Bible.HasStrongs"/> of the Bible that is shown, so the Strongs button appears as soon as it is known.</summary>
+    private void WatchBible(Bible? bible)
+    {
+        if (ReferenceEquals(bible, _watchedBible)) return;
+        if (_watchedBible is not null) _watchedBible.PropertyChanged -= OnBiblePropertyChanged;
+        _watchedBible = bible;
+        if (bible is not null) bible.PropertyChanged += OnBiblePropertyChanged;
+    }
+
+    private void OnBiblePropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        // A book is read on any thread, the button belongs to the UI thread.
+        if (e.PropertyName == nameof(Bible.HasStrongs)) Avalonia.Threading.Dispatcher.UIThread.Post(UpdateText);
+    }
+
     private void UpdateText()
     {
         var position = Position;
+        WatchBible(position?.Book?.Bible);
+        // The Strongs button is only there for a Bible that has Strong's numbers (known once a book of it has been read).
+        StrongsButton.IsVisible = position?.Book?.Bible?.HasStrongs == true;
+        UpdateStrongsLetters(position?.Book);
         BookName.Text = ShortenWithEllipsis(position?.Book?.Name ?? string.Empty, 30);
         BibleName.Text = ShortenWithEllipsis(position?.Book?.Bible?.Name ?? string.Empty, 35);
         ReferenceText.Text = position is null ? "—"

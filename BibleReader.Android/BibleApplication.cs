@@ -40,7 +40,7 @@ public class BibleApplication : AvaloniaAndroidApplication<App>
         var external = GetExternalFilesDir(null)?.AbsolutePath;
         if (external is not null)
         {
-            var pushed = Path.Combine(external, "Bibles");
+            var pushed = Path.Combine(external, "Books");
             if (Directory.Exists(pushed) && Directory.EnumerateFiles(pushed, "*.md").Any()) return pushed;
         }
 

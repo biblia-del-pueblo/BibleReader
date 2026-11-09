@@ -48,7 +48,7 @@
             Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
             BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
         <Grid>
-            <StackPanel Orientation="Horizontal" Spacing="10">
+            <StackPanel Orientation="Horizontal" Spacing="0">
                 <Button x:Name="MenuButton"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
@@ -80,7 +80,6 @@
                         <!-- Direct Svg tag -->
                         <svg:Svg Path="/Assets/down-arrow.svg" Width="18" Height="18"
                                 Css="{DynamicResource SvgThemeCss}" />
-                        <TextBlock Opacity="0.6" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
                 <!-- The installed Bibles: opens a list to choose the Bible to read. -->
@@ -96,6 +95,29 @@
                         <svg:Svg Path="/Assets/bookshelf.svg" Width="30" Height="30"
                                 Css="{DynamicResource SvgThemeCss}" />
                     </StackPanel>
+                </Button>
+                <!-- Search: opens a box to type the words, and below it the verses that have them, best match first. -->
+                <Button x:Name="SearchButton"
+                        VerticalAlignment="Center"
+                        Padding="8,4"
+                        BorderThickness="0"
+                        Background="Transparent"
+                        Cursor="Hand"
+                        ToolTip.Tip="Search"
+                        Click="OnSearchClick">
+                    <svg:Svg Path="/Assets/magnifying-glass.svg" Width="22" Height="22" Css="{DynamicResource SvgThemeCss}" />
+                </Button>
+                <!-- The installed Strong's dictionaries: opens a list in which they are switched on and off. -->
+                <Button x:Name="StrongsButton"
+                        VerticalAlignment="Center"
+                        Padding="8,4"
+                        BorderThickness="0"
+                        Background="Transparent"
+                        Cursor="Hand"
+                        ToolTip.Tip="Strong's dictionaries"
+                        Click="OnStrongsClick">
+                    <!-- Two Greek or Hebrew letters, after the testament of the position (see UpdateText). -->
+                    <TextBlock x:Name="StrongsLetters" FontSize="20" VerticalAlignment="Center" />
                 </Button>
             </StackPanel>
 
@@ -127,6 +149,49 @@
                         BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
                     <ScrollViewer MaxHeight="400" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel x:Name="BiblesItems" />
+                    </ScrollViewer>
+                </Border>
+            </Popup>
+
+            <!-- The search: the words to look for, and the verses that have them. Its entries are added in code. -->
+            <Popup x:Name="SearchPopup"
+                   Placement="BottomEdgeAlignedLeft"
+                   IsLightDismissEnabled="True"
+                   Opened="OnSearchPopupOpened"
+                   Closed="OnSearchPopupClosed">
+                <Border MinWidth="340" MaxWidth="560" Padding="8"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+                        BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                    <StackPanel Spacing="6">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
+                            <TextBox x:Name="SearchBox" PlaceholderText="Search the Bible…" KeyDown="OnSearchKeyDown" />
+                            <Button Grid.Column="1" Click="OnSearchGoClick" ToolTip.Tip="Search">
+                                <svg:Svg Path="/Assets/magnifying-glass.svg" Width="16" Height="16" Css="{DynamicResource SvgThemeCss}" />
+                            </Button>
+                        </Grid>
+                        <TextBlock x:Name="SearchStatus" Opacity="0.7" FontSize="12" IsVisible="False" />
+                        <ScrollViewer MaxHeight="420" HorizontalScrollBarVisibility="Disabled">
+                            <StackPanel x:Name="SearchResults" />
+                        </ScrollViewer>
+                    </StackPanel>
+                </Border>
+            </Popup>
+
+            <!-- The installed Strong's dictionaries, each with a check box; its entries are added in code. -->
+            <Popup x:Name="StrongsPopup"
+                   Placement="BottomEdgeAlignedLeft"
+                   IsLightDismissEnabled="True"
+                   Closed="OnStrongsPopupClosed">
+                <Border MinWidth="220"
+                        Padding="8,4"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+                        BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                    <ScrollViewer MaxHeight="400" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel x:Name="StrongsItems" />
                     </ScrollViewer>
                 </Border>
             </Popup>

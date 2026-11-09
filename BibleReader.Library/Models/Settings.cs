@@ -82,6 +82,8 @@ namespace BibleReader.Library
                 FontSize = settings.FontSize;
                 FontFamily = settings.FontFamily;
                 ConfigPath = settings.ConfigPath;
+                // The dictionaries were switched on or off while the file was read, before the list was replaced.
+                BibleReader.Library.Downloads.StrongsDictionaries.Refresh();
             } catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Failed to load settings: {ex}");

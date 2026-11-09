@@ -14,8 +14,23 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace BibleReader.Library;
 
-public class Bible
+public class Bible : System.ComponentModel.INotifyPropertyChanged
 {
+    /// <summary>Raised when <see cref="HasStrongs"/> changes (possibly on the thread that reads a book).</summary>
+    public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+    /// <summary>Whether the text has Strong's numbers; found out when a book that has them is read.</summary>
+    public bool HasStrongs
+    {
+        get => field;
+        set
+        {
+            if (field == value) return;
+            field = value;
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(HasStrongs)));
+        }
+    } = false;
+
     internal static readonly Dictionary<int, Book.Classes> ClassByIndex = new Dictionary<int, Book.Classes>()
     {
         {0, Book.Classes.Prefix },
@@ -277,9 +292,9 @@ public class Bible
     // Strong's numbers in the USFM style of Creator.UsfmStrongs: a word followed by "_" attributes, "_G1234" / "_H7225"
     // (Strong's number), "_&lemma" and "_%morphology"; "_" also joins the words of a phrase that has one number:
     // "In_the_beginning_H7225_&lemma_%HNcfsa". Words with a "_" but no such attribute are plain text.
-    const string StrongsAttribute = @"_(?:[GH][0-9]+|&[\p{L}\p{M}]+|%[0-9a-zA-Z-]+)(?![%&\p{Nd}\p{L}\p{M}-])";
-    const string StrongsPart = @"_[%&\p{Nd}\p{L}\p{M}-]+";
-    const string StrongsWord = @"(?<![\p{L}\p{M}_])(?=[\p{L}\p{M}]+(?:" + StrongsPart + "){0,}?" + StrongsAttribute +
+    internal const string StrongsAttribute = @"_(?:[GH][0-9]+|&[\p{L}\p{M}]+|%[0-9a-zA-Z-]+)(?![%&\p{Nd}\p{L}\p{M}-])";
+    internal const string StrongsPart = @"_[%&\p{Nd}\p{L}\p{M}-]+";
+    internal const string StrongsWord = @"(?<![\p{L}\p{M}_])(?=[\p{L}\p{M}]+(?:" + StrongsPart + "){0,}?" + StrongsAttribute +
         @")[\p{L}\p{M}]+(?:" + StrongsPart + ")+";
     static readonly Regex TextParts = new(
         @"\*\*(?<bold>.*?)\*\*|\*(?<italic>.*?)\*|" +
@@ -367,6 +382,7 @@ public class Bible
     /// </summary>
     static Run ParseStrongsWord(string word, VersePosition position)
     {
+        if (position?.Book?.Bible is { } bible) bible.HasStrongs = true;
         var text = StrongsAttributes.Replace(word, "").Replace('_', ' ');
         var numbers = Regex.Matches(word, @"(?<=_)[GH][0-9]+(?![%&\p{Nd}\p{L}\p{M}-])").Select(n => n.Value);
         var lemma = Regex.Match(word, @"(?<=_&)[\p{L}\p{M}]+");
@@ -517,7 +533,7 @@ public class Bible
         {
             if (field == null)
             {
-                field = Path.Combine(Settings.Current.ConfigPath, "Bibles", WebUtility.UrlEncode(EnglishName));
+                field = Path.Combine(Settings.Current.ConfigPath, "Books", WebUtility.UrlEncode(EnglishName));
             }
             return field;
         }

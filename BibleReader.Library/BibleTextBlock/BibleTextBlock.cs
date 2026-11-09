@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using BibleReader.Library.Downloads;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -566,7 +568,7 @@ public class BibleTextBlock : Panel
 
         // 1. Measure floats. Each one is anchored at the text index where it was declared and gets placed
         //    while flowing, on the line that contains that index (like CSS float).
-        var (text, segments, anchors, notes, breaks, splitIndex, markers) = Flatten();
+        var (text, segments, anchors, notes, breaks, splitIndex, markers, strongs) = Flatten();
         var pending = new List<(Control Child, Size Size, FloatSide Side, int Anchor)>();
         foreach (var child in Children.OfType<Control>().Where(c => c != _layer && c != _popup && c != _scrollBar && c != _vBar && c != _tail))
         {
@@ -624,6 +626,7 @@ public class BibleTextBlock : Panel
         _splitIndex = splitIndex;
         _markers = markers;
         _notes = notes;
+        _strongs = strongs;
         _text = text;
         _anchor = Math.Min(_anchor, text.Length);
         _caret = Math.Min(_caret, text.Length);
@@ -1153,6 +1156,12 @@ public class BibleTextBlock : Panel
             e.Handled = true;
             Dispatcher.UIThread.Post(() => ShowFootnote(note, bounds), DispatcherPriority.Background);
         }
+        else if (HitStrongs(ToContent(position), out var wordBounds) is { } strong)
+        {
+            wordBounds = wordBounds.Translate(new Vector(-_offsetX, -_offsetY));
+            e.Handled = true;
+            _ = ShowStrongsAsync(strong, wordBounds);
+        }
     }
 
     // ---- Column scrolling ---------------------------------------------------------------------------
@@ -1428,6 +1437,7 @@ public class BibleTextBlock : Panel
             owner.DrawSelection(context);
             foreach (var placed in owner._lines)
                 if (owner.IsInView(placed)) placed.Line.Draw(context, placed.Origin);
+            owner.DrawStrongsUnderlines(context);
         }
     }
 
@@ -1445,6 +1455,44 @@ public class BibleTextBlock : Panel
     private readonly BusySpinner _tail; // after the lines flowed so far, while the rest is still being flowed
     private Rect? _tailRect;            // where it sits, in the coordinates of the text
     private List<NoteRange> _notes = new();
+    private List<StrongsRange> _strongs = new(); // in the order of the text, so they can be searched by position
+
+    /// <summary>Finds the word with Strong's numbers under <paramref name="point"/>, and the bounds of the word.</summary>
+    private string? HitStrongs(Point point, out Rect bounds)
+    {
+        bounds = default;
+        if (_strongs.Count == 0 || !StrongsDictionaries.Any) return null; // without a dictionary there is nothing to show
+        foreach (var pl in _lines)
+        {
+            var line = pl.Line;
+            if (point.Y < pl.Origin.Y || point.Y >= pl.Origin.Y + line.Height) continue;
+            double x = point.X - pl.Origin.X;
+            if (x < 0 || x > line.WidthIncludingTrailingWhitespace) continue; // another column's line may match
+
+            int index = line.GetCharacterHitFromDistance(x).FirstCharacterIndex;
+            int lo = 0, hi = _strongs.Count - 1;
+            while (lo <= hi)
+            {
+                int mid = (lo + hi) >> 1;
+                var word = _strongs[mid];
+                if (index < word.Start) hi = mid - 1;
+                else if (index >= word.End) lo = mid + 1;
+                else
+                {
+                    // the part of the word on this line (a phrase may go on in the next one)
+                    int start = Math.Max(word.Start, line.FirstTextSourceIndex);
+                    int end = Math.Min(word.End, line.FirstTextSourceIndex + line.Length);
+                    var rects = end > start ? line.GetTextBounds(start, end - start) : [];
+                    bounds = rects.Count > 0
+                        ? rects[0].Rectangle.Translate(new Vector(pl.Origin.X, pl.Origin.Y))
+                        : new Rect(point, new Size(1, line.Height));
+                    return word.Strong;
+                }
+            }
+            return null;
+        }
+        return null;
+    }
 
     /// <summary>Finds the footnote marker under <paramref name="point"/>, and the marker's bounds.</summary>
     private Footnote? HitFootnote(Point point, out Rect bounds)
@@ -1610,6 +1658,43 @@ public class BibleTextBlock : Panel
             await clipboard.SetTextAsync(GetSelectedText());
     }
 
+    /// <summary>
+    /// The dotted underline of the words with Strong's numbers (gray, white in dark mode), while a Strong's dictionary
+    /// is switched on. It is drawn from the ranges of the words, below the baseline of each line they are on.
+    /// </summary>
+    private void DrawStrongsUnderlines(DrawingContext context)
+    {
+        if (_strongs.Count == 0 || !StrongsDictionaries.Any) return;
+        var pen = ActualThemeVariant == Avalonia.Styling.ThemeVariant.Dark ? StrongsPenDark : StrongsPenLight;
+        foreach (var pl in _lines)
+        {
+            if (!IsInView(pl)) continue;
+            var line = pl.Line;
+            int first = line.FirstTextSourceIndex, last = first + line.Length - line.NewLineLength;
+
+            // the first word that ends after the start of the line (the words are in order and do not overlap)
+            int lo = 0, hi = _strongs.Count;
+            while (lo < hi)
+            {
+                int mid = (lo + hi) >> 1;
+                if (_strongs[mid].End <= first) lo = mid + 1; else hi = mid;
+            }
+
+            double descent = line.Height - line.Baseline;
+            double y = pl.Origin.Y + line.Baseline + Math.Min(StrongsUnderlineThickness + 0.5, descent / 2);
+            for (int i = lo; i < _strongs.Count && _strongs[i].Start < last; i++)
+            {
+                int start = Math.Max(_strongs[i].Start, first), end = Math.Min(_strongs[i].End, last);
+                if (end <= start) continue;
+                foreach (var box in line.GetTextBounds(start, end - start))
+                {
+                    var r = box.Rectangle;
+                    context.DrawLine(pen, new Point(pl.Origin.X + r.Left, y), new Point(pl.Origin.X + r.Right, y));
+                }
+            }
+        }
+    }
+
     private void DrawSelection(DrawingContext context)
     {
         if (!HasSelection) return;
@@ -1644,16 +1729,21 @@ public class BibleTextBlock : Panel
             if (IndexAt(point) is { } index) SetSelection(_anchor, index);
             return;
         }
-        Cursor = HitFootnote(point, out _) is not null ? HandCursor : IsOverText(point) ? IBeamCursor : null;
+        Cursor = HitFootnote(point, out _) is not null || HitStrongs(point, out _) is not null ? HandCursor : IsOverText(point) ? IBeamCursor : null;
     }
 
     protected override void OnPointerReleased(PointerReleasedEventArgs e)
     {
         base.OnPointerReleased(e);
         _touchDown = false;
+        var pressedStrong = _pressedStrong;
+        _pressedStrong = null;
         if (!_selecting) return;
         _selecting = false;
         e.Pointer.Capture(null);
+        // A click on a word with Strong's numbers (not a drag that selected text) shows its dictionary entries.
+        if (pressedStrong is { } word && _anchor == _caret)
+            _ = ShowStrongsAsync(word.Strong, word.Bounds.Translate(new Vector(-_offsetX, -_offsetY)));
     }
 
     // Light dismiss closes a popup that opens during the very press that is being handled, so the popup is
@@ -1674,6 +1764,8 @@ public class BibleTextBlock : Panel
             return;
         }
 
+        _pressedStrong = e.ClickCount == 1 && HitStrongs(point, out var wordBounds) is { } strong ? (strong, wordBounds) : null;
+
         // Start a selection: click collapses it, double-click selects a word, dragging extends it.
         Focus();
         if (IndexAt(point) is not { } index) return;
@@ -1690,21 +1782,49 @@ public class BibleTextBlock : Panel
         e.Handled = true;
     }
 
+    private (string Strong, Rect Bounds)? _pressedStrong;
+
     /// <summary>The popup's text is this much smaller than the text of the reader.</summary>
     private const double FootnoteScale = 0.85;
 
-    private void ShowFootnote(Footnote note, Rect bounds)
+    private void ShowFootnote(Footnote note, Rect bounds) => ShowPopup(note.CloneContent(FootnoteScale), bounds);
+
+    /// <summary>
+    /// Shows the entries of the Strong's dictionaries that are switched on for the numbers of a word
+    /// (<see cref="StrongsDictionaries.Lookup"/>), as markdown, in the popup of the footnotes.
+    /// </summary>
+    private async Task ShowStrongsAsync(string strong, Rect bounds)
+    {
+        string? markdown;
+        try { markdown = await Task.Run(() => StrongsDictionaries.Lookup(strong)); }
+        catch (Exception ex) when (ex is IOException or InvalidDataException or LiteDB.LiteException)
+        {
+            markdown = null; // a dictionary whose database cannot be read has no entry
+        }
+        if (string.IsNullOrWhiteSpace(markdown))
+            markdown = $"No entry for {strong}. Switch a Strong's dictionary on with the Strongs button.";
+
+        // The markdown of the dictionaries is the same Bible Markdown as the text: bold, italic and paragraphs.
+        var runs = Bible.ParseText(markdown, Bible.Run.Classes.Text, new Bible.VersePosition());
+        ShowPopup(ToInlines(runs, FontSize * FootnoteScale, upperCase: false), bounds);
+    }
+
+    /// <summary>The inlines of a text in Bible Markdown (bold, italic, small caps, ...), to show it outside the text block.</summary>
+    internal static IEnumerable<Inline> MarkdownInlines(string markdown, double size) =>
+        ToInlines(Bible.ParseText(markdown, Bible.Run.Classes.Text, new Bible.VersePosition()), size, upperCase: false);
+
+    private void ShowPopup(IEnumerable<Inline> content, Rect bounds)
     {
         _popup.IsOpen = false;
         _popup.PlacementRect = bounds;
         // Theme resources (not fixed colours) so the popup follows light/dark mode, including live theme switches.
-        var text = new SelectableTextBlock // selectable so the footnote text can be copied
+        var text = new SelectableTextBlock // selectable so the text can be copied
         {
             TextWrapping = TextWrapping.Wrap,
             FontSize = FontSize * FootnoteScale,
             FontFamily = FontFamily, // a popup is its own visual root: it would not inherit the font from this control
         };
-        foreach (var inline in note.CloneContent(FootnoteScale)) text.Inlines!.Add(inline);
+        foreach (var inline in content) text.Inlines!.Add(inline);
         text[!TextBlock.ForegroundProperty] = new DynamicResourceExtension("SystemControlForegroundBaseHighBrush");
 
         var card = new Border
@@ -1713,7 +1833,16 @@ public class BibleTextBlock : Panel
             CornerRadius = new CornerRadius(6),
             Padding = new Thickness(10, 8),
             MaxWidth = 320,
-            Child = text,
+            Child = new ScrollViewer { MaxHeight = 360, HorizontalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Disabled, Content = text },
+            // The drop shadow is drawn outside the card, so the popup needs room around it (and a transparent window).
+            Margin = new Thickness(12),
+            // A black shadow is invisible on a dark background: in dark mode the shadow is white. The popup is built
+            // each time it is shown, so a change of theme is picked up by the next one.
+            BoxShadow = new BoxShadows(new BoxShadow
+            {
+                OffsetX = 0, OffsetY = 3, Blur = 12, Spread = 0,
+                Color = ActualThemeVariant == Avalonia.Styling.ThemeVariant.Dark ? Color.FromArgb(0x70, 255, 255, 255) : Color.FromArgb(0x60, 0, 0, 0),
+            }),
         };
         card[!Border.BackgroundProperty] = new DynamicResourceExtension("SystemControlBackgroundAltHighBrush");
         card[!Border.BorderBrushProperty] = new DynamicResourceExtension("SystemControlForegroundBaseLowBrush");
@@ -1721,15 +1850,33 @@ public class BibleTextBlock : Panel
         _popup.IsOpen = true;
     }
 
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        StrongsDictionaries.AnyChanged += OnStrongsAnyChanged;
+        _layer.InvalidateVisual(); // it may have changed while the control was away
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        StrongsDictionaries.AnyChanged -= OnStrongsAnyChanged;
+        base.OnDetachedFromVisualTree(e);
+    }
+
+    // The underline is painted by the text layer: paint again, no layout is needed.
+    private void OnStrongsAnyChanged(object? sender, EventArgs e) => Dispatcher.UIThread.Post(_layer.InvalidateVisual);
+
     public BibleTextBlock()
     {
         _layer = new TextLayer(this) { IsHitTestVisible = false };
+        ActualThemeVariantChanged += (_, _) => _layer.InvalidateVisual(); // the underline of Strong's words follows the theme
         Children.Add(_layer);
         _popup = new Popup
         {
             Placement = PlacementMode.Bottom,
             IsLightDismissEnabled = true,
             PlacementTarget = this,
+            WindowManagerAddShadowHint = false, // the card draws its own shadow, not a rectangular one of the window manager
         };
         Children.Add(_popup);
         _tail = new BusySpinner { IsVisible = false, IsHitTestVisible = false, Thickness = 3 };
@@ -2016,13 +2163,14 @@ public class BibleTextBlock : Panel
         }
 
         // Everything else is a styled span around the run's text or its parsed children.
-        var span = new Span();
+        var span = run.Class == Bible.Run.Classes.WordWithStrong && !string.IsNullOrWhiteSpace(run.StrongNumber)
+            ? new StrongsSpan { Strong = run.StrongNumber }
+            : new Span();
         bool lineAfter = false;
         switch (run.Class)
         {
             case Bible.Run.Classes.Bold: span.FontWeight = FontWeight.Bold; break;
             case Bible.Run.Classes.Italic: span.FontStyle = FontStyle.Italic; break;
-            case Bible.Run.Classes.WordWithStrong: span.TextDecorations = StrongsUnderline; break;
             case Bible.Run.Classes.Greek: span.FontFamily = GreekFont; break;
             case Bible.Run.Classes.Hebrew:
                 span.FontFamily = HebrewFont;
@@ -2061,18 +2209,16 @@ public class BibleTextBlock : Panel
 
     private const double SmallCapsScale = 0.85;
 
-    /// <summary>The dotted gray underline of words that have a Strong's number.</summary>
-    private static readonly TextDecorationCollection StrongsUnderline = new()
-    {
-        new TextDecoration
-        {
-            Location = TextDecorationLocation.Underline,
-            Stroke = new SolidColorBrush(Colors.Gray),
-            StrokeThickness = 1.2,
-            StrokeDashArray = new Avalonia.Collections.AvaloniaList<double> { 1, 2 },
-            StrokeLineCap = PenLineCap.Round,
-        },
-    };
+    // The dotted underline of words that have a Strong's number is drawn by the text layer (see DrawStrongsUnderlines),
+    // not made a decoration of the text: it then does not belong to the laid-out lines, and switching it on or off, or
+    // changing the theme, only paints again.
+    private const double StrongsUnderlineThickness = 1.2;
+    private static readonly Pen StrongsPenLight = StrongsPenOf(Brushes.Gray);
+    private static readonly Pen StrongsPenDark = StrongsPenOf(Brushes.White);
+
+    // A dash is as long as the thickness times its number: 1 on, 2 off with round caps are dots.
+    private static Pen StrongsPenOf(IBrush brush) =>
+        new(brush, StrongsUnderlineThickness, new DashStyle(new double[] { 1, 2 }, 0), PenLineCap.Round);
 
     // Greek text is set in Cardo and Hebrew in Frank Ruehl CLM, whatever font the reader chose for the rest.
     private static readonly FontFamily GreekFont = new("avares://BibleReader.Library/Assets#Cardo");
@@ -2125,6 +2271,9 @@ public class BibleTextBlock : Panel
 
     private readonly record struct NoteRange(int Start, int End, Footnote Note);
 
+    /// <summary>Where a word with Strong's numbers is in the flattened text.</summary>
+    private readonly record struct StrongsRange(int Start, int End, string Strong);
+
     private static readonly IBrush LinkBrush = new SolidColorBrush(Color.Parse("#1A6FD1"));
 
     private readonly record struct Segment(int Start, int End, RunStyle Style);
@@ -2155,12 +2304,13 @@ public class BibleTextBlock : Panel
     /// per-run styles. Whitespace is collapsed like HTML so indented XAML text doesn't show its indentation.
     /// </summary>
     private (string Text, List<Segment> Segments, Dictionary<Control, int> Anchors, List<NoteRange> Notes,
-        HashSet<int> Breaks, int SplitIndex, List<(int Index, Bible.VersePosition Pos)> Markers) Flatten()
+        HashSet<int> Breaks, int SplitIndex, List<(int Index, Bible.VersePosition Pos)> Markers, List<StrongsRange> Strongs) Flatten()
     {
         var sb = new StringBuilder();
         var segs = new List<Segment>();
         var anchors = new Dictionary<Control, int>();
         var notes = new List<NoteRange>();
+        var strongs = new List<StrongsRange>();
         var breaks = new HashSet<int>();
         var markers = new List<(int Index, Bible.VersePosition Pos)>();
         int splitIndex = -1;
@@ -2243,6 +2393,13 @@ public class BibleTextBlock : Panel
                         if (ReferenceEquals(pageBreak, _bookBreak)) splitIndex = sb.Length; // the second book starts here
                         break;
                     case LineBreak: Append("\n", style, verbatim: true); break;
+                    case StrongsSpan word when word.Inlines is { } children:
+                    {
+                        int wordStart = sb.Length;
+                        Walk(children, style);
+                        if (sb.Length > wordStart) strongs.Add(new StrongsRange(wordStart, sb.Length, word.Strong));
+                        break;
+                    }
                     case Span span when span.Inlines is { } children: Walk(children, style); break;
                 }
             }
@@ -2260,7 +2417,7 @@ public class BibleTextBlock : Panel
             else segs[^1] = last with { End = last.End - 1 };
         }
         // The caller stores breaks, split and markers together with the lines they belong to (see MeasureCore).
-        return (sb.ToString(), segs, anchors, notes, breaks, splitIndex, markers);
+        return (sb.ToString(), segs, anchors, notes, breaks, splitIndex, markers, strongs);
     }
 
     /// <summary>Index of the segment containing <paramref name="index"/> (segments are contiguous and sorted), or -1.</summary>

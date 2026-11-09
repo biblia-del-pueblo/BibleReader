@@ -60,13 +60,16 @@ public partial class OnlineBibleItem : ObservableObject
     {
         if (string.IsNullOrEmpty(bible.EnglishName)) return false;
         var dir = bible.ConfigPath;
-        return Directory.Exists(dir) && Directory.EnumerateFiles(dir, "*.md").Any();
+        if (!Directory.Exists(dir)) return false;
+        // A Strong's dictionary has no books: it is installed when its database is.
+        return bible is IStrongDictionary ? File.Exists(Path.Combine(dir, BibleMarkdown.StrongsDatabase.FileName))
+            : Directory.EnumerateFiles(dir, "*.md").Any();
     }
 }
 
 /// <summary>
 /// Lists the Bibles offered by ebible.org, filtered by language (and a name search), and installs the chosen
-/// one with <see cref="eBible.Installl"/>. The layout is in OnlineBiblesView.axaml.
+/// one with <see cref="eBible.Install"/>. The layout is in OnlineBiblesView.axaml.
 /// </summary>
 public partial class OnlineBiblesView : UserControl
 {
@@ -108,6 +111,7 @@ public partial class OnlineBiblesView : UserControl
         {
             if (e.Property == ComboBox.TextProperty) ApplyFilter();
         };
+        ClassPopup.PlacementTarget = ClassButton;
         SizeChanged += (_, e) => IsWide = e.NewSize.Width > WideWidth;
         AttachedToVisualTree += (_, _) => OnShown();
         // The page is kept while it is hidden, so what is installed may have changed since it was last shown.
@@ -195,7 +199,7 @@ public partial class OnlineBiblesView : UserControl
             LoadSpinner.IsVisible = true;
             StatusText.Text = $"Installing {name}…";
             bible = new BookArchive { File = path, Name = name, EnglishName = name, Language = "", LanguageEnglishName = "" };
-            await bible.Installl();
+            await bible.Install();
             if (!Directory.EnumerateFiles(bible.ConfigPath, "*.md").Any())
                 throw new InvalidDataException("No books could be imported from the file.");
 
@@ -273,15 +277,13 @@ public partial class OnlineBiblesView : UserControl
         if (_loading || !Settings.Current.InMyCountryThereIsNoPersecution) return;
         _loading = true;
         LoadSpinner.IsVisible = true;
-        StatusText.Text = "Loading Bibles from ebible.org…";
+        StatusText.Text = "Loading Bibles from ebible.org and crosswire.org…";
         try
         {
-            var bibles = await Task.Run(async () => (await eBible.GetBiblesAsync())
-                .OrderBy(b => b.LanguageEnglishName)
-                .ThenBy(b => b.Name)
-                .ToList());
+            var bibles = await Task.Run(LoadSourcesAsync);
             _items = bibles.Select(b => new OnlineBibleItem(b, this)).ToList();
             FillLanguages();
+            FillClasses();
             ApplyFilter();
         }
         catch (Exception ex)
@@ -294,6 +296,96 @@ public partial class OnlineBiblesView : UserControl
             LoadSpinner.IsVisible = false;
         }
     }
+
+    /// <summary>
+    /// The modules of all the sources, in one list sorted by language and name. A source that cannot be reached is
+    /// left out (the others are still listed); only when none can be reached is that an error.
+    /// </summary>
+    private static async Task<List<InstallableBook>> LoadSourcesAsync()
+    {
+        var sources = new Func<Task<IEnumerable<InstallableBook>>>[]
+        {
+            async () => await eBible.GetBiblesAsync(),
+            async () => await CrossWireBook.GetBiblesAsync(),
+            async () => await CrossWireDictionary.GetStrongsDictionariesAsync(),
+        };
+        var results = await Task.WhenAll(sources.Select(async load =>
+        {
+            try { return (Books: await load(), Error: (Exception?)null); }
+            catch (Exception ex) { return (Books: Enumerable.Empty<InstallableBook>(), Error: ex); }
+        }));
+
+        var books = results.SelectMany(r => r.Books)
+            .OrderBy(b => b.LanguageEnglishName ?? "", StringComparer.CurrentCultureIgnoreCase)
+            .ThenBy(b => b.Name ?? b.EnglishName ?? "", StringComparer.CurrentCultureIgnoreCase)
+            .ToList();
+        if (books.Count == 0 && results.FirstOrDefault(r => r.Error != null).Error is { } error) throw error;
+        return books;
+    }
+
+    private InstallableBook.Classes _classFilter = InstallableBook.Classes.All;
+    private DateTime _classClosedAt = DateTime.MinValue;
+
+    /// <summary>The kinds of modules (<see cref="InstallableBook.Classes"/>) that are in the list: a choice of one, or all.</summary>
+    private void FillClasses()
+    {
+        var present = _items.Select(i => i.Bible.Class).Distinct().Where(c => c != InstallableBook.Classes.All).Order().ToList();
+        if (_classFilter != InstallableBook.Classes.All && !present.Contains(_classFilter)) _classFilter = InstallableBook.Classes.All;
+
+        // A list with one selected entry (radio buttons do not exclude each other while the popup is closed, which
+        // left "All" checked for good).
+        _fillingClasses = true;
+        try
+        {
+            var entries = present.Prepend(InstallableBook.Classes.All).Select(kind => new ListBoxItem
+            {
+                Tag = kind,
+                Content = kind == InstallableBook.Classes.All ? $"All ({_items.Count})" : $"{kind} ({_items.Count(i => i.Bible.Class == kind)})",
+            }).ToList();
+            ClassList.ItemsSource = entries;
+            ClassList.SelectedItem = entries.First(entry => (InstallableBook.Classes)entry.Tag! == _classFilter);
+        }
+        finally { _fillingClasses = false; }
+        UpdateClassButton();
+    }
+
+    private bool _fillingClasses;
+
+    /// <summary>A kind was chosen; choosing the chosen one again (nothing selected) or "All" turns the filter off.</summary>
+    private void OnClassSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (_fillingClasses) return;
+        var kind = (ClassList.SelectedItem as ListBoxItem)?.Tag is InstallableBook.Classes chosen ? chosen : InstallableBook.Classes.All;
+        if (ClassList.SelectedItem is null) // toggled off: "All" is the entry that shows it
+        {
+            _fillingClasses = true;
+            ClassList.SelectedIndex = 0;
+            _fillingClasses = false;
+        }
+        ClassPopup.IsOpen = false;
+        if (kind == _classFilter) return;
+        _classFilter = kind;
+        UpdateClassButton();
+        ApplyFilter();
+    }
+
+    /// <summary>The filter icon is tinted while a kind is chosen, so a shortened list is not a surprise.</summary>
+    private void UpdateClassButton()
+    {
+        bool active = _classFilter != InstallableBook.Classes.All;
+        ClassButton.Background = active ? new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#664C8BF5")) : Avalonia.Media.Brushes.Transparent;
+        ToolTip.SetTip(ClassButton, active ? $"Showing: {_classFilter}" : "Filter by kind");
+    }
+
+    private void OnClassFilterClick(object? sender, RoutedEventArgs e)
+    {
+        if (ClassPopup.IsOpen) { ClassPopup.IsOpen = false; return; }
+        // Pressing the button already light-dismissed the open popup; don't reopen it with the same click.
+        if ((DateTime.UtcNow - _classClosedAt).TotalMilliseconds < 300) return;
+        ClassPopup.IsOpen = true;
+    }
+
+    private void OnClassPopupClosed(object? sender, EventArgs e) => _classClosedAt = DateTime.UtcNow;
 
     private void FillLanguages()
     {
@@ -334,25 +426,31 @@ public partial class OnlineBiblesView : UserControl
         }
         var language = LanguageBox.Text?.Trim();
         if (string.IsNullOrEmpty(language)) language = AllLanguages;
+        string langenglish = null;
         if (Regex.IsMatch(language, "[a-z]{2,3}(?:-[A-Z]{2})?"))
         {
             try
             {
                 var culture = CultureInfo.GetCultureInfo(language);
                 language = Regex.Replace(culture.NativeName, @"\s+|\(.*?\)", "", RegexOptions.Singleline);
+                langenglish = Regex.Replace(culture.EnglishName, @"\s+|\(.*?\)", "", RegexOptions.Singleline);
             }
             catch { }
         }
         var text = SearchBox.Text?.Trim();
         var filtered = _items.Where(i =>
+            (_classFilter == InstallableBook.Classes.All || i.Bible.Class == _classFilter) &&
             (language == AllLanguages || i.Bible.Language.Contains(language, StringComparison.CurrentCultureIgnoreCase) ||
-            i.Bible.LanguageEnglishName.Contains(language, StringComparison.CurrentCultureIgnoreCase)) &&
+            i.Bible.LanguageEnglishName.Contains(language, StringComparison.CurrentCultureIgnoreCase) ||
+            langenglish != null && 
+            (i.Bible.Language.Contains(langenglish, StringComparison.CurrentCultureIgnoreCase) ||
+            i.Bible.LanguageEnglishName.Contains(langenglish, StringComparison.CurrentCultureIgnoreCase))) &&
             (string.IsNullOrEmpty(text) ||
              (i.Bible.Name?.Contains(text, StringComparison.CurrentCultureIgnoreCase) ?? false) ||
              (i.Bible.EnglishName?.Contains(text, StringComparison.CurrentCultureIgnoreCase) ?? false)))
             .ToList();
         List.ItemsSource = filtered;
-        if (_items.Count > 0) StatusText.Text = $"{filtered.Count} of {_items.Count} Bibles";
+        if (_items.Count > 0) StatusText.Text = $"{filtered.Count} of {_items.Count} modules";
     }
 
     private void OnDeleteClick(object? sender, RoutedEventArgs e)
@@ -373,11 +471,11 @@ public partial class OnlineBiblesView : UserControl
         item.IsBusy = true;
         try
         {
-            var folder = item.Bible.ConfigPath;
-            await Task.Run(() => { if (Directory.Exists(folder)) Directory.Delete(folder, true); });
+            await Task.Run(() => item.Bible.Uninstall());
             var settings = Settings.Current;
             settings.Bibles?.RemoveAll(b => b.EnglishName == item.Bible.EnglishName);
             settings.Save();
+            StrongsDictionaries.Refresh();
             item.IsInstalled = false;
             // The Bible may be shown in both lists (the rows are separate objects): the online one is no longer installed.
             foreach (var other in _items.Where(o => o.Bible.EnglishName == item.Bible.EnglishName)) other.IsInstalled = false;
@@ -402,13 +500,14 @@ public partial class OnlineBiblesView : UserControl
         item.IsBusy = true;
         try
         {
-            await item.Bible.Installl();
+            await item.Bible.Install();
             item.IsInstalled = true;
             var settings = Settings.Current;
             settings.Bibles ??= new List<Bible>();
-            if (!settings.Bibles.OfType<eBible>().Any(b => b.EnglishName == item.Bible.EnglishName))
+            if (!settings.Bibles.OfType<InstallableBook>().Any(b => b.Origin == item.Bible.Origin && b.EnglishName == item.Bible.EnglishName))
                 settings.Bibles.Add(item.Bible);
             settings.Save();
+            StrongsDictionaries.Refresh(); // a dictionary that was installed counts only once it is in the list
             UpdateInstalled();
             BibleInstalled?.Invoke(this, item.Bible);
         }

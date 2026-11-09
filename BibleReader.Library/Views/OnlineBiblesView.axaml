@@ -72,13 +72,29 @@
             <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="8">
                 <ComboBox x:Name="LanguageBox" MinWidth="200" IsEditable="True" SelectionChanged="OnLanguageChanged"
                     PlaceholderText="Language…"/>
-                <svg:Svg Grid.Column="1" Path="/Assets/filter.svg" Width="18" Height="18" Css="{DynamicResource SvgThemeCss}" />
+                <!-- The filter icon is a button: it opens the list of the kinds of modules (InstallableBook.Classes). -->
+                <Button x:Name="ClassButton" Grid.Column="1" Padding="8,6" BorderThickness="0" Background="Transparent"
+                        Cursor="Hand" ToolTip.Tip="Filter by kind" Click="OnClassFilterClick">
+                    <svg:Svg Path="/Assets/filter.svg" Width="18" Height="18" Css="{DynamicResource SvgThemeCss}" />
+                </Button>
                 <TextBox x:Name="SearchBox" Grid.Column="2" PlaceholderText="Search name…" TextChanged="OnSearchChanged" />
                 <Button Grid.Column="3" Click="OnReloadClick" ToolTip.Tip="Reload">
                     <svg:Svg Path="/Assets/cycle.svg" Width="18" Height="18" Css="{DynamicResource SvgThemeCss}" />
                 </Button>
             </Grid>
         </StackPanel>
+
+        <!-- The kinds of modules to show; its entries are added in code. -->
+        <Popup x:Name="ClassPopup" Grid.Row="1" Placement="BottomEdgeAlignedLeft" IsLightDismissEnabled="True"
+               Closed="OnClassPopupClosed">
+            <Border MinWidth="180" Padding="8,4" BorderThickness="1" CornerRadius="6"
+                    Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+                    BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                <!-- Toggle: choosing the chosen kind again clears the filter. -->
+                <ListBox x:Name="ClassList" SelectionMode="Toggle" Background="Transparent"
+                         SelectionChanged="OnClassSelectionChanged" />
+            </Border>
+        </Popup>
 
         <TextBlock x:Name="StatusText" Grid.Row="2" Margin="12,0,12,6" Opacity="0.7" />
 

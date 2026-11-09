@@ -15,6 +15,7 @@ public class eBible : InstallableBook
     const string Url = "https://ebible.org/find";
 
     public override string Origin => "eBible";
+    public override Classes Class { get => InstallableBook.Classes.Bible; }
     static async Task<string> GetListAsync() => await Download.DownloadStringAsync(Url);
 
     public static async Task<IEnumerable<eBible>> GetBiblesAsync()
@@ -57,7 +58,7 @@ public class eBible : InstallableBook
             .ToList();
     }
 
-    public override async Task Installl()
+    public override async Task Install()
     {
         var details = await Download.DownloadStringAsync(DetailsUrl);
         var html = new HtmlAgilityPack.HtmlDocument();
