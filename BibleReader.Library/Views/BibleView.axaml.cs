@@ -180,6 +180,7 @@ public partial class BibleView : UserControl
         Block.FontFamily = SettingsView.FamilyOf(settings.FontFamily);
         Block.ShowWordsOfJesus = settings.ShowWordsOfJesus ?? true;
         Block.ShowVerseNumbersInGreen = settings.ShowVerseNumbersInGreen ?? false;
+        Block.Hyphenate = settings.Hyphenate ?? true;
     }
 
     /// <summary>The settings changed: the text is built again a moment after the last change (a slider fires often).</summary>

@@ -37,6 +37,27 @@
                         <ComboBoxItem Content="Русский" Tag="ru" />
                         <ComboBoxItem Content="Español" Tag="es" />
                         <ComboBoxItem Content="Türkçe" Tag="tr" />
+                        <ComboBoxItem Content="Italiano" Tag="it" />
+                        <ComboBoxItem Content="Nederlands" Tag="nl" />
+                        <ComboBoxItem Content="Polski" Tag="pl" />
+                        <ComboBoxItem Content="Dansk" Tag="da" />
+                        <ComboBoxItem Content="Svenska" Tag="sv" />
+                        <ComboBoxItem Content="Norsk bokmål" Tag="nb" />
+                        <ComboBoxItem Content="Suomi" Tag="fi" />
+                        <ComboBoxItem Content="فارسی" Tag="fa" />
+                        <ComboBoxItem Content="हिन्दी" Tag="hi" />
+                        <ComboBoxItem Content="नेपाली" Tag="ne" />
+                        <ComboBoxItem Content="اردو" Tag="ur" />
+                        <ComboBoxItem Content="پښتو" Tag="ps" />
+                        <ComboBoxItem Content="Հայերեն" Tag="hy" />
+                        <ComboBoxItem Content="Bahasa Indonesia" Tag="id" />
+                        <ComboBoxItem Content="Tiếng Việt" Tag="vi" />
+                        <ComboBoxItem Content="ไทย" Tag="th" />
+                        <ComboBoxItem Content="ខ្មែរ" Tag="km" />
+                        <ComboBoxItem Content="සිංහල" Tag="si" />
+                        <ComboBoxItem Content="Filipino" Tag="fil" />
+                        <ComboBoxItem Content="Монгол" Tag="mn" />
+                        <ComboBoxItem Content="中文（繁體）" Tag="zh-Hant" />
                     </ComboBox>
                 </StackPanel>
                 <TextBlock x:Name="LanguageHint" Opacity="0.7" TextWrapping="Wrap" IsVisible="False" />
@@ -80,6 +101,10 @@
                     <CheckBox x:Name="GreenVerseBox" Content="{loc:Loc ShowVersesGreen}"
                               IsCheckedChanged="OnGreenVerseChanged" />
                 </StackPanel>
+
+                <!-- Words are split at the end of a line (for the languages that have hyphenation patterns). -->
+                <CheckBox x:Name="HyphenateBox" Content="{loc:Loc Hyphenation}"
+                          IsCheckedChanged="OnHyphenateChanged" />
 
                 <!-- Online Bibles are only listed when this is ticked. -->
                 <CheckBox x:Name="NoPersecutionBox" Content="{loc:Loc NoPersecution}"

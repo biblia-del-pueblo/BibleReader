@@ -5,10 +5,16 @@
         <NeutralLanguage>en</NeutralLanguage> <!-- the language of Resources/Strings.resx; the others are Strings.de.resx ... -->
         <LangVersion>latest</LangVersion>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <DefineConstants>$(DefineConstants);BibleReader</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
         <AvaloniaResource Include="Assets\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- InstallableBook is shared with BibleMarkdown, where it also reads info.json (see the #if BibleReader in it). -->
+        <Compile Include="..\BibleMarkdown\BibleMarkdown\InstallableBook.cs" Link="Downloads\InstallableBook.cs" />
     </ItemGroup>
 
     <ItemGroup>
@@ -27,6 +33,7 @@
         <PackageReference Include="Svg.Controls.Skia.Avalonia" />
         <PackageReference Include="EstrellasDeEsperanza.AsyncLock" />
         <PackageReference Include="LibArchive.Net" />
+        <PackageReference Include="NHyphenator" />
         <PackageReference Include="HtmlAgilityPack" />
         <PackageReference Include=" System.Linq.AsyncEnumerable" />
     </ItemGroup>

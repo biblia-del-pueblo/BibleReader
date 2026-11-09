@@ -267,4 +267,16 @@
   <data name="UiSizeReset" xml:space="preserve">
     <value>Reset to the system size</value>
   </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>Forward</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>No history yet</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>Hyphenate words at the end of a line</value>
+  </data>
 </root>

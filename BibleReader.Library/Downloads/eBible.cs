@@ -16,6 +16,7 @@ public class eBible : InstallableBook
 
     public override string Origin => "eBible";
     public override Classes Class { get => InstallableBook.Classes.Bible; }
+    protected virtual string DetailsUrl { get; set; }
     static async Task<string> GetListAsync() => await Download.DownloadStringAsync(Url);
 
     public static async Task<IEnumerable<eBible>> GetBiblesAsync()

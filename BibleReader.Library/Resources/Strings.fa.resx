@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>همه</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>جستجو</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>بستن</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>لغو</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>تنظیمات</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>کتاب‌های مقدس نصب‌شده</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>فرهنگ‌های استرانگ</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>جستجو در کتاب مقدس…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>›  کتاب‌ها</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>هنوز کتاب مقدسی نصب نشده است</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>هنوز فرهنگ استرانگی نصب نشده است</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>ابتدا یک کتاب مقدس را باز کنید.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>در حال جستجو… (نخستین جستجو در هر کتاب مقدس فهرست آن را می‌سازد و کمی طول می‌کشد)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>جستجو ناموفق بود: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>هیچ آیه‌ای پیدا نشد.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} آیه، بهترین نتیجه ابتدا</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>نصب کتاب‌های مقدس…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>بازگشت به مطالعه</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>تنظیمات…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>نصب‌شده</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>نصب</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>حذف شود؟</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>کتاب‌های مقدس نصب‌شده ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>نصب از فایل ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>زبان…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>همه زبان‌ها</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>فیلتر بر اساس نوع</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>نمایش: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>جستجوی نام…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>بارگذاری مجدد</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>نام کتاب مقدس</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>نصب کتاب مقدس از یک فایل</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>آرشیوهای کتاب مقدس</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>در حال نصب {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>هیچ کتابی از فایل وارد نشد.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} نصب شد</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>نصب از فایل ناموفق بود: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>لطفاً یک نام وارد کنید.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>کتاب مقدسی با این نام از قبل نصب شده است.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>در حال بارگیری کتاب‌های مقدس از ebible.org و crosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>فهرست بارگیری نشد: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>برای نمایش کتاب‌های مقدس آنلاین، در تنظیمات «{0}» را علامت بزنید.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} از {1} ماژول</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>حذف ناموفق بود: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>نصب ناموفق بود: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>کتاب مقدس</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>تفسیر</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>فرهنگ لغت</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>کتاب</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>نقشه</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>افزونه</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>پوسته:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>سیستم</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>روشن</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>تیره</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>زبان:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>زبان پس از راه‌اندازی مجدد برنامه تغییر می‌کند.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>قلم:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>نصب قلم ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>اندازه قلم:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>نمایش سخنان عیسی به رنگ قرمز</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>نمایش شماره آیه‌ها به رنگ سبز</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>در کشور من آزار و اذیتی وجود ندارد</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>و عیسی در تمام جلیل می‌گشت و در کنیسه‌های ایشان تعلیم می‌داد. </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>از پی من بیایید تا شما را صیاد آدمیان گردانم.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>محل ذخیره:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>نصب قلم‌ها</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>قلم‌ها یا زیپ قلم‌ها</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>قلم قابل استفاده‌ای در {0} پیدا نشد</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>نصب شد: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. قلم قابل استفاده‌ای در {0} نیست</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>قلم نصب نشد: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>۱ کتاب مقدس نصب شده است</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>{0} کتاب مقدس نصب شده است</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>مدخلی برای {0} وجود ندارد. با دکمه استرانگ، یک فرهنگ استرانگ را روشن کنید.</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>اندازه رابط:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>بازنشانی به اندازه سیستم</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>عقب</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>جلو</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>هنوز تاریخچه‌ای نیست</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>شکستن واژه‌ها در پایان سطر</value>
+  </data>
+</root>

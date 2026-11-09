@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>Tất cả</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Tìm kiếm</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Đóng</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Hủy</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Cài đặt</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>Kinh Thánh đã cài</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>Từ điển Strong</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>Tìm trong Kinh Thánh…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  Các sách</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>Chưa cài Kinh Thánh nào</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>Chưa cài từ điển Strong nào</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>Hãy mở một bản Kinh Thánh trước.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Đang tìm kiếm… (lần tìm đầu tiên trong một bản Kinh Thánh sẽ tạo chỉ mục, việc này mất một chút thời gian)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Tìm kiếm thất bại: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>Không tìm thấy câu nào.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} câu, kết quả khớp nhất ở trên</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>Cài Kinh Thánh…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>Quay lại đọc</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Cài đặt…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>Đã cài</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>Cài đặt</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Xóa</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>Xóa?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>Kinh Thánh đã cài ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>Cài từ tệp ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>Ngôn ngữ…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>Tất cả ngôn ngữ</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>Lọc theo loại</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>Đang hiển thị: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>Tìm theo tên…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Tải lại</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>Tên Kinh Thánh</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>Cài Kinh Thánh từ tệp</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>Kho lưu trữ Kinh Thánh</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>Đang cài {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>Không thể nhập sách nào từ tệp.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>Đã cài {0}</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>Cài từ tệp thất bại: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>Vui lòng nhập tên.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>Đã có một bản Kinh Thánh cùng tên được cài.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>Đang tải Kinh Thánh từ ebible.org và crosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>Không thể tải danh sách: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>Để liệt kê Kinh Thánh trực tuyến, hãy đánh dấu “{0}” trong cài đặt.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} trên {1} mô-đun</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Xóa thất bại: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>Cài đặt thất bại: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>Kinh Thánh</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>Chú giải</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>Từ điển</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>Sách</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>Bản đồ</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>Tiện ích bổ sung</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Giao diện:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Hệ thống</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Sáng</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Tối</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Ngôn ngữ:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>Ngôn ngữ sẽ đổi khi khởi động lại ứng dụng.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Phông chữ:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>Cài phông chữ ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>Cỡ chữ:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>Hiển thị lời Chúa Giê-su màu đỏ</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>Hiển thị số câu màu xanh lá</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>Ở nước tôi không có sự bắt bớ</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>Đức Chúa Jêsus đi khắp xứ Ga-li-lê, dạy dỗ trong các nhà hội. </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>Hãy theo ta, ta sẽ khiến các ngươi trở nên tay đánh lưới người.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Lưu trữ:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>Cài phông chữ</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>Phông chữ hoặc tệp zip phông chữ</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>Không tìm thấy phông chữ dùng được trong {0}</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>Đã cài: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. Không có phông chữ dùng được trong {0}</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>Không thể cài phông chữ: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>Đã cài 1 Kinh Thánh</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>Đã cài {0} Kinh Thánh</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>Không có mục cho {0}. Bật một từ điển Strong bằng nút Strong.</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Kích thước giao diện:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Đặt lại theo kích thước hệ thống</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>Quay lại</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>Tiến tới</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>Chưa có lịch sử</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>Ngắt từ ở cuối dòng</value>
+  </data>
+</root>

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>ទាំងអស់</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>ស្វែងរក</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>បិទ</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>បោះបង់</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>ការកំណត់</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>គម្ពីរដែលបានដំឡើង</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>វចនានុក្រម Strong</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>ស្វែងរកក្នុងព្រះគម្ពីរ…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  គម្ពីរ</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>មិនទាន់មានព្រះគម្ពីរដែលបានដំឡើងនៅឡើយទេ</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>មិនទាន់មានវចនានុក្រម Strong ដែលបានដំឡើងនៅឡើយទេ</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>សូមបើកព្រះគម្ពីរមួយជាមុនសិន។</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>កំពុងស្វែងរក… (ការស្វែងរកដំបូងក្នុងព្រះគម្ពីរនឹងបង្កើតសន្ទស្សន៍ ដែលត្រូវការពេលបន្តិច)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>ការស្វែងរកបរាជ័យ៖ {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>រកមិនឃើញខគម្ពីរទេ។</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} ខ លទ្ធផលត្រូវគ្នាបំផុតមុនគេ</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>ដំឡើងព្រះគម្ពីរ…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>ត្រឡប់ទៅអានវិញ</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>ការកំណត់…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>បានដំឡើង</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>ដំឡើង</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>លុប</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>លុបឬទេ?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>ព្រះគម្ពីរដែលបានដំឡើង ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>ដំឡើងពីឯកសារ ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>ភាសា…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>គ្រប់ភាសា</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>ត្រងតាមប្រភេទ</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>កំពុងបង្ហាញ៖ {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>ស្វែងរកឈ្មោះ…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>ផ្ទុកឡើងវិញ</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>ឈ្មោះព្រះគម្ពីរ</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>ដំឡើងព្រះគម្ពីរពីឯកសារ</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>ឯកសារបណ្ណសារព្រះគម្ពីរ</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>កំពុងដំឡើង {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>មិនអាចនាំចូលសៀវភៅណាមួយពីឯកសារបានទេ។</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>បានដំឡើង {0}</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>ការដំឡើងពីឯកសារបរាជ័យ៖ {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>សូមបញ្ចូលឈ្មោះ។</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>មានព្រះគម្ពីរដែលមានឈ្មោះនេះបានដំឡើងរួចហើយ។</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>កំពុងផ្ទុកព្រះគម្ពីរពី ebible.org និង crosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>មិនអាចផ្ទុកបញ្ជីបានទេ៖ {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>ដើម្បីបង្ហាញព្រះគម្ពីរអនឡាញ សូមធីក “{0}” ក្នុងការកំណត់។</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} ក្នុងចំណោម {1} ម៉ូឌុល</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>ការលុបបរាជ័យ៖ {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>ការដំឡើងបរាជ័យ៖ {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>ព្រះគម្ពីរ</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>ការអធិប្បាយ</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>វចនានុក្រម</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>សៀវភៅ</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>ផែនទី</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>កម្មវិធីបន្ថែម</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>រចនាប័ទ្ម៖</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>ប្រព័ន្ធ</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>ភ្លឺ</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>ងងឹត</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>ភាសា៖</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>ភាសានឹងប្តូរនៅពេលចាប់ផ្ដើមកម្មវិធីឡើងវិញ។</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>ពុម្ពអក្សរ៖</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>ដំឡើងពុម្ពអក្សរ ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>ទំហំអក្សរ៖</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>បង្ហាញព្រះបន្ទូលរបស់ព្រះយេស៊ូជាពណ៌ក្រហម</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>បង្ហាញលេខខជាពណ៌បៃតង</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>នៅក្នុងប្រទេសរបស់ខ្ញុំគ្មានការបៀតបៀនទេ</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>ព្រះយេស៊ូយាងទៅពាសពេញស្រុកកាលីឡេ ទ្រង់បង្រៀននៅក្នុងសាលាប្រជុំរបស់គេ។ </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>ចូរមកតាមខ្ញុំ ខ្ញុំនឹងធ្វើឲ្យអ្នករាល់គ្នាទៅជាអ្នកនេសាទមនុស្ស។</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>ទីផ្ទុក៖</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>ដំឡើងពុម្ពអក្សរ</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>ពុម្ពអក្សរ ឬ zip នៃពុម្ពអក្សរ</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>រកមិនឃើញពុម្ពអក្សរដែលអាចប្រើបានក្នុង {0}</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>បានដំឡើង៖ {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>។ គ្មានពុម្ពអក្សរដែលអាចប្រើបានក្នុង {0}</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>មិនអាចដំឡើងពុម្ពអក្សរបានទេ៖ {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>បានដំឡើងព្រះគម្ពីរ ១</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>បានដំឡើងព្រះគម្ពីរ {0}</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>គ្មានធាតុសម្រាប់ {0} ទេ។ បើកវចនានុក្រម Strong ដោយប៊ូតុង Strong។</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>ទំហំចំណុចប្រទាក់៖</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>កំណត់ឡើងវិញទៅទំហំប្រព័ន្ធ</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>ថយក្រោយ</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>ទៅមុខ</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>មិនទាន់មានប្រវត្តិទេ</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>កាត់ពាក្យនៅចុងបន្ទាត់</value>
+  </data>
+</root>

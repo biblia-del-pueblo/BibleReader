@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>Lahat</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Maghanap</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Isara</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Kanselahin</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Mga Setting</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>Mga naka-install na Bibliya</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>Mga diksyunaryo ni Strong</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>Maghanap sa Bibliya…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  Mga aklat</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>Wala pang naka-install na Bibliya</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>Wala pang naka-install na diksyunaryo ni Strong</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>Magbukas muna ng Bibliya.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Naghahanap… (ang unang paghahanap sa isang Bibliya ay gumagawa ng index nito, na tumatagal nang sandali)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Nabigo ang paghahanap: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>Walang nakitang talata.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} talata, pinakamahusay na tugma muna</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>Mag-install ng mga Bibliya…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>Bumalik sa pagbabasa</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Mga Setting…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>Naka-install</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>I-install</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Burahin</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>Buburahin?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>Mga naka-install na Bibliya ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>I-install mula sa file ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>Wika…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>Lahat ng wika</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>I-filter ayon sa uri</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>Ipinapakita: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>Maghanap ng pangalan…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>I-reload</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>Pangalan ng Bibliya</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>Mag-install ng Bibliya mula sa file</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>Mga archive ng Bibliya</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>Ini-install ang {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>Walang aklat na na-import mula sa file.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>Na-install ang {0}</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>Nabigo ang pag-install mula sa file: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>Maglagay ng pangalan.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>May naka-install nang Bibliya na may ganitong pangalan.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>Nilo-load ang mga Bibliya mula sa ebible.org at crosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>Hindi ma-load ang listahan: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>Upang ilista ang mga online na Bibliya, lagyan ng tsek ang “{0}” sa mga setting.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} sa {1} module</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Nabigo ang pagbura: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>Nabigo ang pag-install: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>Bibliya</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>Komentaryo</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>Diksyunaryo</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>Aklat</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>Mapa</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>Add-on</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Tema:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Sistema</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Maliwanag</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Madilim</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Wika:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>Magbabago ang wika kapag muling sinimulan ang app.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Font:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>Mag-install ng font ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>Laki ng font:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>Ipakita ang mga salita ni Jesus sa pula</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>Ipakita ang mga numero ng talata sa berde</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>Sa aking bansa ay walang pag-uusig</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>At nilibot ni Jesus ang buong Galilea, na nagtuturo sa kanilang mga sinagoga. </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>Sumunod kayo sa akin, at gagawin ko kayong mga mamamalakaya ng tao.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Imbakan:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>Mag-install ng mga font</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>Mga font o zip ng mga font</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>Walang nakitang magagamit na font sa {0}</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>Na-install: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. Walang magagamit na font sa {0}</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>Hindi ma-install ang font: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>1 Bibliya ang naka-install</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>{0} Bibliya ang naka-install</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>Walang entry para sa {0}. I-on ang diksyunaryo ni Strong gamit ang button na Strong.</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Laki ng interface:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>I-reset sa laki ng sistema</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>Bumalik</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>Sumulong</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>Wala pang kasaysayan</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>Hatiin ang mga salita sa dulo ng linya</value>
+  </data>
+</root>

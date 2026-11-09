@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>Kaikki</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Haku</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Sulje</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Peruuta</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Asetukset</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>Asennetut Raamatut</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>Strongin sanakirjat</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>Hae Raamatusta…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  Kirjat</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>Raamattuja ei ole vielä asennettu</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>Strongin sanakirjoja ei ole vielä asennettu</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>Avaa ensin Raamattu.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Haetaan… (Raamatun ensimmäinen haku luo sen hakemiston, mikä kestää hetken)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Haku epäonnistui: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>Jakeita ei löytynyt.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} jaetta, paras osuma ensin</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>Asenna Raamattuja…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>Takaisin lukemiseen</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Asetukset…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>Asennettu</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>Asenna</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Poista</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>Poistetaanko?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>Asennetut Raamatut ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>Asenna tiedostosta ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>Kieli…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>Kaikki kielet</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>Suodata tyypin mukaan</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>Näytetään: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>Hae nimellä…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Lataa uudelleen</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>Raamatun nimi</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>Asenna Raamattu tiedostosta</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>Raamattuarkistot</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>Asennetaan: {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>Tiedostosta ei voitu tuoda yhtään kirjaa.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} asennettu</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>Asennus tiedostosta epäonnistui: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>Anna nimi.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>Tämän niminen Raamattu on jo asennettu.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>Ladataan Raamattuja osoitteista ebible.org ja crosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>Luetteloa ei voitu ladata: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>Jos haluat näyttää verkon Raamatut, valitse asetuksissa ”{0}”.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} / {1} moduulia</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Poisto epäonnistui: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>Asennus epäonnistui: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>Raamattu</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>Selitys</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>Sanakirja</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>Kirja</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>Kartta</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>Lisäosa</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Teema:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Järjestelmä</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Vaalea</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Tumma</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Kieli:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>Kieli vaihtuu, kun sovellus käynnistetään uudelleen.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Fontti:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>Asenna fontti ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>Fontin koko:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>Näytä Jeesuksen sanat punaisella</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>Näytä jaenumerot vihreällä</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>Maassani ei ole vainoa</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>Ja Jeesus kulki ympäri koko Galileaa ja opetti heidän synagoogissaan. </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>Seuratkaa minua, niin minä teen teistä ihmisten kalastajia.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Tallennustila:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>Asenna fontit</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>Fontit tai fonttien zip</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>Käyttökelpoista fonttia ei löytynyt kohteesta {0}</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>Asennettu: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. Ei käyttökelpoista fonttia kohteessa {0}</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>Fonttia ei voitu asentaa: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>1 Raamattu asennettu</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>{0} Raamattua asennettu</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>Ei hakusanaa kohteelle {0}. Ota Strongin sanakirja käyttöön Strong-painikkeella.</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Käyttöliittymän koko:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Palauta järjestelmän koko</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>Takaisin</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>Eteenpäin</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>Ei vielä historiaa</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>Tavuta sanat rivin lopussa</value>
+  </data>
+</root>

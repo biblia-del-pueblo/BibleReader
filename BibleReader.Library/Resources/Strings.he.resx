@@ -267,4 +267,16 @@
   <data name="UiSizeReset" xml:space="preserve">
     <value>איפוס לגודל המערכת</value>
   </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>אחורה</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>קדימה</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>אין היסטוריה עדיין</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>חלוקת מילים בסוף שורה</value>
+  </data>
 </root>

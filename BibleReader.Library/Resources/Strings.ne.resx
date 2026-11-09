@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>सबै</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>खोज्नुहोस्</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>बन्द गर्नुहोस्</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>रद्द गर्नुहोस्</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>सेटिङहरू</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>स्थापना गरिएका बाइबलहरू</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>स्ट्रङका शब्दकोशहरू</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>बाइबलमा खोज्नुहोस्…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  पुस्तकहरू</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>अहिलेसम्म कुनै बाइबल स्थापना गरिएको छैन</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>अहिलेसम्म कुनै स्ट्रङ शब्दकोश स्थापना गरिएको छैन</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>पहिले एउटा बाइबल खोल्नुहोस्।</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>खोज्दै… (बाइबलको पहिलो खोजले यसको सूची बनाउँछ, जसमा केही समय लाग्छ)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>खोज असफल भयो: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>कुनै पद फेला परेन।</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} पद, सबैभन्दा मिल्दो पहिले</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>बाइबलहरू स्थापना गर्नुहोस्…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>पढ्नमा फर्कनुहोस्</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>सेटिङहरू…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>स्थापना गरिएको</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>स्थापना गर्नुहोस्</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>मेट्नुहोस्</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>मेट्ने?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>स्थापना गरिएका बाइबलहरू ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>फाइलबाट स्थापना गर्नुहोस् ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>भाषा…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>सबै भाषाहरू</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>प्रकार अनुसार छान्नुहोस्</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>देखाइँदै: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>नाम खोज्नुहोस्…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>पुनः लोड गर्नुहोस्</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>बाइबलको नाम</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>फाइलबाट बाइबल स्थापना गर्नुहोस्</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>बाइबल अभिलेखहरू</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>{0} स्थापना गर्दै…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>फाइलबाट कुनै पुस्तक आयात गर्न सकिएन।</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} स्थापना गरियो</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>फाइलबाट स्थापना असफल भयो: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>कृपया नाम प्रविष्ट गर्नुहोस्।</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>यो नामको बाइबल पहिले नै स्थापना गरिएको छ।</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>ebible.org र crosswire.org बाट बाइबलहरू लोड गर्दै…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>सूची लोड गर्न सकिएन: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>अनलाइन बाइबलहरू देखाउन सेटिङमा “{0}” मा चिन्ह लगाउनुहोस्।</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{1} मध्ये {0} मोड्युल</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>मेट्न असफल भयो: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>स्थापना असफल भयो: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>बाइबल</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>टिप्पणी</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>शब्दकोश</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>पुस्तक</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>नक्सा</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>एड-अन</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>थिम:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>सिस्टम</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>उज्यालो</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>अँध्यारो</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>भाषा:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>एप फेरि सुरु गर्दा भाषा परिवर्तन हुन्छ।</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>फन्ट:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>फन्ट स्थापना गर्नुहोस् ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>फन्टको आकार:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>येशूका वचनहरू रातो रङमा देखाउनुहोस्</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>पद संख्याहरू हरियो रङमा देखाउनुहोस्</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>मेरो देशमा कुनै सताइ छैन</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>येशू सारा गालीलमा घुम्नुभयो र तिनीहरूका सभाघरहरूमा सिकाउनुभयो। </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>मेरो पछि आओ, र म तिमीहरूलाई मानिस पक्रने माछा मार्नेहरू बनाउनेछु।</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>भण्डारण:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>फन्टहरू स्थापना गर्नुहोस्</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>फन्टहरू वा फन्टहरूको zip</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>{0} मा प्रयोग गर्न मिल्ने फन्ट फेला परेन</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>स्थापना गरियो: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>। {0} मा प्रयोग गर्न मिल्ने फन्ट छैन</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>फन्ट स्थापना गर्न सकिएन: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>१ बाइबल स्थापना गरिएको छ</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>{0} बाइबल स्थापना गरिएका छन्</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>{0} को लागि कुनै प्रविष्टि छैन। स्ट्रङ बटनले स्ट्रङ शब्दकोश खोल्नुहोस्।</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>इन्टरफेसको आकार:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>सिस्टमको आकारमा रिसेट गर्नुहोस्</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>पछाडि</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>अगाडि</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>अहिलेसम्म कुनै इतिहास छैन</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>पङ्क्तिको अन्त्यमा शब्द तोड्नुहोस्</value>
+  </data>
+</root>

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>සියල්ල</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>සොයන්න</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>වසන්න</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>අවලංගු කරන්න</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>සැකසුම්</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>ස්ථාපිත බයිබල්</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>ස්ට්‍රොන්ග් ශබ්දකෝෂ</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>බයිබලයේ සොයන්න…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  පොත්</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>තවම බයිබල් ස්ථාපනය කර නැත</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>තවම ස්ට්‍රොන්ග් ශබ්දකෝෂ ස්ථාපනය කර නැත</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>පළමුව බයිබලයක් විවෘත කරන්න.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>සොයමින්… (බයිබලයක පළමු සෙවුම එහි සුචිය සාදයි, ඒ සඳහා මොහොතක් ගතවේ)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>සෙවුම අසාර්ථකයි: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>පද කිසිවක් හමු නොවීය.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>පද {0}ක්, හොඳම ගැළපීම මුලින්</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>බයිබල් ස්ථාපනය කරන්න…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>කියවීමට ආපසු</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>සැකසුම්…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>ස්ථාපිතයි</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>ස්ථාපනය</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>මකන්න</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>මකන්නද?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>ස්ථාපිත බයිබල් ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>ගොනුවකින් ස්ථාපනය ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>භාෂාව…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>සියලු භාෂා</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>වර්ගය අනුව පෙරන්න</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>පෙන්වන්නේ: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>නම සොයන්න…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>නැවත පූරණය</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>බයිබලයේ නම</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>ගොනුවකින් බයිබලයක් ස්ථාපනය කරන්න</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>බයිබල් ලේඛනාගාර</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>{0} ස්ථාපනය කරමින්…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>ගොනුවෙන් පොත් කිසිවක් ආයාත කළ නොහැකි විය.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} ස්ථාපනය කරන ලදී</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>ගොනුවෙන් ස්ථාපනය අසාර්ථකයි: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>කරුණාකර නමක් ඇතුළත් කරන්න.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>මෙම නමින් බයිබලයක් දැනටමත් ස්ථාපනය කර ඇත.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>ebible.org සහ crosswire.org වෙතින් බයිබල් පූරණය කරමින්…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>ලැයිස්තුව පූරණය කළ නොහැකි විය: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>ඔන්ලයින් බයිබල් ලැයිස්තුගත කිරීමට, සැකසුම් තුළ “{0}” සලකුණු කරන්න.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>මොඩියුල {1}න් {0}</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>මැකීම අසාර්ථකයි: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>ස්ථාපනය අසාර්ථකයි: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>බයිබලය</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>විවරණය</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>ශබ්දකෝෂය</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>පොත</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>සිතියම</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>ඇඩෝන</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>තේමාව:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>පද්ධතිය</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>ලා</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>තද</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>භාෂාව:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>යෙදුම නැවත ආරම්භ කළ විට භාෂාව වෙනස් වේ.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>අකුරු වර්ගය:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>අකුරු වර්ගයක් ස්ථාපනය ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>අකුරු ප්‍රමාණය:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>ජේසුස්වහන්සේගේ වචන රතු පැහැයෙන් පෙන්වන්න</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>පද අංක කොළ පැහැයෙන් පෙන්වන්න</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>මගේ රටේ පීඩාවක් නැත</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>ජේසුස් වහන්සේ ගලීලය පුරා ගොස් ඔවුන්ගේ සිනගොගවල ඉගැන්වූ සේක. </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>මා පස්සේ එන්න, මම ඔබ මිනිසුන් අල්ලන්නන් කරන්නෙමි.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>ගබඩාව:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>අකුරු වර්ග ස්ථාපනය</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>අකුරු වර්ග හෝ අකුරු zip</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>{0} හි භාවිත කළ හැකි අකුරු වර්ගයක් හමු නොවීය</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>ස්ථාපනය කළා: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. {0} හි භාවිත කළ හැකි අකුරු වර්ගයක් නැත</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>අකුරු වර්ගය ස්ථාපනය කළ නොහැකි විය: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>බයිබල් 1ක් ස්ථාපිතයි</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>බයිබල් {0}ක් ස්ථාපිතයි</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>{0} සඳහා ඇතුළත් කිරීමක් නැත. ස්ට්‍රොන්ග් බොත්තමෙන් ස්ට්‍රොන්ග් ශබ්දකෝෂයක් සක්‍රිය කරන්න.</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>අතුරු මුහුණතේ ප්‍රමාණය:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>පද්ධති ප්‍රමාණයට යළි සකසන්න</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>ආපසු</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>ඉදිරියට</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>තවම ඉතිහාසයක් නැත</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>පේළි අගදී වචන බෙදන්න</value>
+  </data>
+</root>

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>Alle</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Søg</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Luk</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Annuller</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Indstillinger</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>Installerede bibler</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>Strongs ordbøger</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>Søg i Bibelen…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  Bøger</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>Ingen bibler installeret endnu</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>Ingen Strongs ordbøger installeret endnu</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>Åbn først en bibel.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Søger… (den første søgning i en bibel opretter dens indeks, hvilket tager et øjeblik)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Søgningen mislykkedes: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>Ingen vers fundet.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} vers, bedste match først</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>Installer bibler…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>Tilbage til læsning</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Indstillinger…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>Installeret</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>Installer</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Slet</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>Slet?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>Installerede bibler ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>Installer fra fil ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>Sprog…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>Alle sprog</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>Filtrer efter type</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>Viser: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>Søg efter navn…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Genindlæs</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>Bibelens navn</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>Installer en bibel fra en fil</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>Bibelarkiver</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>Installerer {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>Der kunne ikke importeres nogen bøger fra filen.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} installeret</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>Installation fra fil mislykkedes: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>Indtast et navn.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>En bibel med dette navn er allerede installeret.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>Indlæser bibler fra ebible.org og crosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>Listen kunne ikke indlæses: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>For at vise onlinebibler skal du markere „{0}“ i indstillingerne.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} af {1} moduler</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Sletning mislykkedes: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>Installation mislykkedes: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>Bibel</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>Kommentar</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>Ordbog</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>Bog</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>Kort</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>Tilføjelse</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Tema:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Lyst</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Mørkt</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Sprog:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>Sproget ændres, når appen startes igen.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Skrifttype:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>Installer skrifttype ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>Skriftstørrelse:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>Vis Jesu ord i rødt</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>Vis versnumre i grønt</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>I mit land er der ingen forfølgelse</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>Og Jesus gik omkring i hele Galilæa og lærte i deres synagoger. </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>Følg mig, så vil jeg gøre jer til menneskefiskere.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Lager:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>Installer skrifttyper</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>Skrifttyper eller zip med skrifttyper</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>Ingen brugbar skrifttype fundet i {0}</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>Installeret: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. Ingen brugbar skrifttype i {0}</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>Skrifttypen kunne ikke installeres: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>1 bibel installeret</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>{0} bibler installeret</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>Ingen post for {0}. Slå en Strongs ordbog til med Strongs-knappen.</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Grænsefladens størrelse:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Nulstil til systemets størrelse</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>Tilbage</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>Frem</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>Ingen historik endnu</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>Orddel ved linjeskift</value>
+  </data>
+</root>

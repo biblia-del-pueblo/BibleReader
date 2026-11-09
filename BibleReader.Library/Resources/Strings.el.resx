@@ -267,4 +267,16 @@
   <data name="UiSizeReset" xml:space="preserve">
     <value>Επαναφορά στο μέγεθος του συστήματος</value>
   </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>Πίσω</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>Μπροστά</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>Δεν υπάρχει ιστορικό ακόμη</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>Συλλαβισμός λέξεων στο τέλος της γραμμής</value>
+  </data>
 </root>

@@ -525,6 +525,8 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
 
     public string Name { get; set; }
     public string EnglishName { get; set; }
+    public virtual string Origin => GetType().Name;
+
     [Newtonsoft.Json.JsonIgnore] // Settings are saved with Newtonsoft; the books are read from the folder
     public List<Book> Books { get; set; } = new List<Book>();
     public string ConfigPath
@@ -533,7 +535,7 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
         {
             if (field == null)
             {
-                field = Path.Combine(Settings.Current.ConfigPath, "Books", WebUtility.UrlEncode(EnglishName));
+                field = Path.Combine(Settings.Current.ConfigPath, "Books", WebUtility.UrlEncode(Origin +"." + EnglishName));
             }
             return field;
         }

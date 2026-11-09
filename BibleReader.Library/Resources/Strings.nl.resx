@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>Alle</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Zoeken</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Sluiten</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Annuleren</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Instellingen</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>Geïnstalleerde Bijbels</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>Strong-woordenboeken</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>Zoek in de Bijbel…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  Boeken</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>Nog geen Bijbels geïnstalleerd</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>Nog geen Strong-woordenboeken geïnstalleerd</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>Open eerst een Bijbel.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Zoeken… (bij de eerste zoekopdracht in een Bijbel wordt de index gemaakt, dat duurt even)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Zoeken mislukt: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>Geen verzen gevonden.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} verzen, beste treffer eerst</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>Bijbels installeren…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>Terug naar lezen</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Instellingen…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>Geïnstalleerd</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>Installeren</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Verwijderen</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>Verwijderen?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>Geïnstalleerde Bijbels ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>Installeren vanuit bestand ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>Taal…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>Alle talen</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>Filteren op soort</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>Weergegeven: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>Zoek op naam…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Opnieuw laden</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>Naam van de Bijbel</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>Een Bijbel installeren vanuit een bestand</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>Bijbelarchieven</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>{0} installeren…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>Uit het bestand kon geen enkel boek worden geïmporteerd.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} geïnstalleerd</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>Installeren vanuit bestand mislukt: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>Voer een naam in.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>Er is al een Bijbel met deze naam geïnstalleerd.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>Bijbels laden van ebible.org en crosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>De lijst kon niet worden geladen: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>Om de online Bijbels weer te geven, vink „{0}” aan in de instellingen.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} van {1} modules</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Verwijderen mislukt: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>Installeren mislukt: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>Bijbel</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>Commentaar</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>Woordenboek</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>Boek</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>Kaart</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>Add-on</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Thema:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Systeem</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Licht</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Donker</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Taal:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>De taal verandert wanneer de app opnieuw wordt gestart.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Lettertype:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>Lettertype installeren ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>Lettergrootte:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>Woorden van Jezus in rood tonen</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>Versnummers in groen tonen</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>In mijn land is er geen vervolging</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>En Jezus ging om in geheel Galilea, lerende in hun synagogen. </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>Volgt Mij na, en Ik zal u vissers der mensen maken.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Opslag:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>Lettertypen installeren</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>Lettertypen of zip met lettertypen</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>Geen bruikbaar lettertype gevonden in {0}</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>Geïnstalleerd: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. Geen bruikbaar lettertype in {0}</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>Het lettertype kon niet worden geïnstalleerd: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>1 Bijbel geïnstalleerd</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>{0} Bijbels geïnstalleerd</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>Geen lemma voor {0}. Schakel een Strong-woordenboek in met de Strong-knop.</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Grootte van de interface:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Terugzetten naar de systeemgrootte</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>Terug</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>Vooruit</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>Nog geen geschiedenis</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>Woorden aan het einde van een regel afbreken</value>
+  </data>
+</root>

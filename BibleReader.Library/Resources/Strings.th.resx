@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>ทั้งหมด</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>ค้นหา</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>ปิด</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>ยกเลิก</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>การตั้งค่า</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>พระคัมภีร์ที่ติดตั้งแล้ว</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>พจนานุกรมสตรอง</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>ค้นหาในพระคัมภีร์…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  หนังสือ</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>ยังไม่ได้ติดตั้งพระคัมภีร์</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>ยังไม่ได้ติดตั้งพจนานุกรมสตรอง</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>โปรดเปิดพระคัมภีร์ก่อน</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>กำลังค้นหา… (การค้นหาครั้งแรกในพระคัมภีร์จะสร้างดัชนี ซึ่งใช้เวลาสักครู่)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>การค้นหาล้มเหลว: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>ไม่พบข้อพระคัมภีร์</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} ข้อ เรียงตามความตรงมากที่สุดก่อน</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>ติดตั้งพระคัมภีร์…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>กลับไปอ่าน</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>การตั้งค่า…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>ติดตั้งแล้ว</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>ติดตั้ง</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>ลบ</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>ลบหรือไม่?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>พระคัมภีร์ที่ติดตั้งแล้ว ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>ติดตั้งจากไฟล์ ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>ภาษา…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>ทุกภาษา</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>กรองตามประเภท</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>กำลังแสดง: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>ค้นหาชื่อ…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>โหลดใหม่</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>ชื่อพระคัมภีร์</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>ติดตั้งพระคัมภีร์จากไฟล์</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>ไฟล์เก็บถาวรพระคัมภีร์</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>กำลังติดตั้ง {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>ไม่สามารถนำเข้าหนังสือใดจากไฟล์ได้</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>ติดตั้ง {0} แล้ว</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>การติดตั้งจากไฟล์ล้มเหลว: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>โปรดป้อนชื่อ</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>มีพระคัมภีร์ชื่อนี้ติดตั้งอยู่แล้ว</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>กำลังโหลดพระคัมภีร์จาก ebible.org และ crosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>ไม่สามารถโหลดรายการได้: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>หากต้องการแสดงพระคัมภีร์ออนไลน์ ให้ติ๊ก “{0}” ในการตั้งค่า</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} จาก {1} โมดูล</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>การลบล้มเหลว: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>การติดตั้งล้มเหลว: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>พระคัมภีร์</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>อรรถาธิบาย</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>พจนานุกรม</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>หนังสือ</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>แผนที่</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>ส่วนเสริม</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>ธีม:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>ระบบ</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>สว่าง</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>มืด</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>ภาษา:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>ภาษาจะเปลี่ยนเมื่อเริ่มแอปใหม่</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>แบบอักษร:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>ติดตั้งแบบอักษร ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>ขนาดอักษร:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>แสดงพระวจนะของพระเยซูเป็นสีแดง</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>แสดงเลขข้อเป็นสีเขียว</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>ในประเทศของฉันไม่มีการข่มเหง</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>พระเยซูเสด็จไปทั่วแคว้นกาลิลี ทรงสั่งสอนในศาลาธรรมของเขา </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>จงตามเรามา และเราจะให้ท่านเป็นผู้จับคน</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>ที่เก็บข้อมูล:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>ติดตั้งแบบอักษร</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>แบบอักษรหรือ zip ของแบบอักษร</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>ไม่พบแบบอักษรที่ใช้ได้ใน {0}</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>ติดตั้งแล้ว: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value> ไม่มีแบบอักษรที่ใช้ได้ใน {0}</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>ไม่สามารถติดตั้งแบบอักษรได้: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>ติดตั้งพระคัมภีร์ 1 เล่ม</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>ติดตั้งพระคัมภีร์ {0} เล่ม</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>ไม่มีรายการสำหรับ {0} เปิดพจนานุกรมสตรองด้วยปุ่มสตรอง</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>ขนาดส่วนติดต่อ:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>รีเซ็ตเป็นขนาดของระบบ</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>ย้อนกลับ</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>ไปข้างหน้า</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>ยังไม่มีประวัติ</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>ตัดคำท้ายบรรทัด</value>
+  </data>
+</root>

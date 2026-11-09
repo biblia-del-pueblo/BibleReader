@@ -267,4 +267,16 @@
   <data name="UiSizeReset" xml:space="preserve">
     <value>Вернуть размер системы</value>
   </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>Вперёд</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>Истории пока нет</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>Переносить слова в конце строки</value>
+  </data>
 </root>

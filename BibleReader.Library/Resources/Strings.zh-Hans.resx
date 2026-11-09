@@ -267,4 +267,16 @@
   <data name="UiSizeReset" xml:space="preserve">
     <value>恢复为系统大小</value>
   </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>后退</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>前进</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>还没有历史记录</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>在行尾断开单词（连字符）</value>
+  </data>
 </root>

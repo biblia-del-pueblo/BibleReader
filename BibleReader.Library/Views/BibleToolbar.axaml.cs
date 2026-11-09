@@ -59,6 +59,13 @@ public partial class BibleToolbar : UserControl
     public bool ShowOnlineBibles { get => GetValue(ShowOnlineBiblesProperty); set => SetValue(ShowOnlineBiblesProperty, value); }
     public bool ShowSettings { get => GetValue(ShowSettingsProperty); set => SetValue(ShowSettingsProperty, value); }
     public bool ShowText { get => GetValue(ShowTextProperty); private set => SetValue(ShowTextProperty, value); }
+    private const double WideWidth = 500;
+
+    /// <summary>True while the view is wider than <see cref="WideWidth"/>.</summary>
+    public static readonly StyledProperty<bool> IsWideProperty =
+        AvaloniaProperty.Register<BibleToolbar, bool>(nameof(IsWide));
+
+    public bool IsWide { get => GetValue(IsWideProperty); private set => SetValue(IsWideProperty, value); }
 
     public BibleTextBlock? Target { get => GetValue(TargetProperty); set => SetValue(TargetProperty, value); }
     public Bible.VersePosition? Position { get => GetValue(PositionProperty); set => SetValue(PositionProperty, value); }
@@ -81,6 +88,7 @@ public partial class BibleToolbar : UserControl
         TargetProperty.Changed.AddClassHandler<BibleToolbar>((bar, e) =>
             bar.OnTargetChanged(e.OldValue as BibleTextBlock, e.NewValue as BibleTextBlock));
         PositionProperty.Changed.AddClassHandler<BibleToolbar>((bar, _) => bar.UpdateText());
+        IsWideProperty.Changed.AddClassHandler<BibleToolbar>((bar, _) => bar.UpdateText());
         // The online Bibles and the settings replace the text, one at a time.
         ShowOnlineBiblesProperty.Changed.AddClassHandler<BibleToolbar>((bar, e) =>
         {
@@ -103,6 +111,7 @@ public partial class BibleToolbar : UserControl
     public BibleToolbar()
     {
         InitializeComponent();
+        SizeChanged += (_, e) => IsWide = e.NewSize.Width > WideWidth;
         if (ReturnToSettings) { ReturnToSettings = false; ShowSettings = true; }
         FlowDirection = Localizer.FlowDirection; // mirrored for Arabic and Hebrew
         MenuPopup.PlacementTarget = MenuButton;
@@ -113,14 +122,40 @@ public partial class BibleToolbar : UserControl
         StrongsButton.AddHandler(PointerPressedEvent, OnStrongsPressed, RoutingStrategies.Tunnel);
         StrongsButton.AddHandler(PointerReleasedEvent, OnStrongsReleased, RoutingStrategies.Tunnel);
         StrongsButton.AddHandler(PointerCaptureLostEvent, OnStrongsReleased);
+        // A long press or double click on the back or forward button, or a long press on the position (the only way in a narrow bar), lists the history.
+        foreach (var button in new[] { BackButton, ForwardButton, PositionButton })
+        {
+            button.AddHandler(PointerPressedEvent, OnHistoryPressed, RoutingStrategies.Tunnel);
+            button.AddHandler(PointerReleasedEvent, OnHistoryReleased, RoutingStrategies.Tunnel);
+            button.AddHandler(PointerCaptureLostEvent, OnHistoryReleased);
+        }
+        // A horizontal swipe anywhere on the bar goes back or forward in the history. Tunnelled, to see the gesture
+        // whichever button it starts on.
+        AddHandler(PointerPressedEvent, OnSwipePressed, RoutingStrategies.Tunnel);
+        AddHandler(PointerMovedEvent, OnSwipeMoved, RoutingStrategies.Tunnel);
+        AddHandler(PointerReleasedEvent, OnSwipeReleased, RoutingStrategies.Tunnel);
         BookPopup.PlacementTarget = PositionButton; // a reference to a named sibling, set here rather than as a binding
+        UpdateHistoryButtons(); // the history of the last session
         UpdateText();
     }
 
     private void OnTargetChanged(BibleTextBlock? old, BibleTextBlock? target)
     {
-        if (old is not null) old.PropertyChanged -= OnTargetPropertyChanged;
-        if (target is not null) target.PropertyChanged += OnTargetPropertyChanged;
+        if (old is not null)
+        {
+            old.PropertyChanged -= OnTargetPropertyChanged;
+            old.RemoveHandler(PointerPressedEvent, OnTextSwipePressed);
+            old.RemoveHandler(PointerMovedEvent, OnSwipeMoved);
+            old.RemoveHandler(PointerReleasedEvent, OnSwipeReleased);
+        }
+        if (target is not null)
+        {
+            target.PropertyChanged += OnTargetPropertyChanged;
+            // A swipe on the text goes through the history too (tunnelled: the text block handles its own presses).
+            target.AddHandler(PointerPressedEvent, OnTextSwipePressed, RoutingStrategies.Tunnel);
+            target.AddHandler(PointerMovedEvent, OnSwipeMoved, RoutingStrategies.Tunnel);
+            target.AddHandler(PointerReleasedEvent, OnSwipeReleased, RoutingStrategies.Tunnel);
+        }
         Position = target?.Position;
     }
 
@@ -131,6 +166,7 @@ public partial class BibleToolbar : UserControl
 
     private void OnPositionClick(object? sender, RoutedEventArgs e)
     {
+        if (_historyLongPressed) { _historyLongPressed = false; return; } // the long press listed the history: the release is no click
         if (BookPopup.IsOpen) { BookPopup.IsOpen = false; return; }
         // Pressing the button already light-dismissed the open popup; don't reopen it with the same click.
         if ((DateTime.UtcNow - _closedAt).TotalMilliseconds < 300) return;
@@ -166,6 +202,218 @@ public partial class BibleToolbar : UserControl
             return Task.CompletedTask;
         });
         MenuPopup.IsOpen = true;
+    }
+
+    // ---- History ---------------------------------------------------------------------------------------
+
+    // The history lives in the settings (saved when the app ends, see Settings.SaveOnExit), oldest entry first.
+    private static List<Settings.HistoryEntry> _history => Settings.Current.History ??= new();
+    private static int _historyIndex
+    {
+        get => Math.Clamp(Settings.Current.HistoryIndex, -1, _history.Count - 1);
+        set => Settings.Current.HistoryIndex = value;
+    }
+    private bool _historyLongPressed;
+    private Control? _historyHoldTarget;
+    private Avalonia.Threading.DispatcherTimer? _historyHold;
+
+    private static Settings.HistoryEntry EntryOf(Bible.VersePosition p) => new() { BookIndex = p.Book.Index, Chapter = p.Chapter, Verse = p.Verse };
+
+    /// <summary>The book of the entry in the Bible that is read (the history is of positions, not of Bibles).</summary>
+    private Bible.Book? BookOf(Settings.HistoryEntry entry) => Target?.Books?.FirstOrDefault(b => b.Index == entry.BookIndex);
+
+    /// <summary>
+    /// Notes where the reader is now in the current entry, so that coming back lands there. Scrolling does not make
+    /// history: only going somewhere does. A place in another chapter than the entry's becomes an entry of its own.
+    /// </summary>
+    private void SnapshotCurrent()
+    {
+        if (Position is not { Book: not null } position) return;
+        int current = _historyIndex;
+        if (current >= 0 && _history[current].BookIndex == position.Book.Index && _history[current].Chapter == position.Chapter)
+        {
+            _history[current].Verse = position.Verse;
+            return;
+        }
+        _history.Insert(current + 1, EntryOf(position));
+        _historyIndex = current + 1;
+    }
+
+    /// <summary>
+    /// Adds the place that the reader is about to go to (a chapter, a search result) as the newest entry; the entries ahead
+    /// of the current one are dropped. Call it before the text block is moved.
+    /// </summary>
+    private void PushHistory(Bible.VersePosition target)
+    {
+        if (target.Book is null) return;
+        SnapshotCurrent();
+        int current = _historyIndex;
+        if (current >= 0 && _history[current].BookIndex == target.Book.Index && _history[current].Chapter == target.Chapter)
+            _history[current].Verse = target.Verse;
+        else
+        {
+            _history.RemoveRange(current + 1, _history.Count - current - 1);
+            _history.Add(EntryOf(target));
+            _historyIndex = _history.Count - 1;
+        }
+        UpdateHistoryButtons();
+        SaveHistory();
+    }
+
+    /// <summary>Saves the settings (off the UI thread), with the history, when the reader goes somewhere (not for every verse that scrolls by).</summary>
+    private static async void SaveHistory()
+    {
+        try { await Settings.Current.SaveAsync(); } // the file is written off the UI thread
+        catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Could not save the settings: {ex}"); }
+    }
+
+    private void UpdateHistoryButtons()
+    {
+        BackButton.IsEnabled = _historyIndex > 0;
+        ForwardButton.IsEnabled = _historyIndex >= 0 && _historyIndex < _history.Count - 1;
+    }
+
+    private void GoToHistory(int index)
+    {
+        if (index < 0 || index >= _history.Count || Target is null) return;
+        var entry = _history[index];
+        if (BookOf(entry) is not { } book) return;
+        SnapshotCurrent(); // where the reader is now; may add an entry, which moves the one that is wanted
+        _historyIndex = _history.IndexOf(entry);
+        ShowOnlineBibles = false;
+        ShowSettings = false;
+        Target.Position = new Bible.VersePosition { Book = book, Chapter = entry.Chapter, Verse = entry.Verse };
+        UpdateHistoryButtons();
+        SaveHistory();
+    }
+
+    private object? _backPending;      // the step back that waits for a possible second press
+    private bool _historyOpenOnRelease; // the second press of a double click on the back button
+
+    /// <summary>
+    /// A click goes back one step, unless a second press follows: a double click (like a long press) lists the history
+    /// instead, so the step waits for as long as a second press may take (as the Strongs button does).
+    /// </summary>
+    private void OnBackHistoryClick(object? sender, RoutedEventArgs e) => _ = StepHistoryAsync(BackButton, -1);
+
+    private void OnForwardHistoryClick(object? sender, RoutedEventArgs e) => _ = StepHistoryAsync(ForwardButton, 1);
+
+    private async Task StepHistoryAsync(Button button, int step)
+    {
+        if (_historyLongPressed) { _historyLongPressed = false; return; } // the long press opened the list: the release is no click
+        // The list opens when the second press ends: a popup that opens during a press is light-dismissed by it.
+        if (_historyOpenOnRelease) { _historyOpenOnRelease = false; OpenHistoryPopup(button); return; }
+        var pending = _backPending = new object();
+        await Task.Delay(StrongsDoubleClickDelay);
+        if (!ReferenceEquals(pending, _backPending)) return;
+        GoToHistory(_historyIndex + step);
+    }
+
+    private void OnHistoryPressed(object? sender, PointerPressedEventArgs e)
+    {
+        _historyLongPressed = false;
+        _historyHoldTarget = sender as Control;
+        _historyOpenOnRelease = false;
+        if ((ReferenceEquals(sender, BackButton) || ReferenceEquals(sender, ForwardButton)) && e.ClickCount == 2)
+        {
+            _backPending = null; // the step back that waited does not happen
+            _historyOpenOnRelease = true;
+            _historyHold?.Stop();
+            return;
+        }
+        _historyHold ??= new Avalonia.Threading.DispatcherTimer { Interval = LongPressDelay };
+        _historyHold.Tick -= OnHistoryHeld;
+        _historyHold.Tick += OnHistoryHeld;
+        _historyHold.Stop();
+        _historyHold.Start();
+    }
+
+    private void OnHistoryHeld(object? sender, EventArgs e)
+    {
+        _historyHold?.Stop();
+        if (_historyHoldTarget is { IsEnabled: false }) return; // a disabled back button has nothing to go back to
+        _historyLongPressed = true; // the release that follows is not a click
+        OpenHistoryPopup(_historyHoldTarget ?? PositionButton);
+    }
+
+    private void OnHistoryReleased(object? sender, RoutedEventArgs e) => _historyHold?.Stop();
+
+    private const double SwipeDistance = 40;
+    private Point _swipeStart;
+    private bool _swipeTracked;
+
+    /// <summary>Starts to track a swipe, unless the press is in a popup of the bar (the book grid, the lists).</summary>
+    private void OnSwipePressed(object? sender, PointerPressedEventArgs e)
+    {
+        _historyLongPressed = false; // from here on, a release is a click again
+        _swipeTracked = e.Source is Visual source && ReferenceEquals(TopLevel.GetTopLevel(source), TopLevel.GetTopLevel(this));
+        _swipeStart = e.GetPosition(this);
+    }
+
+    /// <summary>
+    /// A swipe on the text: only a finger or a pen, since a mouse drag selects text, and only while the text has a single
+    /// column, since with more a horizontal drag turns the pages.
+    /// </summary>
+    private void OnTextSwipePressed(object? sender, PointerPressedEventArgs e)
+    {
+        OnSwipePressed(sender, e);
+        if (e.Pointer.Type == PointerType.Mouse || Target?.IsSingleColumn != true) _swipeTracked = false;
+    }
+
+    /// <summary>A swipe is mostly horizontal and long enough; <paramref name="dx"/> is how far the pointer went from the press.</summary>
+    private bool IsSwipe(PointerEventArgs e, out double dx)
+    {
+        var moved = e.GetPosition(this) - _swipeStart;
+        dx = moved.X;
+        return _swipeTracked && Math.Abs(moved.X) >= SwipeDistance && Math.Abs(moved.X) > 2 * Math.Abs(moved.Y);
+    }
+
+    /// <summary>Once the pointer has swiped, the press is no long press any more.</summary>
+    private void OnSwipeMoved(object? sender, PointerEventArgs e)
+    {
+        if (_historyHold is { IsEnabled: true } && IsSwipe(e, out _)) _historyHold.Stop();
+    }
+
+    private void OnSwipeReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (!IsSwipe(e, out double dx) || _historyLongPressed) { _swipeTracked = false; return; }
+        _swipeTracked = false;
+        _historyLongPressed = true; // the release is no click on the back or position button
+        // To the right goes back, to the left forward; the other way round in a mirrored bar.
+        bool right = dx > 0;
+        if (FlowDirection == FlowDirection.RightToLeft) right = !right;
+        GoToHistory(_historyIndex + (right ? -1 : 1));
+    }
+
+    /// <summary>
+    /// Lists the history, the newest first; choosing an entry goes to it. From the forward button it lists only what
+    /// is ahead of the position, the nearest first.
+    /// </summary>
+    private void OpenHistoryPopup(Control anchor)
+    {
+        HistoryItems.Children.Clear();
+        bool ahead = ReferenceEquals(anchor, ForwardButton);
+        for (int n = 0; n < _history.Count; n++)
+        {
+            int i = ahead ? _historyIndex + 1 + n : _history.Count - 1 - n;
+            if (i < 0 || i >= _history.Count) break;
+
+            int index = i;
+            // The book, and chapter:verse beside it (the start of a chapter is verse 1).
+            var entry = _history[i];
+            var content = new StackPanel { Orientation = Avalonia.Layout.Orientation.Horizontal, Spacing = 8 };
+            content.Children.Add(new TextBlock { Text = ShortenWithEllipsis(BookOf(entry)?.Name ?? string.Empty, 30) });
+            content.Children.Add(new TextBlock { Text = $"{Math.Max(1, entry.Chapter)}:{Math.Max(1, entry.Verse)}", Opacity = 0.7 });
+            var button = new Button { Content = content, };
+            button.Classes.Add("entry");
+            if (i == _historyIndex) button.Classes.Add("current");
+            button.Click += (_, _) => { HistoryPopup.IsOpen = false; GoToHistory(index); };
+            HistoryItems.Children.Add(button);
+        }
+        if (HistoryItems.Children.Count == 0)
+            HistoryItems.Children.Add(new TextBlock { Text = Localizer.Get("NoHistory"), Opacity = 0.7, Margin = new Thickness(12, 8) });
+        HistoryPopup.PlacementTarget = anchor;
+        HistoryPopup.IsOpen = true;
     }
 
     /// <summary>Lists the installed Bibles (<see cref="Settings.Bibles"/>); choosing one sets <see cref="Bible"/>.</summary>
@@ -432,7 +680,9 @@ public partial class BibleToolbar : UserControl
         if (Target is null) return;
         // the book of the text block (the search made its own list of the books of the folder)
         var book = Target.Books?.FirstOrDefault(b => b.Index == result.Position.Book.Index) ?? result.Position.Book;
-        Target.Position = new Bible.VersePosition { Book = book, Chapter = result.Position.Chapter, Verse = result.Position.Verse };
+        var place = new Bible.VersePosition { Book = book, Chapter = result.Position.Chapter, Verse = result.Position.Verse };
+        PushHistory(place);
+        Target.Position = place;
     }
 
     private void AddMenuEntry(string? image, string header, Func<Task> action)
@@ -567,7 +817,9 @@ public partial class BibleToolbar : UserControl
         ShowSettings = false;
         if (Target is null) return;
         // Verse 0 is the start of the chapter; the text block loads the book if it is not shown yet.
-        Target.Position = new Bible.VersePosition { Book = book, Chapter = chapter, Verse = 0 };
+        var place = new Bible.VersePosition { Book = book, Chapter = chapter, Verse = 0 };
+        PushHistory(place);
+        Target.Position = place;
     }
 
     private static readonly FontFamily GreekFont = new("avares://BibleReader.Library/Assets#Cardo");
@@ -613,11 +865,12 @@ public partial class BibleToolbar : UserControl
     {
         var position = Position;
         WatchBible(position?.Book?.Bible);
+        BackButton.IsVisible = ForwardButton.IsVisible = IsWide;
         // The Strongs button is only there for a Bible that has Strong's numbers (known once a book of it has been read).
         StrongsButton.IsVisible = position?.Book?.Bible?.HasStrongs == true;
         UpdateStrongsLetters(position?.Book);
-        BookName.Text = ShortenWithEllipsis(position?.Book?.Name ?? string.Empty, 30);
-        BibleName.Text = ShortenWithEllipsis(position?.Book?.Bible?.Name ?? string.Empty, 35);
+        BookName.Text = ShortenWithEllipsis(position?.Book?.Name ?? string.Empty, IsWide ? 30 : 20);
+        BibleName.Text = ShortenWithEllipsis(position?.Book?.Bible?.Name ?? string.Empty, IsWide ? 35 : 25);
         ReferenceText.Text = position is null ? "—"
             : position.Verse > 0 ? $"{position.Chapter}:{position.Verse}"
             : position.Chapter > 0 ? position.Chapter.ToString() : string.Empty;

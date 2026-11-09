@@ -267,4 +267,16 @@
   <data name="UiSizeReset" xml:space="preserve">
     <value>시스템 크기로 되돌리기</value>
   </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>뒤로</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>앞으로</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>아직 기록이 없습니다</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>줄 끝에서 단어 나누기</value>
+  </data>
 </root>

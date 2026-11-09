@@ -140,10 +140,50 @@ public class BibleTextBlock : Panel
     /// <summary>Whether verse numbers are green; like <see cref="ShowWordsOfJesus"/> it applies when the text is rebuilt.</summary>
     public bool ShowVerseNumbersInGreen { get; set; }
 
+    /// <summary>
+    /// Whether words are split at the end of a line, for the languages that have hyphenation patterns (see
+    /// <see cref="Hyphenation"/>). The text is flowed again when it changes.
+    /// </summary>
+    public bool Hyphenate
+    {
+        get => field;
+        set
+        {
+            if (field == value) return;
+            field = value;
+            MarkDirty();
+        }
+    } = true;
+
+    private Bible? _hyphenBible;
+    private string? _hyphenCode;
+
+    /// <summary>The language of the patterns for the text that is shown; null when it is not hyphenated.</summary>
+    private string? HyphenationLanguage
+    {
+        get
+        {
+            if (!Hyphenate) return null;
+            var bible = Bible;
+            if (!ReferenceEquals(bible, _hyphenBible) || (_hyphenCode is null && bible is not null))
+            {
+                _hyphenBible = bible;
+                _hyphenCode = Hyphenation.LanguageOf(bible);
+            }
+            return _hyphenCode;
+        }
+    }
+
     public Bible? Bible { get => GetValue(BibleProperty); set => SetValue(BibleProperty, value); }
     public Bible.VersePosition? Position { get => GetValue(PositionProperty); set => SetValue(PositionProperty, value); }
     public Orientation Orientation { get => GetValue(OrientationProperty); set => SetValue(OrientationProperty, value); }
     public int ColumnCount { get => GetValue(ColumnCountProperty); set => SetValue(ColumnCountProperty, value); }
+
+    /// <summary>
+    /// True while the text shows a single column that no horizontal drag pans (in columns that are paged sideways, a
+    /// drag turns the pages), so a horizontal swipe on it is free for other uses.
+    /// </summary>
+    public bool IsSingleColumn => _visibleColumns <= 1 && !(_scrolling && Orientation != Orientation.Vertical);
     public double ColumnWidth { get => GetValue(ColumnWidthProperty); set => SetValue(ColumnWidthProperty, value); }
     public double ColumnSpacing { get => GetValue(ColumnSpacingProperty); set => SetValue(ColumnSpacingProperty, value); }
 
@@ -957,6 +997,20 @@ public class BibleTextBlock : Panel
                 }
             }
 
+            // A line that was broken at a soft hyphen shows a hyphen in its place: the line is formatted again with a
+            // hyphen there, which may no longer fit; then it ends earlier (the loop looks at where it ended then).
+            TextLine WithHyphen(TextLine line, int from, double lineWidth)
+            {
+                while (line.NewLineLength == 0 && line.Length > 0 && text[from + line.Length - 1] == Hyphenation.SoftHyphen)
+                {
+                    var hyphenated = formatter.FormatLine(new HyphenSource(text, input.Segments, from + line.Length), from, lineWidth, paraProps);
+                    if (hyphenated is null || hyphenated.Length == 0) return line;
+                    if (hyphenated.Length == line.Length) return hyphenated;
+                    line = hyphenated;
+                }
+                return line;
+            }
+
             int gapIndex = -1, stopAfter = int.MaxValue;
             while (index < text.Length)
             {
@@ -994,6 +1048,7 @@ public class BibleTextBlock : Panel
                 // No float beside this line: the probe is already the line.
                 var line = lineWidth == width ? probe : Format(index, lineWidth);
                 if (line is null || line.Length == 0) break;
+                line = WithHyphen(line, index, lineWidth);
 
                 // Floats declared inside this line start here: place them at this line's top, then lay the
                 // line out again, now narrowed by them. (Floats are removed from `pending`, so this happens once.)
@@ -1356,7 +1411,8 @@ public class BibleTextBlock : Panel
         double extra = (width - line.Width) / spaces.Count;
         if (extra < 0.01) return null;
 
-        var source = new JustifiedSource(text, segments, start + line.Length, spaces, extra, line.Height, line.Baseline);
+        bool hyphen = line.NewLineLength == 0 && text[start + line.Length - 1] == Hyphenation.SoftHyphen;
+        var source = new JustifiedSource(text, segments, start + line.Length, spaces, extra, line.Height, line.Baseline, hyphen);
         var justified = TextFormatter.Current.FormatLine(source, start, 100_000, paragraph);
         return justified is not null && justified.Length == line.Length ? justified : null;
     }
@@ -1373,11 +1429,13 @@ public class BibleTextBlock : Panel
 
     /// <summary>Like <see cref="RichTextSource"/> for one line, with its inner spaces widened.</summary>
     private sealed class JustifiedSource(string text, List<Segment> segments, int lineEnd,
-        Dictionary<int, double> spaces, double extra, double height, double baseline) : ITextSource
+        Dictionary<int, double> spaces, double extra, double height, double baseline, bool hyphen) : ITextSource
     {
         public TextRun? GetTextRun(int index)
         {
             if (index >= lineEnd) return null;
+            if (hyphen && index == lineEnd - 1) // the line ends at a soft hyphen: a hyphen is shown
+                return new TextCharacters("-".AsMemory(), ToRunProperties(segments[FindSegment(segments, index)].Style));
             if (spaces.TryGetValue(index, out double natural))
             {
                 var style = segments[FindSegment(segments, index)].Style with { Baseline = BaselineAlignment.Baseline };
@@ -1387,7 +1445,7 @@ public class BibleTextBlock : Panel
             int found = FindSegment(segments, index);
             if (found < 0) return null;
             var seg = segments[found];
-            int stop = Math.Min(seg.End, lineEnd);
+            int stop = Math.Min(seg.End, hyphen ? lineEnd - 1 : lineEnd);
             for (int i = index; i < stop; i++)
                 if (spaces.ContainsKey(i)) { stop = i; break; }
             return new TextCharacters(text.AsMemory(index, stop - index), ToRunProperties(seg.Style));
@@ -1630,7 +1688,7 @@ public class BibleTextBlock : Panel
 
     private void SelectWordAt(int index)
     {
-        static bool InWord(char c) => char.IsLetterOrDigit(c) || c == '­' || c == '\'';
+        static bool InWord(char c) => char.IsLetterOrDigit(c) || Hyphenation.IsMark(c) || c == '\'';
         int start = Math.Min(index, _text.Length), end = start;
         while (start > 0 && InWord(_text[start - 1])) start--;
         while (end < _text.Length && InWord(_text[end])) end++;
@@ -1643,7 +1701,7 @@ public class BibleTextBlock : Panel
         var sb = new StringBuilder();
         for (int i = SelStart; i < SelEnd && i < _text.Length; i++)
         {
-            if (_text[i] == '­' || _notes.Any(n => i >= n.Start && i < n.End)) continue;
+            if (Hyphenation.IsMark(_text[i]) || _notes.Any(n => i >= n.Start && i < n.End)) continue;
             sb.Append(_text[i]);
         }
         return sb.ToString();
@@ -1806,7 +1864,71 @@ public class BibleTextBlock : Panel
 
         // The markdown of the dictionaries is the same Bible Markdown as the text: bold, italic and paragraphs.
         var runs = Bible.ParseText(markdown, Bible.Run.Classes.Text, new Bible.VersePosition());
-        ShowPopup(ToInlines(runs, FontSize * FootnoteScale, upperCase: false), bounds);
+        var inlines = ToInlines(runs, FontSize * FootnoteScale, upperCase: false).ToList();
+        LinkStrongsNumbers(inlines, strong, bounds);
+        ShowPopup(inlines, bounds);
+    }
+
+    // A number of four digits or more in an entry ("G1234", or "1234" with the prefix of the word that was clicked)
+    // is the number of another entry.
+    private static readonly Regex StrongsReference = new(@"(?<![\p{L}\p{N}])(?<prefix>[GgHh])?(?<number>[0-9]{4,})(?![0-9])", RegexOptions.Compiled);
+
+    /// <summary>
+    /// Makes the numbers of four digits or more in the text of a dictionary entry links: clicking one closes the popup and
+    /// shows the entry of that number in a new one, in the same place. A number without G or H gets the prefix of the
+    /// number that was looked up (<paramref name="current"/>).
+    /// </summary>
+    private void LinkStrongsNumbers(IList<Inline> inlines, string current, Rect bounds)
+    {
+        string? defaultPrefix = current.TrimStart().Length > 0 && char.ToUpperInvariant(current.TrimStart()[0]) is 'G' or 'H'
+            ? char.ToUpperInvariant(current.TrimStart()[0]).ToString() : null;
+        for (int i = 0; i < inlines.Count; i++)
+        {
+            switch (inlines[i])
+            {
+                case Avalonia.Controls.Documents.Run { Text: { Length: > 0 } text } when StrongsReference.IsMatch(text):
+                    var parts = new List<Inline>();
+                    int last = 0;
+                    foreach (Match m in StrongsReference.Matches(text))
+                    {
+                        string? prefix = m.Groups["prefix"].Success ? m.Groups["prefix"].Value.ToUpperInvariant() : defaultPrefix;
+                        if (prefix is null || !int.TryParse(m.Groups["number"].Value, out int number) || number == 0) continue;
+                        if (m.Index > last) parts.Add(new Avalonia.Controls.Documents.Run(text[last..m.Index]));
+                        parts.Add(new InlineUIContainer(StrongsLink(m.Value, prefix + number, bounds)));
+                        last = m.Index + m.Length;
+                    }
+                    if (parts.Count == 0) break;
+                    if (last < text.Length) parts.Add(new Avalonia.Controls.Documents.Run(text[last..]));
+                    inlines.RemoveAt(i);
+                    foreach (var part in parts) inlines.Insert(i++, part);
+                    i--; // the loop moves on to the inline after the last part
+                    break;
+                case Span { Inlines: { } children }:
+                    LinkStrongsNumbers(children, current, bounds);
+                    break;
+            }
+        }
+    }
+
+    private Control StrongsLink(string text, string key, Rect bounds)
+    {
+        var link = new TextBlock
+        {
+            Text = text,
+            Foreground = LinkBrush,
+            TextDecorations = TextDecorations.Underline,
+            FontSize = FontSize * FootnoteScale,
+            FontFamily = FontFamily,
+            Cursor = new Cursor(StandardCursorType.Hand),
+        };
+        link.PointerPressed += (_, e) =>
+        {
+            e.Handled = true; // it is not the start of a selection of the text around it
+            _popup.IsOpen = false;
+            // Shown from a posted callback: a popup that opens during the press that closed another is light-dismissed by it.
+            Dispatcher.UIThread.Post(() => _ = ShowStrongsAsync(key, bounds), DispatcherPriority.Background);
+        };
+        return link;
     }
 
     /// <summary>The inlines of a text in Bible Markdown (bold, italic, small caps, ...), to show it outside the text block.</summary>
@@ -2318,8 +2440,10 @@ public class BibleTextBlock : Panel
         bool lastSpace = true; // trims leading whitespace
         var root = BaseStyle();
 
+        string? hyphenation = HyphenationLanguage; // soft hyphens mark where a word may be split at the end of a line
         void Append(string raw, RunStyle style, bool verbatim = false)
         {
+            if (!verbatim && hyphenation is not null) raw = Hyphenation.Apply(raw, hyphenation);
             int start = sb.Length;
             foreach (char c in raw)
             {
@@ -2440,6 +2564,21 @@ public class BibleTextBlock : Panel
     /// appear to end early: the formatter fetches runs up to the end of the paragraph for every line it breaks,
     /// which is quadratic for a long paragraph, so each line is formatted from a window just past its end.
     /// </summary>
+    /// <summary>Like <see cref="RichTextSource"/> for one line, which ends at a soft hyphen that is shown as a hyphen.</summary>
+    private sealed class HyphenSource(string text, List<Segment> segments, int lineEnd) : ITextSource
+    {
+        public TextRun? GetTextRun(int index)
+        {
+            if (index >= lineEnd) return null;
+            int found = FindSegment(segments, index);
+            if (found < 0) return null;
+            var seg = segments[found];
+            var properties = ToRunProperties(seg.Style);
+            if (index == lineEnd - 1) return new TextCharacters("-".AsMemory(), properties);
+            return new TextCharacters(text.AsMemory(index, Math.Min(seg.End, lineEnd - 1) - index), properties);
+        }
+    }
+
     private sealed class RichTextSource(string text, List<Segment> segments) : ITextSource
     {
         public int Limit { get; set; } = int.MaxValue;

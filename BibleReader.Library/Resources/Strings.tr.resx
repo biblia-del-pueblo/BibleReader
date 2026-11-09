@@ -267,4 +267,16 @@
   <data name="UiSizeReset" xml:space="preserve">
     <value>Sistem boyutuna sıfırla</value>
   </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>Geri</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>İleri</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>Henüz geçmiş yok</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>Satır sonunda kelimeleri heceleyerek böl</value>
+  </data>
 </root>

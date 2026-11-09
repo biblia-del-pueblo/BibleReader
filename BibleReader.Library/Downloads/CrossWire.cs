@@ -23,6 +23,8 @@ namespace BibleReader.Library
         const string ListUrl = Host + "/sword/modules/ModDisp.jsp?modType=";
 
         public override string Origin => "CrossWire";
+        protected virtual string DetailsUrl { get; set; }
+        protected virtual string CrossWireModuleUrl { get; set; }
         public override InstallableBook.Classes Class => InstallableBook.Classes.Bible;
 
         /// <summary>The Bibles of crosswire.org (the Bible texts and translations), by language.</summary>

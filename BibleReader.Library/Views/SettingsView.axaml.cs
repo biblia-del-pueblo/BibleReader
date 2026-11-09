@@ -134,6 +134,7 @@ public partial class SettingsView : UserControl
             FontBox.SelectedItem = string.IsNullOrWhiteSpace(settings.FontFamily) ? EmbeddedFont : settings.FontFamily;
             JesusBox.IsChecked = settings.ShowWordsOfJesus ?? true;
             GreenVerseBox.IsChecked = settings.ShowVerseNumbersInGreen ?? false;
+            HyphenateBox.IsChecked = settings.Hyphenate ?? true;
             NoPersecutionBox.IsChecked = settings.InMyCountryThereIsNoPersecution;
             UpdateSample();
             PathText.Text = settings.ConfigPath;
@@ -241,6 +242,14 @@ public partial class SettingsView : UserControl
         if (_loading) return;
         Settings.Current.InMyCountryThereIsNoPersecution = NoPersecutionBox.IsChecked == true;
         Save();
+    }
+
+    private void OnHyphenateChanged(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (_loading) return;
+        Settings.Current.Hyphenate = HyphenateBox.IsChecked == true;
+        Save();
+        AppearanceChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnGreenVerseChanged(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

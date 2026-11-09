@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>Бүгд</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Хайх</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Хаах</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Цуцлах</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Тохиргоо</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>Суулгасан Библиуд</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>Стронгийн толь бичиг</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>Библиэс хайх…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  Номууд</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>Одоогоор Библи суулгаагүй байна</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>Одоогоор Стронгийн толь бичиг суулгаагүй байна</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>Эхлээд Библи нээнэ үү.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Хайж байна… (Библид хийх эхний хайлт индексийг үүсгэдэг тул хэсэг хугацаа шаардана)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Хайлт амжилтгүй боллоо: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>Эшлэл олдсонгүй.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} эшлэл, хамгийн тохирох нь эхэнд</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>Библи суулгах…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>Уншихад буцах</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Тохиргоо…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>Суулгасан</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>Суулгах</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Устгах</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>Устгах уу?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>Суулгасан Библиуд ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>Файлаас суулгах ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>Хэл…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>Бүх хэл</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>Төрлөөр шүүх</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>Харуулж байна: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>Нэрээр хайх…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Дахин ачаалах</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>Библийн нэр</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>Файлаас Библи суулгах</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>Библийн архивууд</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>{0} суулгаж байна…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>Файлаас ямар ч ном импортолж чадсангүй.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} суулгагдлаа</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>Файлаас суулгах амжилтгүй боллоо: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>Нэр оруулна уу.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>Энэ нэртэй Библи аль хэдийн суулгагдсан байна.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>ebible.org болон crosswire.org-оос Библиудыг ачаалж байна…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>Жагсаалтыг ачаалж чадсангүй: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>Онлайн Библиудыг жагсаахын тулд тохиргооноос “{0}”-г чагтална уу.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{1}-аас {0} модуль</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Устгах амжилтгүй боллоо: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>Суулгах амжилтгүй боллоо: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>Библи</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>Тайлбар</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>Толь бичиг</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>Ном</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>Газрын зураг</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>Нэмэлт</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Загвар:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Систем</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Цайвар</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Бараан</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Хэл:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>Апп-ыг дахин эхлүүлэхэд хэл солигдоно.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Фонт:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>Фонт суулгах ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>Фонтын хэмжээ:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>Есүсийн үгийг улаанаар харуулах</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>Эшлэлийн дугаарыг ногоон өнгөөр харуулах</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>Миний улсад хавчлага байхгүй</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>Есүс бүх Галилейгаар явж, тэдний синагогуудад сургаж байв. </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>Миний хойноос ир, би та нарыг хүн барьдаг загасчин болгоно.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Хадгалах байршил:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>Фонтууд суулгах</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>Фонтууд эсвэл фонтуудын zip</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>{0}-д ашиглах боломжтой фонт олдсонгүй</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>Суулгасан: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. {0}-д ашиглах боломжтой фонт алга</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>Фонтыг суулгаж чадсангүй: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>1 Библи суулгасан</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>{0} Библи суулгасан</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>{0}-д зориулсан оруулга алга. Стронг товчоор Стронгийн толь бичгийг идэвхжүүлнэ үү.</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Интерфейсийн хэмжээ:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Системийн хэмжээнд сэргээх</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>Буцах</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>Урагш</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>Түүх одоогоор алга</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>Мөрийн төгсгөлд үгийг таслах</value>
+  </data>
+</root>

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>Semua</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Cari</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Tutup</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Batal</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Pengaturan</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>Alkitab terpasang</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>Kamus Strong</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>Cari di Alkitab…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  Kitab</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>Belum ada Alkitab terpasang</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>Belum ada kamus Strong terpasang</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>Buka sebuah Alkitab terlebih dahulu.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Mencari… (pencarian pertama di sebuah Alkitab membuat indeksnya, dan itu memerlukan waktu sebentar)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Pencarian gagal: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>Tidak ada ayat ditemukan.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} ayat, yang paling cocok lebih dulu</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>Pasang Alkitab…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>Kembali membaca</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Pengaturan…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>Terpasang</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>Pasang</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Hapus</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>Hapus?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>Alkitab terpasang ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>Pasang dari berkas ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>Bahasa…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>Semua bahasa</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>Saring menurut jenis</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>Menampilkan: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>Cari nama…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Muat ulang</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>Nama Alkitab</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>Pasang Alkitab dari berkas</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>Arsip Alkitab</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>Memasang {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>Tidak ada kitab yang dapat diimpor dari berkas.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} terpasang</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>Pemasangan dari berkas gagal: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>Masukkan nama.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>Alkitab dengan nama ini sudah terpasang.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>Memuat Alkitab dari ebible.org dan crosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>Daftar tidak dapat dimuat: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>Untuk menampilkan Alkitab daring, centang “{0}” di pengaturan.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} dari {1} modul</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Penghapusan gagal: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>Pemasangan gagal: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>Alkitab</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>Tafsiran</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>Kamus</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>Buku</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>Peta</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>Pengaya</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Tema:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Sistem</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Terang</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Gelap</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Bahasa:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>Bahasa berubah setelah aplikasi dijalankan ulang.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Fon:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>Pasang fon ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>Ukuran fon:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>Tampilkan perkataan Yesus berwarna merah</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>Tampilkan nomor ayat berwarna hijau</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>Di negara saya tidak ada penganiayaan</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>Yesus berkeliling di seluruh Galilea. Ia mengajar di rumah-rumah ibadat. </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>Mari, ikutlah Aku, dan kamu akan Kujadikan penjala manusia.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Penyimpanan:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>Pasang fon</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>Fon atau zip berisi fon</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>Tidak ditemukan fon yang dapat dipakai di {0}</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>Terpasang: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. Tidak ada fon yang dapat dipakai di {0}</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>Fon tidak dapat dipasang: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>1 Alkitab terpasang</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>{0} Alkitab terpasang</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>Tidak ada entri untuk {0}. Aktifkan kamus Strong dengan tombol Strong.</value>
+  </data>
+  <data name="UiSize" xml:space="preserve">
+    <value>Ukuran antarmuka:</value>
+  </data>
+  <data name="UiSizeReset" xml:space="preserve">
+    <value>Setel ulang ke ukuran sistem</value>
+  </data>
+  <data name="HistoryBack" xml:space="preserve">
+    <value>Kembali</value>
+  </data>
+  <data name="HistoryForward" xml:space="preserve">
+    <value>Maju</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>Belum ada riwayat</value>
+  </data>
+  <data name="Hyphenation" xml:space="preserve">
+    <value>Pisahkan kata di akhir baris</value>
+  </data>
+</root>
