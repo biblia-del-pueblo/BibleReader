@@ -1,7 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:BibleReader.Library"
-             xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
              x:Class="BibleReader.Library.UI.SettingsView">
 
     <Grid Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
@@ -48,7 +47,7 @@
                     <ComboBox x:Name="FontBox" Grid.Column="1" MinWidth="200" MaxWidth="400"
                               SelectionChanged="OnFontChanged" VerticalAlignment="Center" />
                     <Button x:Name="InstallFontButton" Grid.Column="2" Click="OnInstallFontClick" VerticalAlignment="Center" ToolTip.Tip="{loc:Loc InstallFont}">
-                        <svg:Svg Path="/Assets/upload.svg" Width="18" Height="18" Css="{DynamicResource SvgThemeCss}" VerticalAlignment="Center" />
+                        <loc:ThemedSvg Path="/Assets/upload.svg" Size="18" VerticalAlignment="Center" />
                     </Button>
                 </Grid>
 
@@ -66,7 +65,7 @@
                             TickFrequency="5" IsSnapToTickEnabled="True" VerticalAlignment="Center" />
                     <TextBlock x:Name="UiSizeText" Grid.Column="2" Opacity="0.7" VerticalAlignment="Center" />
                     <Button Grid.Column="3" Click="OnUiSizeResetClick" ToolTip.Tip="{loc:Loc UiSizeReset}" VerticalAlignment="Center">
-                        <svg:Svg Path="/Assets/cycle.svg" Width="16" Height="16" Css="{DynamicResource SvgThemeCss}" />
+                        <loc:ThemedSvg Path="/Assets/cycle.svg" Size="16" />
                     </Button>
                 </Grid>
 
@@ -108,7 +107,7 @@
         <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="8"
                 Padding="8,6" Background="Transparent" BorderThickness="0"
                 ToolTip.Tip="{loc:Loc Close}" Click="OnCloseClick">
-            <svg:Svg Path="/Assets/close.svg" Width="16" Height="16" Css="{DynamicResource SvgThemeCss}" />
+            <loc:ThemedSvg Path="/Assets/close.svg" Size="16" />
         </Button>
     </Grid>
 </UserControl>

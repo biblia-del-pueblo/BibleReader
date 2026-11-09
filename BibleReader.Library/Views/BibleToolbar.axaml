@@ -1,7 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:BibleReader.Library"
-             xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
              x:Class="BibleReader.Library.UI.BibleToolbar">
 
     <UserControl.Styles>
@@ -59,8 +58,7 @@
                         Cursor="Hand"
                         Click="OnMenuClick">
                     <StackPanel Orientation="Horizontal" Spacing="10">
-                        <svg:Svg x:Name="Menu" Path="/Assets/bars.svg" Width="18" Height="18"
-                            Css="{DynamicResource SvgThemeCss}" />
+                        <loc:ThemedSvg x:Name="Menu" Path="/Assets/bars.svg" Size="18" />
                     </StackPanel>
                 </Button>
                 <!-- The position is a flat button: it looks like text until hovered. -->
@@ -79,8 +77,7 @@
                         </StackPanel>
                         <TextBlock x:Name="ReferenceText" Opacity="0.8" VerticalAlignment="Center" />
                         <!-- Direct Svg tag -->
-                        <svg:Svg Path="/Assets/down-arrow.svg" Width="18" Height="18"
-                                Css="{DynamicResource SvgThemeCss}" />
+                        <loc:ThemedSvg Path="/Assets/down-arrow.svg" Size="18" />
                     </StackPanel>
                 </Button>
                 <!-- The installed Bibles: opens a list to choose the Bible to read. -->
@@ -93,8 +90,7 @@
                         ToolTip.Tip="{loc:Loc InstalledBibles}"
                         Click="OnBiblesClick">
                     <StackPanel Orientation="Horizontal" Spacing="6">
-                        <svg:Svg Path="/Assets/bookshelf.svg" Width="30" Height="30"
-                                Css="{DynamicResource SvgThemeCss}" />
+                        <loc:ThemedSvg Path="/Assets/bookshelf.svg" Size="30" />
                     </StackPanel>
                 </Button>
                 <!-- Search: opens a box to type the words, and below it the verses that have them, best match first. -->
@@ -106,7 +102,7 @@
                         Cursor="Hand"
                         ToolTip.Tip="{loc:Loc Search}"
                         Click="OnSearchClick">
-                    <svg:Svg Path="/Assets/magnifying-glass.svg" Width="22" Height="22" Css="{DynamicResource SvgThemeCss}" />
+                    <loc:ThemedSvg Path="/Assets/magnifying-glass.svg" Size="22" />
                 </Button>
                 <!-- The installed Strong's dictionaries: opens a list in which they are switched on and off. -->
                 <Button x:Name="StrongsButton"
@@ -169,7 +165,7 @@
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
                             <TextBox x:Name="SearchBox" PlaceholderText="{loc:Loc SearchBible}" KeyDown="OnSearchKeyDown" />
                             <Button Grid.Column="1" Click="OnSearchGoClick" ToolTip.Tip="{loc:Loc Search}">
-                                <svg:Svg Path="/Assets/magnifying-glass.svg" Width="16" Height="16" Css="{DynamicResource SvgThemeCss}" />
+                                <loc:ThemedSvg Path="/Assets/magnifying-glass.svg" Size="16" />
                             </Button>
                         </Grid>
                         <TextBlock x:Name="SearchStatus" Opacity="0.7" FontSize="{loc:Size 12}" IsVisible="False" />

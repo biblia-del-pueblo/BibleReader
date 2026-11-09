@@ -1,7 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="using:BibleReader.Library"
-             xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
              xmlns:local="using:BibleReader.Library.UI"
              x:Class="BibleReader.Library.UI.OnlineBiblesView"
              x:DataType="local:OnlineBiblesView">
@@ -18,14 +17,14 @@
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                     <local:BusySpinner Width="20" Height="20" Thickness="3" IsVisible="{Binding IsBusy}" />
-                    <svg:Svg Path="/Assets/circle-check.svg" Width="16" Height="16" IsVisible="{Binding IsInstalled}"
-                        ToolTip.Tip="{loc:Loc Installed}" />
+                    <!-- The check mark keeps the colours of its file. -->
+                    <loc:ThemedSvg Path="/Assets/circle-check.svg" Size="18" ThemeColor="False" IsVisible="{Binding IsInstalled}"
+                                   ToolTip.Tip="{loc:Loc Installed}" />
                     <TextBlock Text="{loc:Loc Installed}" Opacity="0.7" VerticalAlignment="Center"
                                IsVisible="{Binding IsInstalledAndWide}" />
                     <Button Click="OnInstallClick" IsVisible="{Binding CanInstall}">
                         <StackPanel Orientation="Horizontal">
-                            <svg:Svg Path="/Assets/download.svg" Width="16" Height="16"
-                                Css="{DynamicResource SvgThemeCss}" ToolTip.Tip="{loc:Loc Install}" />
+                            <loc:ThemedSvg Path="/Assets/download.svg" Size="18" ToolTip.Tip="{loc:Loc Install}" />
                             <TextBlock Text="{loc:Loc Install}" Margin="4,0,0,0"
                                 IsVisible="{Binding $parent[local:OnlineBiblesView].IsWide}" />
                         </StackPanel>
@@ -33,8 +32,7 @@
                     <Button Click="OnDeleteClick"
                             IsVisible="{Binding CanDelete}">
                         <StackPanel Orientation="Horizontal">
-                            <svg:Svg Path="/Assets/trash.svg" Width="16" Height="16"
-                                Css="{DynamicResource SvgThemeCss}" ToolTip.Tip="{loc:Loc Delete}" />
+                            <loc:ThemedSvg Path="/Assets/trash.svg" Size="18" ToolTip.Tip="{loc:Loc Delete}" />
                             <TextBlock Text="{loc:Loc Delete}" Margin="4,0,0,0"
                                 IsVisible="{Binding $parent[local:OnlineBiblesView].IsWide}" />
                         </StackPanel>
@@ -59,7 +57,7 @@
                     <Button x:Name="InstallFromFileButton" Grid.Column="1" Click="OnInstallFromFileClick"
                         ToolTip.Tip="{loc:Loc InstallFromFile}">
                         <StackPanel Orientation="Horizontal" Spacing="6">
-                            <svg:Svg Path="/Assets/upload.svg" Width="18" Height="18" Css="{DynamicResource SvgThemeCss}" />
+                            <loc:ThemedSvg Path="/Assets/upload.svg" Size="18" />
                             <TextBlock Text="{loc:Loc InstallFromFile}" VerticalAlignment="Center"
                                 IsVisible="{Binding $parent[local:OnlineBiblesView].IsWide}" />
                         </StackPanel>
@@ -78,11 +76,11 @@
                 <!-- The filter icon is a button: it opens the list of the kinds of modules (InstallableBook.Classes). -->
                 <Button x:Name="ClassButton" Grid.Column="1" Padding="8,6" BorderThickness="0" Background="Transparent"
                         Cursor="Hand" ToolTip.Tip="{loc:Loc FilterByKind}" Click="OnClassFilterClick">
-                    <svg:Svg Path="/Assets/filter.svg" Width="18" Height="18" Css="{DynamicResource SvgThemeCss}" />
+                    <loc:ThemedSvg Path="/Assets/filter.svg" Size="18" />
                 </Button>
                 <TextBox x:Name="SearchBox" Grid.Column="2" PlaceholderText="{loc:Loc SearchNamePlaceholder}" TextChanged="OnSearchChanged" />
                 <Button Grid.Column="3" Click="OnReloadClick" ToolTip.Tip="{loc:Loc Reload}">
-                    <svg:Svg Path="/Assets/cycle.svg" Width="18" Height="18" Css="{DynamicResource SvgThemeCss}" />
+                    <loc:ThemedSvg Path="/Assets/cycle.svg" Size="18" />
                 </Button>
             </Grid>
         </StackPanel>
@@ -128,7 +126,7 @@
         <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="8"
                 Padding="8,6" Background="Transparent" BorderThickness="0"
                 ToolTip.Tip="{loc:Loc Close}" Click="OnCloseClick">
-            <svg:Svg Path="/Assets/close.svg" Width="16" Height="16" Css="{DynamicResource SvgThemeCss}" />
+            <loc:ThemedSvg Path="/Assets/close.svg" Size="18" />
         </Button>
     </Grid>
 </UserControl>

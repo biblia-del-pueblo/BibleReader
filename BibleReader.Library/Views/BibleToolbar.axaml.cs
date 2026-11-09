@@ -111,6 +111,8 @@ public partial class BibleToolbar : UserControl
         SearchPopup.PlacementTarget = SearchButton;
         // Tunnelled: the presses are seen before the button and the popup that it light-dismisses can handle them.
         StrongsButton.AddHandler(PointerPressedEvent, OnStrongsPressed, RoutingStrategies.Tunnel);
+        StrongsButton.AddHandler(PointerReleasedEvent, OnStrongsReleased, RoutingStrategies.Tunnel);
+        StrongsButton.AddHandler(PointerCaptureLostEvent, OnStrongsReleased);
         BookPopup.PlacementTarget = PositionButton; // a reference to a named sibling, set here rather than as a binding
         UpdateText();
     }
@@ -199,22 +201,30 @@ public partial class BibleToolbar : UserControl
     private void OnBiblesPopupClosed(object? sender, EventArgs e) => _biblesClosedAt = DateTime.UtcNow;
 
     /// <summary>
-    /// Lists the installed Strong's dictionaries (the <see cref="IStrongDictionary"/> entries of
-    /// <see cref="Settings.Bibles"/>); checking one sets its <see cref="IStrongDictionary.IsEnabled"/>.
+    /// A click on the Strongs button switches all the installed Strong's dictionaries on, or, when they all are on,
+    /// off. A double click or a long press opens the list, in which every dictionary is switched on or off by itself.
     /// </summary>
     private async void OnStrongsClick(object? sender, RoutedEventArgs e)
     {
-        if ((DateTime.UtcNow - _strongsToggledAt).TotalMilliseconds < 600) return; // the end of a double click
+        if (_strongsLongPressed) { _strongsLongPressed = false; return; } // the long press opened the list: the release is no click
+        if (_strongsOpenOnRelease) { _strongsOpenOnRelease = false; OpenStrongsPopup(); return; } // the end of a double click
         if (StrongsPopup.IsOpen) { StrongsPopup.IsOpen = false; return; }
-        // Pressing the button already light-dismissed the open popup; don't reopen it with the same click.
+        // Pressing the button already light-dismissed the open popup; this click is not a toggle.
         if ((DateTime.UtcNow - _strongsClosedAt).TotalMilliseconds < 300) return;
 
-        // The popup opens only when no second press follows: opening it at once and closing it again for a double
-        // click would make it flicker.
-        var pending = _strongsOpening = new object();
-        await Task.Delay(StrongsOpenDelay);
-        if (!ReferenceEquals(pending, _strongsOpening)) return;
+        // A click toggles only when no second press follows: for a double click the list opens instead.
+        var pending = _strongsPending = new object();
+        await Task.Delay(StrongsDoubleClickDelay);
+        if (!ReferenceEquals(pending, _strongsPending)) return;
+        SetAllStrongs(!StrongsDictionariesInstalled().All(d => d.IsEnabled));
+    }
 
+    /// <summary>
+    /// Lists the installed Strong's dictionaries (the <see cref="IStrongDictionary"/> entries of
+    /// <see cref="Settings.Bibles"/>); checking one sets its <see cref="IStrongDictionary.IsEnabled"/>.
+    /// </summary>
+    private void OpenStrongsPopup()
+    {
         StrongsItems.Children.Clear();
         _strongsBoxes.Clear();
         var dictionaries = StrongsDictionariesInstalled();
@@ -287,30 +297,51 @@ public partial class BibleToolbar : UserControl
         finally { _syncingStrongs = false; }
     }
 
-    private const ulong DoubleClickMilliseconds = 500;
-    private static readonly TimeSpan StrongsOpenDelay = TimeSpan.FromMilliseconds(350);
-    private object? _strongsOpening; // the opening of the popup that waits for a possible second press
+    private const ulong DoubleClickMilliseconds = 400;
+    private static readonly TimeSpan StrongsDoubleClickDelay = TimeSpan.FromMilliseconds(420); // a little more than the time for a second press
+    private static readonly TimeSpan LongPressDelay = TimeSpan.FromMilliseconds(500);
+    private object? _strongsPending;      // the toggle that waits for a possible second press
     private ulong _strongsPressedAt;
-    private DateTime _strongsToggledAt = DateTime.MinValue;
+    private bool _strongsLongPressed, _strongsOpenOnRelease;
+    private Avalonia.Threading.DispatcherTimer? _strongsHold;
 
     /// <summary>
-    /// Two presses of the button in quick succession switch all the dictionaries on, or, when they all are on, off.
-    /// The presses are timed here, not taken from the Tapped events: the first press opens the popup, and with the
-    /// popup open the second one does not arrive as a double tap.
+    /// Two presses of the button in quick succession, or one that is held, open the list. The presses are timed here,
+    /// not taken from the Tapped events, which do not tell a double tap reliably next to a popup.
     /// </summary>
     private void OnStrongsPressed(object? sender, PointerPressedEventArgs e)
     {
+        _strongsLongPressed = false;
+        _strongsOpenOnRelease = false;
         if (_strongsPressedAt != 0 && e.Timestamp - _strongsPressedAt < DoubleClickMilliseconds)
         {
             _strongsPressedAt = 0;
-            _strongsOpening = null; // the popup that was about to open does not
-            _strongsToggledAt = DateTime.UtcNow; // the click that ends this press must not open the popup either
-            StrongsPopup.IsOpen = false;
-            SetAllStrongs(!StrongsDictionariesInstalled().All(d => d.IsEnabled));
+            _strongsPending = null; // the toggle that waited does not happen
+            // The list opens when this press ends: a popup that opens during a press is light-dismissed by it.
+            _strongsOpenOnRelease = true;
             return;
         }
         _strongsPressedAt = e.Timestamp;
+
+        // Held long enough, it opens the list while the finger is still down.
+        _strongsHold ??= new Avalonia.Threading.DispatcherTimer { Interval = LongPressDelay };
+        _strongsHold.Tick -= OnStrongsHeld;
+        _strongsHold.Tick += OnStrongsHeld;
+        _strongsHold.Stop();
+        _strongsHold.Start();
     }
+
+    private void OnStrongsHeld(object? sender, EventArgs e)
+    {
+        _strongsHold?.Stop();
+        _strongsLongPressed = true; // the release that follows is not a click
+        _strongsPending = null;
+        _strongsPressedAt = 0;
+        OpenStrongsPopup();
+    }
+
+    /// <summary>The press ended (or was taken away): it was not held long enough.</summary>
+    private void OnStrongsReleased(object? sender, RoutedEventArgs e) => _strongsHold?.Stop();
 
     private void OnStrongsPopupClosed(object? sender, EventArgs e) => _strongsClosedAt = DateTime.UtcNow;
 
@@ -411,15 +442,7 @@ public partial class BibleToolbar : UserControl
         else
         {
             var panel = new StackPanel() { Orientation = Avalonia.Layout.Orientation.Horizontal };
-            var svg = new Avalonia.Svg.Skia.Svg(new Uri("avares://BibleReader.Library/"))   // base URI the Path is resolved against
-            {
-                Path = $"/Assets/{image}",
-                Width = 18,
-                Height = 18                                             // x:Name only exists in XAML; Name is the plain property
-            };
-
-            // Css="{DynamicResource SvgThemeCss}": follow the resource, including live theme switches
-            svg.Bind(Avalonia.Svg.Skia.Svg.CssProperty, svg.GetResourceObservable("SvgThemeCss"));
+            var svg = new ThemedSvg { Path = $"/Assets/{image}", Size = 18 }; // coloured for the theme, sized for the interface
             panel.Children.Add(svg);
             panel.Children.Add(new TextBlock() { Text = header, Margin = new Thickness(8, 0, 0, 0) });
             button = new Button { Content = panel };
@@ -565,7 +588,7 @@ public partial class BibleToolbar : UserControl
         };
         if (hebrew is null && !string.IsNullOrEmpty(StrongsLetters.Text)) return;
         StrongsLetters.FontFamily = hebrew == true ? HebrewFont : GreekFont;
-        StrongsLetters.FontSize = hebrew == true ? 30 : 20;
+        StrongsLetters.FontSize = UiScale.Size(hebrew == true ? 30 : 20);
         StrongsLetters.Text = hebrew == true ? "אב" : "αβ";
     }
 
