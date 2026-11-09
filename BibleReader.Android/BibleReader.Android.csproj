@@ -32,4 +32,7 @@
         <AndroidAsset Include="$(BibleDirectory)\*.md" Link="Bible\%(Filename)%(Extension)" />
         <AndroidAsset Include="$(BibleDirectory)\src\booknames.xml" Link="Bible\booknames.xml" Condition="Exists('$(BibleDirectory)\src\booknames.xml')" />
     </ItemGroup>
+    <ItemGroup>
+      <AndroidAsset Remove="C:\GitHub\BibleReader\BibleReader.Android\..\..\BibliaLibrePrivate\Bibles\English.WorldEnglishBibleUS\**" />
+    </ItemGroup>
 </Project>

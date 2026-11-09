@@ -15,7 +15,7 @@ public partial class App : Application
     /// Folder with the Bible's markdown files (null result: none found); started by <see cref="BibleApplication"/>
     /// before the app starts, and awaited here so that the main thread is never blocked while it is prepared.
     /// </summary>
-    public static Task<string?>? BibleDirectory { get; set; }
+    public static string? BibleDirectory { get; set; }
 
     public override void Initialize()
     {
