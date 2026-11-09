@@ -14,7 +14,8 @@ namespace BibleReader.Library;
 public class Download
 {
     public static CancellationTokenSource Cancel { get; set; } = new CancellationTokenSource();
-    public static HttpClientHandler Proxy { get; set; } = new HttpClientHandler { UseProxy = false };
+    // In the browser the handler is built on fetch, which has no proxy setting: setting UseProxy throws there.
+    public static HttpClientHandler Proxy { get; set; } = OperatingSystem.IsBrowser() ? new HttpClientHandler() : new HttpClientHandler { UseProxy = false };
     public static HttpClient Client
     {
         get => field ??= new HttpClient(Proxy, true);
@@ -48,18 +49,13 @@ public class Download
         if (string.IsNullOrEmpty(destinationPath)) destinationPath = Path.GetDirectoryName(destinationFile);
         if (!Directory.Exists(destinationPath)) Directory.CreateDirectory(destinationPath);
 
-        if (url.EndsWith(".7z", StringComparison.OrdinalIgnoreCase) ||
-            url.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+        if (url.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
         {
-            var singleFile = url.EndsWith(".dll.zip", StringComparison.OrdinalIgnoreCase) ||
-                url.EndsWith(".dll.7z", StringComparison.OrdinalIgnoreCase);
+            var singleFile = url.EndsWith(".dll.zip", StringComparison.OrdinalIgnoreCase);
             using (var stream = new SeekableDownloadStream(url, destinationFile + ".tmp", true, singleFile ? progress : null))
             {
                 // Pick the extractor from the url, not destinationFile: callers may pass a name without extension
-                if (url.EndsWith(".7z", StringComparison.OrdinalIgnoreCase))
-                    await Task.Run(() => Zip.Unzip7zFile(destinationFile, destinationPath, filter, stream, singleFile ? null : progress));
-                else
-                    await Task.Run(() => Zip.UnzipZipFile(destinationFile, destinationPath, filter, stream, singleFile ? null : progress));
+                await Task.Run(() => Zip.UnzipZipFile(destinationFile, destinationPath, filter, stream, singleFile ? null : progress));
             }
         }
         else throw new NotSupportedException("Url must be a 7z or zip archive");

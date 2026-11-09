@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices.JavaScript;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using BibleReader.Library;
@@ -41,7 +40,7 @@ internal static partial class BrowserStorage
         settings.ConfigPath = ConfigFolder; // creates the folder
         try
         {
-            var keys = JsonSerializer.Deserialize<string[]>(await ListKeys()) ?? [];
+            var keys = (await ListKeys()).Split('\n', StringSplitOptions.RemoveEmptyEntries);
             foreach (var key in keys)
             {
                 if (await GetFile(key) is not { } text) continue;
@@ -54,8 +53,15 @@ internal static partial class BrowserStorage
             }
         }
         catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Could not read IndexedDB: {ex}"); }
+    }
 
-        // Files are written as they change; they are copied over a moment later.
+    /// <summary>
+    /// Copies the files that changed to IndexedDB every second (they are written to the file system as they change).
+    /// Called when the app has started: the dispatcher must not be touched before, or the code after the first
+    /// <c>await</c> in Main never continues.
+    /// </summary>
+    public static void StartSync()
+    {
         var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         timer.Tick += async (_, _) => await SyncAsync();
         timer.Start();

@@ -124,7 +124,7 @@
                 <StackPanel Spacing="6">
                     <StackPanel Spacing="16" Orientation="Horizontal">
                         <TextBlock Text="{loc:Loc Storage}" FontWeight="SemiBold" />
-                        <TextBlock x:Name="PathText" Opacity="0.7" TextWrapping="Wrap" />
+                        <SelectableTextBlock x:Name="PathText" Opacity="0.7" TextWrapping="Wrap" />
                     </StackPanel>
                     <TextBlock x:Name="BiblesText" Opacity="0.7" />
                 </StackPanel>

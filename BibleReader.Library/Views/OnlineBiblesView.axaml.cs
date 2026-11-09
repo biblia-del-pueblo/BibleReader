@@ -73,6 +73,7 @@ public partial class OnlineBibleItem : ObservableObject
 /// </summary>
 public partial class OnlineBiblesView : UserControl
 {
+    public const bool ShowExceptions = true;
     private static string AllLanguages => Localizer.Get("AllLanguages");
 
     private List<OnlineBibleItem> _items = new();
@@ -216,7 +217,7 @@ public partial class OnlineBiblesView : UserControl
         }
         catch (Exception ex)
         {
-            StatusText.Text = Localizer.Format("InstallFromFileFailed", ex.Message);
+            StatusText.Text = Localizer.Format("InstallFromFileFailed", ShowExceptions ? ex.ToString() : ex.Message);
         }
         finally
         {
@@ -289,7 +290,7 @@ public partial class OnlineBiblesView : UserControl
         }
         catch (Exception ex)
         {
-            StatusText.Text = Localizer.Format("CouldNotLoadList", ex.Message);
+            StatusText.Text = Localizer.Format("CouldNotLoadList", ShowExceptions ? ex.ToString() : ex.Message);
         }
         finally
         {
@@ -486,7 +487,7 @@ public partial class OnlineBiblesView : UserControl
         }
         catch (Exception ex)
         {
-            item.Error = Localizer.Format("DeleteFailed", ex.Message);
+            item.Error = Localizer.Format("DeleteFailed", ShowExceptions ? ex.ToString() : ex.Message);
         }
         finally
         {
@@ -515,7 +516,7 @@ public partial class OnlineBiblesView : UserControl
         }
         catch (Exception ex)
         {
-            item.Error = Localizer.Format("InstallFailed", ex.Message);
+            item.Error = Localizer.Format("InstallFailed", ShowExceptions ? ex.ToString() : ex.Message);
         }
         finally
         {

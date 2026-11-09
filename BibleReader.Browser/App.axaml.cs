@@ -13,9 +13,20 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        Settings.Current.Load(); // the language, the size and the Bibles that were chosen before
-        if (ApplicationLifetime is ISingleViewApplicationLifetime single)
-            single.MainView = new BibleView();
+        try
+        {
+            System.Console.WriteLine("App: initialized");
+            BrowserStorage.StartSync();
+            Settings.Current.Load(); // the language, the size and the Bibles that were chosen before
+            if (ApplicationLifetime is ISingleViewApplicationLifetime single)
+                single.MainView = new BibleView();
+            System.Console.WriteLine("App: BibleView created");
+        }
+        catch (System.Exception ex)
+        {
+            System.Console.Error.WriteLine($"App: {ex}");
+            throw;
+        }
         base.OnFrameworkInitializationCompleted();
     }
 }

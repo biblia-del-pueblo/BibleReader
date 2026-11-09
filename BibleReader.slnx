@@ -3,7 +3,6 @@
   <Project Path="BibleReader.Android/BibleReader.Android.csproj">
     <Deploy Solution="Debug|*" />
   </Project>
-  <Project Path="BibleReader.Browser/BibleReader.Browser.csproj" />
   <Project Path="BibleReader.Desktop/BibleReader.Desktop.csproj" />
   <Project Path="BibleReader.iOS/BibleReader.iOS.csproj" />
   <Project Path="BibleReader.Library/BibleReader.Library.csproj" />

@@ -1,5 +1,4 @@
-﻿using LibArchive.Net;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -14,116 +13,10 @@ public class Zip
 {
 	public static CancellationToken Cancel => Download.Cancel.Token;
 
-	static Zip()
-	{
-		PreloadNativeLibrary();
-	}
-
-	[System.Runtime.InteropServices.DllImport("kernel32", CharSet = System.Runtime.InteropServices.CharSet.Unicode, SetLastError = true)]
-	static extern IntPtr LoadLibrary(string fileName);
-
 	/// <summary>
 	/// .NET Framework does not probe runtimes/{rid}/native, so load archive.dll by full path;
 	/// a module loaded this way satisfies the later DllImport("archive") of LibArchive.Net.
 	/// </summary>
-	static void PreloadNativeLibrary()
-	{
-		try
-		{
-			if (OSInfo.IsCore || Path.DirectorySeparatorChar != '\\') return;
-
-			var rid = "win-" + System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
-			var dirs = new List<string>();
-			try { dirs.Add(Path.GetDirectoryName(new Uri(typeof(Zip).Assembly.CodeBase).LocalPath)); } catch { }
-			dirs.Add(AppDomain.CurrentDomain.BaseDirectory);
-			dirs.Add(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin"));
-
-			foreach (var dir in dirs.Where(d => !string.IsNullOrEmpty(d)).Distinct(StringComparer.OrdinalIgnoreCase))
-			{
-				var path = Path.Combine(dir, "runtimes", rid, "native", "archive.dll");
-				if (File.Exists(path) && LoadLibrary(path) != IntPtr.Zero) return;
-			}
-		}
-		catch { }
-	}
-	public static void UnzipFile(string zipFile, string destFolder, Func<string, bool> filter = null, Stream stream = null,
-		Action<long, long> progress = null)
-	{
-		if (zipFile.EndsWith(".7z")) Unzip7zFile(zipFile, destFolder, filter, stream, progress);
-		else UnzipZipFile(zipFile, destFolder, filter, stream, progress);
-	}
-	public static void Unzip7zFile(string zipFile, string destFolder, Func<string, bool> filter = null, Stream stream = null,
-		Action<long, long> progress = null)
-	{
-		try
-        {
-			var cancel = Cancel;
-            if (!Directory.Exists(destFolder)) Directory.CreateDirectory(destFolder);
-
-            if (filter == null) filter = name => true;
-
-			//Log.WriteStart("Unzipping file");
-			//Log.WriteInfo(string.Format("Unzipping file \"{0}\" to the folder \"{1}\"", zipFile, destFolder));
-
-			using (var reader = stream != null
-				? new LibArchiveReader(stream, password: null, blockSize: 10240)
-				: new LibArchiveReader(zipFile, blockSize: 10240, password: null))
-			{
-				// 7z stores all entry sizes in one header block, so a metadata-only pass (never touching
-				// Entry.Stream) is cheap; Reset() then rewinds for the real extraction pass below.
-				long zipSize = 0;
-				foreach (var entry in reader.Entries())
-				{
-					if (!entry.IsDirectory && filter(entry.Name)) zipSize += entry.LengthBytes ?? 0;
-				}
-				reader.Reset();
-
-				long unzipped = 0;
-
-				foreach (var entry in reader.Entries())
-				{
-					cancel.ThrowIfCancellationRequested();
-
-					if (filter(entry.Name))
-					{
-						try
-						{
-							var destPath = Path.Combine(destFolder, entry.Name.Replace('/', Path.DirectorySeparatorChar));
-							if (entry.IsDirectory) Directory.CreateDirectory(destPath);
-							else
-							{
-								Directory.CreateDirectory(Path.GetDirectoryName(destPath));
-								using var dest = new FileStream(destPath, System.IO.FileMode.Create, FileAccess.Write);
-								entry.Stream.CopyTo(dest);
-							}
-                        }
-                        catch
-						{
-                            if (cancel.IsCancellationRequested) break;
-
-							throw;
-						}
-
-						unzipped += entry.LengthBytes ?? 0;
-
-						if (zipSize != 0 && entry.LengthBytes > 0)
-						{
-							progress?.Invoke(unzipped, zipSize);
-						}
-                    }
-                }
-
-				progress?.Invoke(zipSize, zipSize);
-			}
-		}
-		catch (Exception ex)
-		{
-			if (ex is ThreadAbortException)
-				return;
-
-			throw;
-		}
-	}
 	public static void UnzipZipFile(string zipFile, string destFolder, Func<string, bool> filter = null, Stream stream = null,
 		Action<long, long> progress = null)
 	{
@@ -186,39 +79,4 @@ public class Zip
 		}
 	}
 
-    public static void Zip7zFiles(string zip, string root, IEnumerable<string> files  = null, Action<int, int> progress = null)
-    {
-        var cancel = Cancel;
-
-        Directory.CreateDirectory(Path.GetDirectoryName(zip));
-
-        if (root.Length > 0 && root[root.Length - 1] != Path.DirectorySeparatorChar) root = root + Path.DirectorySeparatorChar;
-
-        int count = 0;
-        if (files == null) files = Directory.EnumerateFiles(root, "*.*", SearchOption.AllDirectories);
-        else if (progress != null)
-        {
-            var list = files.ToList();
-            count = list.Count;
-            files = list;
-        }
-        // CompressionType.None here means "don't add an outer filter" -- libarchive's own 7z writer
-        // still compresses internally (and solidly, across all entries); adding e.g. CompressionType.Lzma
-        // on top wraps the whole 7z container in a second, non-standard raw LZMA stream instead.
-        using (var writer = new LibArchiveWriter(zip, ArchiveFormat.SevenZip, CompressionType.None,
-            compressionLevel: 9, blockSize: 10240, password: null, encryption: EncryptionType.None))
-        {
-            int n = 1;
-            foreach (var file in files)
-            {
-                cancel.ThrowIfCancellationRequested();
-
-                var entry = file;
-                if (entry.StartsWith(root)) entry = entry.Substring(root.Length);
-                entry = entry.Replace(Path.DirectorySeparatorChar, '/');
-                writer.AddFile(file, entry);
-                if (progress != null) progress(n++, count);
-            }
-        }
-    }
 }

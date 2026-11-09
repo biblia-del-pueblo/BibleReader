@@ -97,7 +97,7 @@
             </Border>
         </Popup>
 
-        <TextBlock x:Name="StatusText" Grid.Row="2" Margin="12,0,12,6" Opacity="0.7" TextWrapping="Wrap" />
+        <SelectableTextBlock x:Name="StatusText" Grid.Row="2" Margin="12,0,12,6" Opacity="0.7" TextWrapping="Wrap" />
 
         <ListBox x:Name="List" Grid.Row="3" Background="Transparent" ItemTemplate="{StaticResource BibleRow}" />
 

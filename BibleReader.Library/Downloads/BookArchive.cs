@@ -77,7 +77,7 @@ namespace BibleReader.Library.Downloads
             if (ext == ".zip" || ext == ".7z")
             {
                 Directory.Delete(src);
-                Zip.UnzipFile(File, src);
+                Zip.UnzipZipFile(File, src);
             }
             else IO.File.Copy(File, IO.Path.Combine(src, IO.Path.GetFileName(File)), true);
             

@@ -79,6 +79,7 @@ public class eBible : InstallableBook
             };
             importer.FromSWORD(path, srcpath, true);
             importer.PostprocessMarkdown(path);
+            Directory.Delete(srcpath, true);
         });
     if (!Directory.EnumerateFiles(path, "*.md").Any())
             throw new InvalidDataException("The SWORD module was downloaded, but no books could be imported from it.");

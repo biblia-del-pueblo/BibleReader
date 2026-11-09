@@ -17,7 +17,7 @@ const store = (mode, action) => new Promise((resolve, reject) => {
     transaction.onerror = () => reject(transaction.error);
 });
 globalThis.bibleStorage = {
-    listKeys: async () => JSON.stringify(await store('readonly', s => s.getAllKeys())),
+    listKeys: async () => (await store('readonly', s => s.getAllKeys())).join('\n'),
     getFile: async key => {
         const data = await store('readonly', s => s.get(key));
         if (!data) return null;
@@ -37,6 +37,8 @@ const showProgress = (loaded, total) => { if (percent && total > 0) percent.text
 
 const dotnetRuntime = await dotnet
     .withModuleConfig({ onDownloadResourceProgress: showProgress })
+    // While developing, the debugger's host may serve a file (the .pdb) that differs from the one the hash was made for.
+    .withConfig({ disableIntegrityCheck: ['localhost', '127.0.0.1'].includes(location.hostname) })
     .withDiagnosticTracing(false)
     .withApplicationArgumentsFromQuery()
     .create();
@@ -44,4 +46,14 @@ const dotnetRuntime = await dotnet
 if (percent) percent.textContent = 'Starting…';
 const config = dotnetRuntime.getConfig();
 
-await dotnetRuntime.runMain(config.mainAssemblyName, [globalThis.location.href]);
+// An error while the app starts is shown on the splash screen, which would otherwise say "Starting…" for ever.
+const showError = error => {
+    console.error(error);
+    if (percent) { percent.style.cssText = 'max-width: 80vw; font-size: 1rem; white-space: pre-wrap; color: #d33'; percent.textContent = String(error?.stack ?? error); }
+};
+addEventListener('unhandledrejection', e => showError(e.reason));
+try {
+    await dotnetRuntime.runMain(config.mainAssemblyName, [globalThis.location.href]);
+} catch (error) {
+    showError(error);
+}
