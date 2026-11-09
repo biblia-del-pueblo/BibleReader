@@ -94,9 +94,17 @@ public partial class BibleToolbar : UserControl
         });
     }
 
+    /// <summary>
+    /// Set when the app opens its main window again (after a change of language): the next toolbar shows the settings page
+    /// that the reader was on, not the text.
+    /// </summary>
+    public static bool ReturnToSettings { get; set; }
+
     public BibleToolbar()
     {
         InitializeComponent();
+        if (ReturnToSettings) { ReturnToSettings = false; ShowSettings = true; }
+        FlowDirection = Localizer.FlowDirection; // mirrored for Arabic and Hebrew
         MenuPopup.PlacementTarget = MenuButton;
         BiblesPopup.PlacementTarget = BiblesButton;
         StrongsPopup.PlacementTarget = StrongsButton;
@@ -145,12 +153,12 @@ public partial class BibleToolbar : UserControl
             if (VerseTextOf(position) is { Length: > 0 } text)
                 AddMenuEntry("copy.svg", "Copy verse text", () => CopyAsync(text));
         }*/
-        AddMenuEntry(ShowOnlineBibles ? null : "download.svg", ShowOnlineBibles ? "Back to reading" : "Install Bibles…", () =>
+        AddMenuEntry(ShowOnlineBibles ? null : "download.svg", ShowOnlineBibles ? Localizer.Get("MenuBackToReading") : Localizer.Get("MenuInstallBibles"), () =>
         {
             ShowOnlineBibles = !ShowOnlineBibles;
             return Task.CompletedTask;
         });
-        AddMenuEntry(ShowSettings ? null : "gear.svg", ShowSettings ? "Back to reading" : "Settings…", () =>
+        AddMenuEntry(ShowSettings ? null : "gear.svg", ShowSettings ? Localizer.Get("MenuBackToReading") : Localizer.Get("MenuSettings"), () =>
         {
             ShowSettings = !ShowSettings;
             return Task.CompletedTask;
@@ -184,7 +192,7 @@ public partial class BibleToolbar : UserControl
             BiblesItems.Children.Add(button);
         }
         if (BiblesItems.Children.Count == 0)
-            BiblesItems.Children.Add(new TextBlock { Text = "No Bibles installed yet", Opacity = 0.7, Margin = new Thickness(12, 8) });
+            BiblesItems.Children.Add(new TextBlock { Text = Localizer.Get("NoBiblesInstalled"), Opacity = 0.7, Margin = new Thickness(12, 8) });
         BiblesPopup.IsOpen = true;
     }
 
@@ -214,7 +222,7 @@ public partial class BibleToolbar : UserControl
         {
             // "All" switches all the dictionaries on, or, when they all are, off; it is unchecked when none is on and
             // shows a dash when some are.
-            _strongsAllBox = new CheckBox { Content = "All", IsThreeState = true, Margin = new Thickness(4, 2), FontWeight = FontWeight.SemiBold };
+            _strongsAllBox = new CheckBox { Content = Localizer.Get("All"), IsThreeState = true, Margin = new Thickness(4, 2), FontWeight = FontWeight.SemiBold };
             _strongsAllBox.Click += (_, _) => SetAllStrongs(!dictionaries.All(d => d.IsEnabled));
             StrongsItems.Children.Add(_strongsAllBox);
             StrongsItems.Children.Add(new Border { Height = 1, Margin = new Thickness(0, 2), Opacity = 0.3, Background = Brushes.Gray });
@@ -235,7 +243,7 @@ public partial class BibleToolbar : UserControl
             StrongsItems.Children.Add(box);
         }
         if (dictionaries.Count == 0)
-            StrongsItems.Children.Add(new TextBlock { Text = "No Strong's dictionaries installed yet", Opacity = 0.7, Margin = new Thickness(4, 8) });
+            StrongsItems.Children.Add(new TextBlock { Text = Localizer.Get("NoStrongsInstalled"), Opacity = 0.7, Margin = new Thickness(4, 8) });
         SyncStrongsBoxes();
         StrongsPopup.IsOpen = true;
     }
@@ -343,7 +351,7 @@ public partial class BibleToolbar : UserControl
         SearchStatus.IsVisible = true;
 
         var shown = Position?.Book?.Bible ?? Bible;
-        if (shown is null) { SearchStatus.Text = "Open a Bible first."; return; }
+        if (shown is null) { SearchStatus.Text = Localizer.Get("OpenBibleFirst"); return; }
 
         // The Bible that is read is a plain Bible; the installed one of the same folder does the search.
         var searchable = (Settings.Current.Bibles ?? new List<Bible>()).OfType<InstallableBook>()
@@ -352,17 +360,17 @@ public partial class BibleToolbar : UserControl
 
         var running = _searchRunning = new object();
         SearchResults.Children.Clear();
-        SearchStatus.Text = "Searching… (the first search of a Bible makes its index, which takes a moment)";
+        SearchStatus.Text = Localizer.Get("Searching");
         List<InstallableBook.SearchResult> results;
         try { results = await searchable.Search(phrase); }
         catch (Exception ex)
         {
-            if (ReferenceEquals(running, _searchRunning)) SearchStatus.Text = "Search failed: " + ex.Message;
+            if (ReferenceEquals(running, _searchRunning)) SearchStatus.Text = Localizer.Format("SearchFailed", ex.Message);
             return;
         }
         if (!ReferenceEquals(running, _searchRunning)) return;
 
-        SearchStatus.Text = results.Count == 0 ? "No verses found." : $"{results.Count} verses, best match first";
+        SearchStatus.Text = results.Count == 0 ? Localizer.Get("NoVersesFound") : Localizer.Format("VersesFound", results.Count);
         foreach (var result in results)
         {
             var found = result;

@@ -2,6 +2,7 @@
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
+        <NeutralLanguage>en</NeutralLanguage> <!-- the language of Resources/Strings.resx; the others are Strings.de.resx ... -->
         <LangVersion>latest</LangVersion>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     </PropertyGroup>

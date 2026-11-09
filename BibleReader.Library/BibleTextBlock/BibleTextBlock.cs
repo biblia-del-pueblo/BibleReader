@@ -1802,7 +1802,7 @@ public class BibleTextBlock : Panel
             markdown = null; // a dictionary whose database cannot be read has no entry
         }
         if (string.IsNullOrWhiteSpace(markdown))
-            markdown = $"No entry for {strong}. Switch a Strong's dictionary on with the Strongs button.";
+            markdown = Localizer.Format("NoStrongsEntry", strong);
 
         // The markdown of the dictionaries is the same Bible Markdown as the text: bold, italic and paragraphs.
         var runs = Bible.ParseText(markdown, Bible.Run.Classes.Text, new Bible.VersePosition());

@@ -34,6 +34,7 @@ public partial class SettingsView : UserControl
     public SettingsView()
     {
         InitializeComponent();
+        FlowDirection = Localizer.FlowDirection; // mirrored for Arabic and Hebrew
         // The fonts that ship with the app first, then the ones installed on the system.
         FillFonts();
         FontSizeSlider.PropertyChanged += (_, e) => { if (e.Property == RangeBase.ValueProperty) OnFontSizeChanged(); };
@@ -78,11 +79,11 @@ public partial class SettingsView : UserControl
         {
             var files = await storage.OpenFilePickerAsync(new Avalonia.Platform.Storage.FilePickerOpenOptions
             {
-                Title = "Install fonts",
+                Title = Localizer.Get("InstallFonts"),
                 AllowMultiple = true,
                 FileTypeFilter = new[]
                 {
-                    new Avalonia.Platform.Storage.FilePickerFileType("Fonts or zip of fonts") { Patterns = UserFonts.PickerPatterns },
+                    new Avalonia.Platform.Storage.FilePickerFileType(Localizer.Get("FontFiles")) { Patterns = UserFonts.PickerPatterns },
                 },
             });
             if (files.Count == 0) return;
@@ -98,17 +99,17 @@ public partial class SettingsView : UserControl
             }
             if (installed.Count == 0)
             {
-                FontStatus.Text = "No usable font found in " + string.Join(", ", skipped);
+                FontStatus.Text = Localizer.Format("NoUsableFont", string.Join(", ", skipped));
                 return;
             }
-            FontStatus.Text = "Installed: " + string.Join(", ", installed)
-                + (skipped.Count > 0 ? ". No usable font in " + string.Join(", ", skipped) : "");
+            FontStatus.Text = Localizer.Format("FontsInstalled", string.Join(", ", installed))
+                + (skipped.Count > 0 ? Localizer.Format("NoUsableFontIn", string.Join(", ", skipped)) : "");
             FillFonts();
             FontBox.SelectedItem = installed[0]; // uses it at once (OnFontChanged saves and applies it)
         }
         catch (Exception ex)
         {
-            FontStatus.Text = "Could not install the font: " + ex.Message;
+            FontStatus.Text = Localizer.Format("CouldNotInstallFont", ex.Message);
         }
         finally { InstallFontButton.IsEnabled = true; }
     }
@@ -121,6 +122,8 @@ public partial class SettingsView : UserControl
         {
             var settings = Settings.Current;
             ThemeBox.SelectedIndex = settings.Theme switch { "Light" => 1, "Dark" => 2, _ => 0 };
+            LanguageBox.SelectedItem = LanguageBox.Items.OfType<ComboBoxItem>().FirstOrDefault(i => (string?)i.Tag == (settings.Language ?? "System"))
+                ?? LanguageBox.Items.OfType<ComboBoxItem>().First();
             double size = settings.FontSize ?? DefaultFontSize;
             FontSizeSlider.Value = size;
             FontSizeText.Text = size.ToString("0");
@@ -131,9 +134,27 @@ public partial class SettingsView : UserControl
             UpdateSample();
             PathText.Text = settings.ConfigPath;
             int count = settings.Bibles?.Count ?? 0;
-            BiblesText.Text = count == 1 ? "1 Bible installed" : $"{count} Bibles installed";
+            BiblesText.Text = count == 1 ? Localizer.Get("OneBibleInstalled") : Localizer.Format("BiblesInstalled", count);
         }
         finally { _loading = false; }
+    }
+
+    /// <summary>The reader chose a language: it is saved and taken, and the app opens its main window again in it.</summary>
+    private void OnLanguageChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (_loading || LanguageBox.SelectedItem is not ComboBoxItem { Tag: string tag }) return;
+        var language = tag == "System" ? null : tag;
+        if (Settings.Current.Language == language) return;
+        Settings.Current.Language = language;
+        Save();
+        // The head of the app opens its main window again in the new language; this page is then shown again.
+        BibleToolbar.ReturnToSettings = true;
+        if (!Localizer.Change(language))
+        {
+            BibleToolbar.ReturnToSettings = false;
+            LanguageHint.Text = Localizer.Get("RestartForLanguage"); // nobody opens the window again: it is the next start
+            LanguageHint.IsVisible = true;
+        }
     }
 
     private void OnThemeChanged(object? sender, SelectionChangedEventArgs e)

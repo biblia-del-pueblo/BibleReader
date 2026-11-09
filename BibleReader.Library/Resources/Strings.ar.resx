@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>إغلاق</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>الكتب المقدسة المثبّتة</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>قواميس سترونغ</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>ابحث في الكتاب المقدس…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>›  الأسفار</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>لم يتم تثبيت أي كتاب مقدس بعد</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>لم يتم تثبيت أي قاموس سترونغ بعد</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>افتح كتابًا مقدسًا أولًا.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>جارٍ البحث… (يؤدي أول بحث في كتاب مقدس إلى إنشاء فهرسه، وهذا يستغرق لحظة)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>فشل البحث: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>لم يتم العثور على آيات.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} آية، الأفضل تطابقًا أولًا</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>تثبيت الكتب المقدسة…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>العودة إلى القراءة</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>الإعدادات…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>مثبّت</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>تثبيت</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>هل تريد الحذف؟</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>الكتب المقدسة المثبّتة ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>تثبيت من ملف ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>اللغة…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>كل اللغات</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>تصفية حسب النوع</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>المعروض: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>ابحث عن اسم…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>إعادة تحميل</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>اسم الكتاب المقدس</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>تثبيت كتاب مقدس من ملف</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>أرشيفات الكتاب المقدس</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>جارٍ تثبيت {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>تعذّر استيراد أي أسفار من الملف.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>تم تثبيت {0}</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>فشل التثبيت من الملف: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>الرجاء إدخال اسم.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>يوجد كتاب مقدس بهذا الاسم مثبّت بالفعل.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>جارٍ تحميل الكتب المقدسة من ebible.org وcrosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>تعذّر تحميل القائمة: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>لعرض الكتب المقدسة عبر الإنترنت، فعّل «{0}» في الإعدادات.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} من {1} وحدة</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>فشل الحذف: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>فشل التثبيت: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>كتاب مقدس</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>تفسير</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>قاموس</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>كتاب</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>خريطة</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>إضافة</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>المظهر:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>النظام</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>فاتح</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>داكن</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>اللغة:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>ستتغير اللغة عند تشغيل التطبيق مرة أخرى.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>الخط:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>تثبيت خط ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>حجم الخط:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>عرض كلمات يسوع باللون الأحمر</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>عرض أرقام الآيات باللون الأخضر</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>في بلدي لا يوجد اضطهاد</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>وكان يسوع يطوف كل الجليل يعلّم في مجامعهم </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>هلمّ ورائي فأجعلكما صيّادي الناس.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>التخزين:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>تثبيت خطوط</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>خطوط أو ملف zip يحتوي على خطوط</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>لم يتم العثور على خط صالح للاستخدام في {0}</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>تم التثبيت: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. لا يوجد خط صالح للاستخدام في {0}</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>تعذّر تثبيت الخط: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>تم تثبيت كتاب مقدس واحد</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>تم تثبيت {0} من الكتب المقدسة</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>لا يوجد مدخل لـ {0}. فعّل قاموس سترونغ بزر Strongs.</value>
+  </data>
+</root>

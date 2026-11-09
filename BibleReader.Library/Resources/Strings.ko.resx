@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>모두</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>검색</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>닫기</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>설정</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>설치된 성경</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>스트롱 사전</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>성경에서 검색…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  책</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>아직 설치된 성경이 없습니다</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>아직 설치된 스트롱 사전이 없습니다</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>먼저 성경을 여세요.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>검색 중… (성경을 처음 검색할 때는 색인을 만들기 때문에 잠시 걸립니다)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>검색 실패: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>구절을 찾을 수 없습니다.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>구절 {0}개, 가장 잘 맞는 순서</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>성경 설치…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>읽기로 돌아가기</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>설정…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>설치됨</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>설치</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>삭제</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>삭제할까요?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>설치된 성경 ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>파일에서 설치 ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>언어…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>모든 언어</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>종류별 필터</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>표시 중: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>이름 검색…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>새로 고침</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>성경 이름</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>파일에서 성경 설치</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>성경 압축 파일</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>{0} 설치 중…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>파일에서 가져올 수 있는 책이 없습니다.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} 설치됨</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>파일에서 설치하지 못했습니다: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>이름을 입력하세요.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>이 이름의 성경이 이미 설치되어 있습니다.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>ebible.org와 crosswire.org에서 성경을 불러오는 중…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>목록을 불러오지 못했습니다: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>온라인 성경을 보려면 설정에서 “{0}”을(를) 선택하세요.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>모듈 {1}개 중 {0}개</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>삭제하지 못했습니다: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>설치하지 못했습니다: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>성경</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>주석</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>사전</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>책</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>지도</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>추가 기능</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>테마:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>시스템</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>밝게</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>어둡게</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>언어:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>앱을 다시 시작하면 언어가 바뀝니다.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>글꼴:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>글꼴 설치 ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>글꼴 크기:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>예수님의 말씀을 빨간색으로 표시</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>절 번호를 초록색으로 표시</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>제가 사는 나라에는 박해가 없습니다</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>예수께서 갈릴리 온 땅에 두루 다니사 그들의 회당에서 가르치시며 </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>나를 따라오라 내가 너희를 사람을 낚는 어부가 되게 하리라</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>저장 위치:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>글꼴 설치</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>글꼴 또는 글꼴이 담긴 zip 파일</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>{0}에서 사용할 수 있는 글꼴을 찾지 못했습니다</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>설치됨: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. {0}에는 사용할 수 있는 글꼴이 없습니다</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>글꼴을 설치하지 못했습니다: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>성경 1권 설치됨</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>성경 {0}권 설치됨</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>{0}에 대한 항목이 없습니다. Strongs 버튼으로 스트롱 사전을 켜세요.</value>
+  </data>
+</root>

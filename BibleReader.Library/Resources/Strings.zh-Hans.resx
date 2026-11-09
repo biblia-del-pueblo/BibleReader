@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>搜索</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>已安装的圣经</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>斯特朗词典</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>在圣经中搜索…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  书卷</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>尚未安装圣经</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>尚未安装斯特朗词典</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>请先打开一本圣经。</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>正在搜索…（首次搜索某本圣经时会建立索引，需要片刻时间）</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>搜索失败：{0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>未找到经文。</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>共 {0} 节经文，最佳匹配在前</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>安装圣经…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>返回阅读</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>设置…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>已安装</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>安装</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>删除？</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>已安装的圣经（{0}）</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>从文件安装 ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>语言…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>所有语言</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>按类型筛选</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>显示：{0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>搜索名称…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>重新加载</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>圣经名称</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>从文件安装圣经</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>圣经压缩包</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>正在安装 {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>无法从该文件导入任何书卷。</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} 已安装</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>从文件安装失败：{0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>请输入名称。</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>已安装同名的圣经。</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>正在从 ebible.org 和 crosswire.org 加载圣经…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>无法加载列表：{0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>要列出在线圣经，请在设置中勾选“{0}”。</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{1} 个模块中的 {0} 个</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>删除失败：{0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>安装失败：{0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>圣经</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>注释</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>词典</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>书籍</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>地图</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>附加组件</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>主题：</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>系统</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>浅色</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>深色</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>语言：</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>语言将在应用下次启动时更改。</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>字体：</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>安装字体 ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>字号：</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>用红色显示耶稣的话</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>用绿色显示节号</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>在我的国家没有迫害</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>耶稣走遍加利利，在各会堂里教训人。 </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>来跟从我，我要叫你们得人如得鱼一样。</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>存储位置：</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>安装字体</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>字体或包含字体的 zip 文件</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>在 {0} 中未找到可用的字体</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>已安装：{0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>。{0} 中没有可用的字体</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>无法安装字体：{0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>已安装 1 本圣经</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>已安装 {0} 本圣经</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>没有 {0} 的词条。请用 Strongs 按钮打开斯特朗词典。</value>
+  </data>
+</root>

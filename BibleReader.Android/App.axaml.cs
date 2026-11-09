@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
+using BibleReader.Library;
 using BibleReader.Library.UI;
 
 namespace BibleReader.Android;
@@ -28,7 +29,18 @@ public partial class App : Application
         if (ApplicationLifetime is IActivityApplicationLifetime activity)
             activity.MainViewFactory = CreateMainView;
 
+        // A change of language builds all the texts again: the view is replaced by a new one, which opens the Bible
+        // where the reader was.
+        Localizer.LanguageChanged += (_, _) => Avalonia.Threading.Dispatcher.UIThread.Post(OpenMainViewAgain);
+
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void OpenMainViewAgain()
+    {
+        if (ApplicationLifetime is not ISingleViewApplicationLifetime single) return;
+        (single.MainView as BibleView)?.SaveStateNow();
+        single.MainView = CreateMainView();
     }
 
     private static Control CreateMainView()

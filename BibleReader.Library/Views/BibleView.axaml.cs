@@ -74,10 +74,25 @@ public partial class BibleView : UserControl
         _saveTimer.Start();
     }
 
+    /// <summary>
+    /// Saves the position at once (it is saved a second after the last change otherwise), for a view that is about to be
+    /// replaced by a new one, which opens the Bible at the saved position.
+    /// </summary>
+    public void SaveStateNow()
+    {
+        _saveTimer?.Stop();
+        SavePosition(force: true);
+    }
+
     private void OnSaveTimer(object? sender, EventArgs e)
     {
         _saveTimer?.Stop();
-        if (Block.IsBusy) { SavePositionSoon(); return; } // still opening: the position is not the reader's yet
+        SavePosition(force: false);
+    }
+
+    private void SavePosition(bool force)
+    {
+        if (Block.IsBusy) { if (!force) SavePositionSoon(); return; } // still opening: the position is not the reader's yet
         if (Block.Bible is null || Block.Position is not { Book: { } book } position) return;
         var settings = Settings.Current;
         if (settings.CurrentBible != Block.Bible.EnglishName) return; // the Bible is being switched

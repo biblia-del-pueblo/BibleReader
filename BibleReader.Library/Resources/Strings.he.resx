@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>הכול</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>חיפוש</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>סגירה</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>ביטול</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>הגדרות</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>תנ״כים ומקראות מותקנים</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>מילוני סטרונג</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>חיפוש במקרא…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>›  ספרים</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>עדיין לא הותקנו מקראות</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>עדיין לא הותקנו מילוני סטרונג</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>פתחו קודם מקרא.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>מחפש… (החיפוש הראשון במקרא יוצר את האינדקס שלו, וזה אורך רגע)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>החיפוש נכשל: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>לא נמצאו פסוקים.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} פסוקים, ההתאמות הטובות ביותר תחילה</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>התקנת מקראות…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>חזרה לקריאה</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>הגדרות…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>מותקן</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>התקנה</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>מחיקה</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>למחוק?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>מקראות מותקנים ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>התקנה מקובץ ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>שפה…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>כל השפות</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>סינון לפי סוג</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>מוצג: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>חיפוש שם…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>טעינה מחדש</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>שם המקרא</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>התקנת מקרא מקובץ</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>ארכיוני מקרא</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>מתקין את {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>לא ניתן היה לייבא ספרים מהקובץ.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} הותקן</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>ההתקנה מהקובץ נכשלה: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>נא להזין שם.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>מקרא בשם זה כבר מותקן.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>טוען מקראות מ-ebible.org ומ-crosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>לא ניתן היה לטעון את הרשימה: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>כדי להציג מקראות מקוונים, סמנו את „{0}” בהגדרות.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} מתוך {1} מודולים</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>המחיקה נכשלה: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>ההתקנה נכשלה: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>מקרא</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>פירוש</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>מילון</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>ספר</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>מפה</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>תוסף</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>ערכת נושא:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>מערכת</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>בהיר</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>כהה</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>שפה:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>השפה תשתנה כשהאפליקציה תופעל מחדש.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>גופן:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>התקנת גופן ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>גודל גופן:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>הצגת דברי ישוע באדום</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>הצגת מספרי הפסוקים בירוק</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>בארצי אין רדיפות</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>וישוע הלך בכל הגליל ולימד בבתי הכנסת שלהם. </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>לכו אחרי ואעשה אתכם דייגי אדם.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>אחסון:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>התקנת גופנים</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>גופנים או קובץ zip עם גופנים</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>לא נמצא גופן שמיש ב-{0}</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>הותקן: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. אין גופן שמיש ב-{0}</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>לא ניתן היה להתקין את הגופן: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>מקרא אחד הותקן</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>{0} מקראות הותקנו</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>אין ערך עבור {0}. הפעילו מילון סטרונג בכפתור Strongs.</value>
+  </data>
+</root>

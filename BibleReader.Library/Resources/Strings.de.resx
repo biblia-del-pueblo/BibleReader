@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>Alle</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Suchen</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>Installierte Bibeln</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>Strong-Wörterbücher</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>In der Bibel suchen…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  Bücher</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>Noch keine Bibeln installiert</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>Noch keine Strong-Wörterbücher installiert</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>Öffne zuerst eine Bibel.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Suche läuft… (bei der ersten Suche in einer Bibel wird ihr Index erstellt, das dauert einen Moment)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Die Suche ist fehlgeschlagen: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>Keine Verse gefunden.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} Verse, beste Treffer zuerst</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>Bibeln installieren…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>Zurück zum Lesen</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Einstellungen…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>Installiert</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>Installieren</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>Löschen?</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>Installierte Bibeln ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>Aus Datei installieren ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>Sprache…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>Alle Sprachen</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>Nach Art filtern</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>Angezeigt: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>Name suchen…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Neu laden</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>Name der Bibel</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>Bibel aus einer Datei installieren</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>Bibelarchive</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>{0} wird installiert…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>Aus der Datei konnten keine Bücher importiert werden.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>{0} installiert</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>Die Installation aus der Datei ist fehlgeschlagen: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>Bitte gib einen Namen ein.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>Eine Bibel mit diesem Namen ist bereits installiert.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>Bibeln von ebible.org und crosswire.org werden geladen…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>Die Liste konnte nicht geladen werden: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>Um die Online-Bibeln aufzulisten, aktiviere in den Einstellungen „{0}“.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} von {1} Modulen</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Löschen fehlgeschlagen: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>Installation fehlgeschlagen: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>Bibel</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>Kommentar</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>Wörterbuch</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>Buch</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>Karte</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>Zusatzmodul</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Design:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Hell</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Dunkel</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Sprache:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>Die Sprache wird beim nächsten Start der App geändert.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Schrift:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>Schrift installieren ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>Schriftgröße:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>Worte Jesu rot anzeigen</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>Versnummern grün anzeigen</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>In meinem Land gibt es keine Verfolgung</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>Und Jesus zog in ganz Galiläa umher und lehrte in ihren Synagogen. </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>Folgt mir nach, ich will euch zu Menschenfischern machen!</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Speicher:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>Schriften installieren</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>Schriften oder ZIP-Datei mit Schriften</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>In {0} wurde keine verwendbare Schrift gefunden</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>Installiert: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. Keine verwendbare Schrift in {0}</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>Die Schrift konnte nicht installiert werden: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>1 Bibel installiert</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>{0} Bibeln installiert</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>Kein Eintrag für {0}. Schalte mit der Strongs-Schaltfläche ein Strong-Wörterbuch ein.</value>
+  </data>
+</root>

@@ -23,6 +23,8 @@ namespace BibleReader.Library
         public bool? ShowWordsOfJesus { get; set; }
         /// <summary>The user confirmed that there is no persecution of Christians in their country; only then are online Bibles listed.</summary>
         public bool InMyCountryThereIsNoPersecution { get; set; }
+        /// <summary>The language of the texts: "en", "de" ...; null for the language of the device. It is taken when the app starts.</summary>
+        public string? Language { get; set; }
         /// <summary>Show the verse numbers in green (off when null).</summary>
         public bool? ShowVerseNumbersInGreen { get; set; }
         public double? FontSize { get; set; }
@@ -60,7 +62,7 @@ namespace BibleReader.Library
         public void Load()
         {
             var file = Path.Combine(ConfigPath, SettingsFile);
-            if (!File.Exists(file)) return;
+            if (!File.Exists(file)) { Localizer.Apply(Language); return; }
             try
             {
                 var json = File.ReadAllText(file);
@@ -82,6 +84,8 @@ namespace BibleReader.Library
                 FontSize = settings.FontSize;
                 FontFamily = settings.FontFamily;
                 ConfigPath = settings.ConfigPath;
+                Language = settings.Language;
+                Localizer.Apply(Language);
                 // The dictionaries were switched on or off while the file was read, before the list was replaced.
                 BibleReader.Library.Downloads.StrongsDictionaries.Refresh();
             } catch (Exception ex)

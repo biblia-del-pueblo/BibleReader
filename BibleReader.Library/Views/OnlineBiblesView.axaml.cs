@@ -73,7 +73,7 @@ public partial class OnlineBibleItem : ObservableObject
 /// </summary>
 public partial class OnlineBiblesView : UserControl
 {
-    private const string AllLanguages = "All languages";
+    private static string AllLanguages => Localizer.Get("AllLanguages");
 
     private List<OnlineBibleItem> _items = new();
     private List<OnlineBibleItem> _installed = new(); // the rows of the installed Bibles expander
@@ -106,6 +106,7 @@ public partial class OnlineBiblesView : UserControl
     public OnlineBiblesView()
     {
         InitializeComponent();
+        FlowDirection = Localizer.FlowDirection; // mirrored for Arabic and Hebrew
         DataContext = this;
         LanguageBox.PropertyChanged += (_, e) =>
         {
@@ -152,7 +153,7 @@ public partial class OnlineBiblesView : UserControl
             .ToList();
         _installed = items;
         InstalledList.ItemsSource = items;
-        InstalledHeader.Text = $"Installed Bibles ({items.Count})";
+        InstalledHeader.Text = Localizer.Format("InstalledBiblesCount", items.Count);
     }
 
     // ---- Install from a file ------------------------------------------------------------------------
@@ -175,9 +176,9 @@ public partial class OnlineBiblesView : UserControl
         {
             var files = await storage.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                Title = "Install a Bible from a file",
+                Title = Localizer.Get("InstallBibleFromFileTitle"),
                 AllowMultiple = false,
-                FileTypeFilter = new[] { new FilePickerFileType("Bible archives") { Patterns = new[] { "*.zip", "*.7z", "*.xml" } } },
+                FileTypeFilter = new[] { new FilePickerFileType(Localizer.Get("BibleArchives")) { Patterns = new[] { "*.zip", "*.7z", "*.xml" } } },
             });
             if (files.Count == 0) return;
             var file = files[0];
@@ -197,11 +198,11 @@ public partial class OnlineBiblesView : UserControl
             }
 
             LoadSpinner.IsVisible = true;
-            StatusText.Text = $"Installing {name}…";
+            StatusText.Text = Localizer.Format("Installing", name);
             bible = new BookArchive { File = path, Name = name, EnglishName = name, Language = "", LanguageEnglishName = "" };
             await bible.Install();
             if (!Directory.EnumerateFiles(bible.ConfigPath, "*.md").Any())
-                throw new InvalidDataException("No books could be imported from the file.");
+                throw new InvalidDataException(Localizer.Get("NoBooksImported"));
 
             var settings = Settings.Current;
             settings.Bibles ??= new List<Bible>();
@@ -209,13 +210,13 @@ public partial class OnlineBiblesView : UserControl
             settings.Save();
             UpdateInstalled();
             InstalledExpander.IsExpanded = true;
-            StatusText.Text = $"{name} installed";
+            StatusText.Text = Localizer.Format("NameInstalled", name);
             BibleInstalled?.Invoke(this, bible);
             bible = null; // installed: keep its folder
         }
         catch (Exception ex)
         {
-            StatusText.Text = "Install from file failed: " + ex.Message;
+            StatusText.Text = Localizer.Format("InstallFromFileFailed", ex.Message);
         }
         finally
         {
@@ -253,9 +254,9 @@ public partial class OnlineBiblesView : UserControl
     {
         var name = NameBox.Text?.Trim();
         string? error =
-            string.IsNullOrEmpty(name) ? "Please enter a name."
+            string.IsNullOrEmpty(name) ? Localizer.Get("EnterName")
             : Settings.Current.Bibles?.Any(b => string.Equals(b.EnglishName, name, StringComparison.OrdinalIgnoreCase)) == true
-                ? "A Bible with this name is installed already."
+                ? Localizer.Get("NameExists")
             : null;
         NameError.Text = error;
         NameError.IsVisible = error is not null;
@@ -277,7 +278,7 @@ public partial class OnlineBiblesView : UserControl
         if (_loading || !Settings.Current.InMyCountryThereIsNoPersecution) return;
         _loading = true;
         LoadSpinner.IsVisible = true;
-        StatusText.Text = "Loading Bibles from ebible.org and crosswire.org…";
+        StatusText.Text = Localizer.Get("LoadingModules");
         try
         {
             var bibles = await Task.Run(LoadSourcesAsync);
@@ -288,7 +289,7 @@ public partial class OnlineBiblesView : UserControl
         }
         catch (Exception ex)
         {
-            StatusText.Text = "Could not load the list: " + ex.Message;
+            StatusText.Text = Localizer.Format("CouldNotLoadList", ex.Message);
         }
         finally
         {
@@ -340,7 +341,7 @@ public partial class OnlineBiblesView : UserControl
             var entries = present.Prepend(InstallableBook.Classes.All).Select(kind => new ListBoxItem
             {
                 Tag = kind,
-                Content = kind == InstallableBook.Classes.All ? $"All ({_items.Count})" : $"{kind} ({_items.Count(i => i.Bible.Class == kind)})",
+                Content = kind == InstallableBook.Classes.All ? $"{Localizer.Get("All")} ({_items.Count})" : $"{Localizer.ClassName(kind)} ({_items.Count(i => i.Bible.Class == kind)})",
             }).ToList();
             ClassList.ItemsSource = entries;
             ClassList.SelectedItem = entries.First(entry => (InstallableBook.Classes)entry.Tag! == _classFilter);
@@ -374,7 +375,7 @@ public partial class OnlineBiblesView : UserControl
     {
         bool active = _classFilter != InstallableBook.Classes.All;
         ClassButton.Background = active ? new Avalonia.Media.SolidColorBrush(Avalonia.Media.Color.Parse("#664C8BF5")) : Avalonia.Media.Brushes.Transparent;
-        ToolTip.SetTip(ClassButton, active ? $"Showing: {_classFilter}" : "Filter by kind");
+        ToolTip.SetTip(ClassButton, active ? Localizer.Format("ShowingKind", Localizer.ClassName(_classFilter)) : Localizer.Get("FilterByKind"));
     }
 
     private void OnClassFilterClick(object? sender, RoutedEventArgs e)
@@ -421,7 +422,7 @@ public partial class OnlineBiblesView : UserControl
         if (!Settings.Current.InMyCountryThereIsNoPersecution)
         {
             List.ItemsSource = Array.Empty<OnlineBibleItem>();
-            StatusText.Text = "To list the online Bibles, tick \"In my country there is no persecution\" in the settings.";
+            StatusText.Text = Localizer.Format("PersecutionHint", Localizer.Get("NoPersecution"));
             return;
         }
         var language = LanguageBox.Text?.Trim();
@@ -450,7 +451,7 @@ public partial class OnlineBiblesView : UserControl
              (i.Bible.EnglishName?.Contains(text, StringComparison.CurrentCultureIgnoreCase) ?? false)))
             .ToList();
         List.ItemsSource = filtered;
-        if (_items.Count > 0) StatusText.Text = $"{filtered.Count} of {_items.Count} modules";
+        if (_items.Count > 0) StatusText.Text = Localizer.Format("ModulesCount", filtered.Count, _items.Count);
     }
 
     private void OnDeleteClick(object? sender, RoutedEventArgs e)
@@ -484,7 +485,7 @@ public partial class OnlineBiblesView : UserControl
         }
         catch (Exception ex)
         {
-            item.Error = "Delete failed: " + ex.Message;
+            item.Error = Localizer.Format("DeleteFailed", ex.Message);
         }
         finally
         {
@@ -513,7 +514,7 @@ public partial class OnlineBiblesView : UserControl
         }
         catch (Exception ex)
         {
-            item.Error = "Install failed: " + ex.Message;
+            item.Error = Localizer.Format("InstallFailed", ex.Message);
         }
         finally
         {

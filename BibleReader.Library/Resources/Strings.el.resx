@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="All" xml:space="preserve">
+    <value>Όλα</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Αναζήτηση</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Κλείσιμο</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Άκυρο</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Ρυθμίσεις</value>
+  </data>
+  <data name="InstalledBibles" xml:space="preserve">
+    <value>Εγκατεστημένες Βίβλοι</value>
+  </data>
+  <data name="StrongsDictionaries" xml:space="preserve">
+    <value>Λεξικά Strong</value>
+  </data>
+  <data name="SearchBible" xml:space="preserve">
+    <value>Αναζήτηση στη Βίβλο…</value>
+  </data>
+  <data name="BackToBooks" xml:space="preserve">
+    <value>‹  Βιβλία</value>
+  </data>
+  <data name="NoBiblesInstalled" xml:space="preserve">
+    <value>Δεν έχει εγκατασταθεί ακόμη καμία Βίβλος</value>
+  </data>
+  <data name="NoStrongsInstalled" xml:space="preserve">
+    <value>Δεν έχει εγκατασταθεί ακόμη κανένα λεξικό Strong</value>
+  </data>
+  <data name="OpenBibleFirst" xml:space="preserve">
+    <value>Ανοίξτε πρώτα μια Βίβλο.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Αναζήτηση… (η πρώτη αναζήτηση σε μια Βίβλο δημιουργεί το ευρετήριό της, κάτι που διαρκεί λίγο)</value>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>Η αναζήτηση απέτυχε: {0}</value>
+  </data>
+  <data name="NoVersesFound" xml:space="preserve">
+    <value>Δεν βρέθηκαν εδάφια.</value>
+  </data>
+  <data name="VersesFound" xml:space="preserve">
+    <value>{0} εδάφια, πρώτα τα καλύτερα αποτελέσματα</value>
+  </data>
+  <data name="MenuInstallBibles" xml:space="preserve">
+    <value>Εγκατάσταση Βίβλων…</value>
+  </data>
+  <data name="MenuBackToReading" xml:space="preserve">
+    <value>Επιστροφή στην ανάγνωση</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Ρυθμίσεις…</value>
+  </data>
+  <data name="Installed" xml:space="preserve">
+    <value>Εγκατεστημένη</value>
+  </data>
+  <data name="Install" xml:space="preserve">
+    <value>Εγκατάσταση</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="DeleteQuestion" xml:space="preserve">
+    <value>Διαγραφή;</value>
+  </data>
+  <data name="InstalledBiblesCount" xml:space="preserve">
+    <value>Εγκατεστημένες Βίβλοι ({0})</value>
+  </data>
+  <data name="InstallFromFile" xml:space="preserve">
+    <value>Εγκατάσταση από αρχείο ...</value>
+  </data>
+  <data name="LanguagePlaceholder" xml:space="preserve">
+    <value>Γλώσσα…</value>
+  </data>
+  <data name="AllLanguages" xml:space="preserve">
+    <value>Όλες οι γλώσσες</value>
+  </data>
+  <data name="FilterByKind" xml:space="preserve">
+    <value>Φίλτρο ανά είδος</value>
+  </data>
+  <data name="ShowingKind" xml:space="preserve">
+    <value>Εμφάνιση: {0}</value>
+  </data>
+  <data name="SearchNamePlaceholder" xml:space="preserve">
+    <value>Αναζήτηση ονόματος…</value>
+  </data>
+  <data name="Reload" xml:space="preserve">
+    <value>Ανανέωση</value>
+  </data>
+  <data name="NameOfBible" xml:space="preserve">
+    <value>Όνομα της Βίβλου</value>
+  </data>
+  <data name="InstallBibleFromFileTitle" xml:space="preserve">
+    <value>Εγκατάσταση Βίβλου από αρχείο</value>
+  </data>
+  <data name="BibleArchives" xml:space="preserve">
+    <value>Αρχεία Βίβλου</value>
+  </data>
+  <data name="Installing" xml:space="preserve">
+    <value>Εγκατάσταση του {0}…</value>
+  </data>
+  <data name="NoBooksImported" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η εισαγωγή βιβλίων από το αρχείο.</value>
+  </data>
+  <data name="NameInstalled" xml:space="preserve">
+    <value>Το {0} εγκαταστάθηκε</value>
+  </data>
+  <data name="InstallFromFileFailed" xml:space="preserve">
+    <value>Η εγκατάσταση από το αρχείο απέτυχε: {0}</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>Εισαγάγετε ένα όνομα.</value>
+  </data>
+  <data name="NameExists" xml:space="preserve">
+    <value>Υπάρχει ήδη εγκατεστημένη Βίβλος με αυτό το όνομα.</value>
+  </data>
+  <data name="LoadingModules" xml:space="preserve">
+    <value>Φόρτωση Βίβλων από το ebible.org και το crosswire.org…</value>
+  </data>
+  <data name="CouldNotLoadList" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η φόρτωση της λίστας: {0}</value>
+  </data>
+  <data name="PersecutionHint" xml:space="preserve">
+    <value>Για να εμφανιστούν οι διαδικτυακές Βίβλοι, επιλέξτε «{0}» στις ρυθμίσεις.</value>
+  </data>
+  <data name="ModulesCount" xml:space="preserve">
+    <value>{0} από {1} λειτουργικές μονάδες</value>
+  </data>
+  <data name="DeleteFailed" xml:space="preserve">
+    <value>Η διαγραφή απέτυχε: {0}</value>
+  </data>
+  <data name="InstallFailed" xml:space="preserve">
+    <value>Η εγκατάσταση απέτυχε: {0}</value>
+  </data>
+  <data name="Class_Bible" xml:space="preserve">
+    <value>Βίβλος</value>
+  </data>
+  <data name="Class_Comment" xml:space="preserve">
+    <value>Σχόλιο</value>
+  </data>
+  <data name="Class_Dictionary" xml:space="preserve">
+    <value>Λεξικό</value>
+  </data>
+  <data name="Class_Book" xml:space="preserve">
+    <value>Βιβλίο</value>
+  </data>
+  <data name="Class_Map" xml:space="preserve">
+    <value>Χάρτης</value>
+  </data>
+  <data name="Class_AddOn" xml:space="preserve">
+    <value>Πρόσθετο</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Θέμα:</value>
+  </data>
+  <data name="ThemeSystem" xml:space="preserve">
+    <value>Σύστημα</value>
+  </data>
+  <data name="ThemeLight" xml:space="preserve">
+    <value>Φωτεινό</value>
+  </data>
+  <data name="ThemeDark" xml:space="preserve">
+    <value>Σκούρο</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Γλώσσα:</value>
+  </data>
+  <data name="RestartForLanguage" xml:space="preserve">
+    <value>Η γλώσσα θα αλλάξει την επόμενη φορά που θα ξεκινήσει η εφαρμογή.</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Γραμματοσειρά:</value>
+  </data>
+  <data name="InstallFont" xml:space="preserve">
+    <value>Εγκατάσταση γραμματοσειράς ...</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>Μέγεθος γραμματοσειράς:</value>
+  </data>
+  <data name="ShowJesusRed" xml:space="preserve">
+    <value>Εμφάνιση των λόγων του Ιησού με κόκκινο</value>
+  </data>
+  <data name="ShowVersesGreen" xml:space="preserve">
+    <value>Εμφάνιση των αριθμών εδαφίων με πράσινο</value>
+  </data>
+  <data name="NoPersecution" xml:space="preserve">
+    <value>Στη χώρα μου δεν υπάρχει δίωξη</value>
+  </data>
+  <data name="SampleText1" xml:space="preserve">
+    <value>Και περιήγε ο Ιησούς όλη τη Γαλιλαία, διδάσκοντας στις συναγωγές τους. </value>
+  </data>
+  <data name="SampleText2" xml:space="preserve">
+    <value>Ελάτε πίσω μου και θα σας κάνω ψαράδες ανθρώπων.</value>
+  </data>
+  <data name="Storage" xml:space="preserve">
+    <value>Αποθήκευση:</value>
+  </data>
+  <data name="InstallFonts" xml:space="preserve">
+    <value>Εγκατάσταση γραμματοσειρών</value>
+  </data>
+  <data name="FontFiles" xml:space="preserve">
+    <value>Γραμματοσειρές ή αρχείο zip με γραμματοσειρές</value>
+  </data>
+  <data name="NoUsableFont" xml:space="preserve">
+    <value>Δεν βρέθηκε χρησιμοποιήσιμη γραμματοσειρά στο {0}</value>
+  </data>
+  <data name="FontsInstalled" xml:space="preserve">
+    <value>Εγκαταστάθηκε: {0}</value>
+  </data>
+  <data name="NoUsableFontIn" xml:space="preserve">
+    <value>. Καμία χρησιμοποιήσιμη γραμματοσειρά στο {0}</value>
+  </data>
+  <data name="CouldNotInstallFont" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η εγκατάσταση της γραμματοσειράς: {0}</value>
+  </data>
+  <data name="OneBibleInstalled" xml:space="preserve">
+    <value>Εγκαταστάθηκε 1 Βίβλος</value>
+  </data>
+  <data name="BiblesInstalled" xml:space="preserve">
+    <value>Εγκαταστάθηκαν {0} Βίβλοι</value>
+  </data>
+  <data name="NoStrongsEntry" xml:space="preserve">
+    <value>Δεν υπάρχει λήμμα για το {0}. Ενεργοποιήστε ένα λεξικό Strong με το κουμπί Strongs.</value>
+  </data>
+</root>

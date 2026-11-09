@@ -1,5 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="using:BibleReader.Library"
              xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Svg.Controls.Skia.Avalonia"
              x:Class="BibleReader.Library.UI.BibleToolbar">
 
@@ -89,7 +90,7 @@
                         BorderThickness="0"
                         Background="Transparent"
                         Cursor="Hand"
-                        ToolTip.Tip="Installed Bibles"
+                        ToolTip.Tip="{loc:Loc InstalledBibles}"
                         Click="OnBiblesClick">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <svg:Svg Path="/Assets/bookshelf.svg" Width="30" Height="30"
@@ -103,7 +104,7 @@
                         BorderThickness="0"
                         Background="Transparent"
                         Cursor="Hand"
-                        ToolTip.Tip="Search"
+                        ToolTip.Tip="{loc:Loc Search}"
                         Click="OnSearchClick">
                     <svg:Svg Path="/Assets/magnifying-glass.svg" Width="22" Height="22" Css="{DynamicResource SvgThemeCss}" />
                 </Button>
@@ -114,7 +115,7 @@
                         BorderThickness="0"
                         Background="Transparent"
                         Cursor="Hand"
-                        ToolTip.Tip="Strong's dictionaries"
+                        ToolTip.Tip="{loc:Loc StrongsDictionaries}"
                         Click="OnStrongsClick">
                     <!-- Two Greek or Hebrew letters, after the testament of the position (see UpdateText). -->
                     <TextBlock x:Name="StrongsLetters" FontSize="20" VerticalAlignment="Center" />
@@ -166,8 +167,8 @@
                         BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
                     <StackPanel Spacing="6">
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
-                            <TextBox x:Name="SearchBox" PlaceholderText="Search the Bible…" KeyDown="OnSearchKeyDown" />
-                            <Button Grid.Column="1" Click="OnSearchGoClick" ToolTip.Tip="Search">
+                            <TextBox x:Name="SearchBox" PlaceholderText="{loc:Loc SearchBible}" KeyDown="OnSearchKeyDown" />
+                            <Button Grid.Column="1" Click="OnSearchGoClick" ToolTip.Tip="{loc:Loc Search}">
                                 <svg:Svg Path="/Assets/magnifying-glass.svg" Width="16" Height="16" Css="{DynamicResource SvgThemeCss}" />
                             </Button>
                         </Grid>
@@ -208,7 +209,7 @@
                         BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
                     <StackPanel>
                         <StackPanel x:Name="ChapterHeader" Orientation="Horizontal" Spacing="10" Margin="2,0,2,6" IsVisible="False">
-                            <Button Content="‹  Books" Padding="10,4" Background="Transparent" Click="OnBackClick" />
+                            <Button Content="{loc:Loc BackToBooks}" Padding="10,4" Background="Transparent" Click="OnBackClick" />
                             <TextBlock x:Name="TitleText" FontWeight="SemiBold" VerticalAlignment="Center" />
                         </StackPanel>
                         <ScrollViewer MaxHeight="600" HorizontalScrollBarVisibility="Disabled">
