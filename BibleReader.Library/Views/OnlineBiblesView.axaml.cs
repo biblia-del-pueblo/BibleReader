@@ -190,7 +190,7 @@ public partial class OnlineBiblesView : UserControl
     private TaskCompletionSource<string?>? _nameRequest;
 
     /// <summary>
-    /// Picks a zip, 7z or xml file, asks for a name and installs it as a <see cref="BookArchive"/>: the books are
+    /// Picks a zip, xml file, asks for a name and installs it as a <see cref="BookArchive"/>: the books are
     /// imported into the Bible's folder and the Bible is added to the settings like an online one.
     /// </summary>
     private async void OnInstallFromFileClick(object? sender, RoutedEventArgs e)
@@ -206,7 +206,7 @@ public partial class OnlineBiblesView : UserControl
             {
                 Title = Localizer.Get("InstallBibleFromFileTitle"),
                 AllowMultiple = false,
-                FileTypeFilter = new[] { new FilePickerFileType(Localizer.Get("BibleArchives")) { Patterns = new[] { "*.zip", "*.7z", "*.xml" } } },
+                FileTypeFilter = new[] { new FilePickerFileType(Localizer.Get("BibleArchives")) { Patterns = new[] { "*.zip", "*.xml" } } },
             });
             if (files.Count == 0) return;
             var file = files[0];
@@ -229,7 +229,8 @@ public partial class OnlineBiblesView : UserControl
             StatusText.Text = Localizer.Format("Installing", name);
             bible = new BookArchive { File = path, Name = name, EnglishName = name, Language = "", LanguageEnglishName = "" };
             await bible.Install();
-            if (!Directory.EnumerateFiles(bible.ConfigPath, "*.md").Any())
+            if (!Directory.EnumerateFiles(bible.ConfigPath, "*.md").Any() &&
+                !Directory.EnumerateFiles(bible.ConfigPath, "*.db").Any())
                 throw new InvalidDataException(Localizer.Get("NoBooksImported"));
 
             var settings = Settings.Current;
