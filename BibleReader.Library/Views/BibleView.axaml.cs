@@ -109,6 +109,8 @@ public partial class BibleView : UserControl
         _restored = true;
         SettingsView.ApplyTheme(Settings.Current.Theme);
         ApplyAppearance(); // before the first Bible is opened below, so its text is built with these
+        // With no Bible to read, the list of the online Bibles is what the reader needs first.
+        if (Block.Bible is null && OnlineBiblesView.NoneInstalled) { Toolbar.ShowOnlineBibles = true; return; }
         if (Block.Bible is not null || Settings.Current.CurrentBible is not { Length: > 0 } name) return;
         if (Settings.Current.Bibles?.FirstOrDefault(b => b.EnglishName == name) is not { } bible) return;
         var settings = Settings.Current;

@@ -132,9 +132,36 @@ public partial class OnlineBiblesView : UserControl
         UpdateInstalled();
         // The setting is changed in the settings page, so it is read again every time this view is shown.
         ApplyFilter(); // without the confirmation this shows the hint instead of a list
+        if (!Settings.Current.InMyCountryThereIsNoPersecution && NoneInstalled && !_persecutionAsked)
+        {
+            // Nothing to read yet and the answer is not known: ask once, then the list is shown or not.
+            _persecutionAsked = true;
+            PersecutionPanel.IsVisible = true;
+            return;
+        }
         if (!Settings.Current.InMyCountryThereIsNoPersecution || _loadStarted || _items.Count > 0) return;
         _loadStarted = true;
         await LoadAsync();
+    }
+
+    private bool _persecutionAsked;
+
+    /// <summary>True while no Bible is installed (the Bibles of the "Installed Bibles" list).</summary>
+    public static bool NoneInstalled =>
+        !(Settings.Current.Bibles ?? new List<Bible>()).OfType<InstallableBook>().Any(b => !string.IsNullOrEmpty(b.EnglishName));
+
+    /// <summary>"Yes, there is persecution": the online Bibles stay unlisted (the setting stays off).</summary>
+    private void OnPersecutionYesClick(object? sender, RoutedEventArgs e) => AnswerPersecution(noPersecution: false);
+
+    /// <summary>"No persecution": the setting is switched on and the list is loaded.</summary>
+    private void OnPersecutionNoClick(object? sender, RoutedEventArgs e) => AnswerPersecution(noPersecution: true);
+
+    private void AnswerPersecution(bool noPersecution)
+    {
+        PersecutionPanel.IsVisible = false;
+        Settings.Current.InMyCountryThereIsNoPersecution = noPersecution;
+        try { Settings.Current.Save(); } catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Could not save the settings: {ex}"); }
+        OnShown(); // shows the hint, or loads the list
     }
 
     /// <summary>Raised when the close button is clicked, so the host can show the text again.</summary>

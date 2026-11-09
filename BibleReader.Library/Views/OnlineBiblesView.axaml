@@ -122,6 +122,23 @@
             </Border>
         </Border>
 
+        <!-- Asks whether Christians are persecuted in the reader's country, when no Bible is installed yet and the
+             answer is not known: the online Bibles are only listed where there is no persecution. -->
+        <Border x:Name="PersecutionPanel" Grid.RowSpan="4" IsVisible="False" Background="#80000000">
+            <Border MaxWidth="400" Margin="16" Padding="16" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                    CornerRadius="8" BorderThickness="1"
+                    Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+                    BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="{loc:Loc PersecutionQuestion}" TextWrapping="Wrap" />
+                    <StackPanel Spacing="8">
+                        <Button Content="{loc:Loc PersecutionYes}" Click="OnPersecutionYesClick" HorizontalAlignment="Stretch" />
+                        <Button Content="{loc:Loc PersecutionNo}" Click="OnPersecutionNoClick" HorizontalAlignment="Stretch" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Border>
+
         <!-- Back to reading, in the upper right corner. -->
         <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="8"
                 Padding="8,6" Background="Transparent" BorderThickness="0"
