@@ -5,6 +5,12 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\logo.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="wwwroot\logo.svg" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia.Browser" />

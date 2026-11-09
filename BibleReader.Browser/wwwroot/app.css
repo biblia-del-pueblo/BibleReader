@@ -56,3 +56,31 @@
     display: none;
     opacity: 0;
 }
+
+/* The spinner and the percentage shown while the app downloads (see main.js) */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    color: #1b2a4e;
+    font-size: 1.5rem;
+}
+
+.spinner {
+    width: 56px;
+    height: 56px;
+    border: 6px solid rgba(128, 128, 128, 0.3);
+    border-top-color: #0D6EFD;
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-color-scheme: dark) {
+    .loading { color: white; }
+    .spinner { border-top-color: white; }
+}
