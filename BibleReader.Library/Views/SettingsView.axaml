@@ -59,15 +59,17 @@
                 </Grid>
 
                 <!-- The size of the interface (its texts); the main window is made again in the size that is chosen. -->
-                <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8">
+                <StackPanel Spacing="8">
                     <TextBlock Text="{loc:Loc UiSize}" Grid.Column="0" FontWeight="SemiBold" VerticalAlignment="Center" />
-                    <Slider x:Name="UiSizeSlider" Grid.Column="1" Minimum="80" Maximum="200" SmallChange="5" LargeChange="10"
-                            TickFrequency="5" IsSnapToTickEnabled="True" VerticalAlignment="Center" />
-                    <TextBlock x:Name="UiSizeText" Grid.Column="2" Opacity="0.7" VerticalAlignment="Center" />
-                    <Button Grid.Column="3" Click="OnUiSizeResetClick" ToolTip.Tip="{loc:Loc UiSizeReset}" VerticalAlignment="Center">
-                        <loc:ThemedSvg Path="/Assets/cycle.svg" Size="16" />
-                    </Button>
-                </Grid>
+                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                        <Slider x:Name="UiSizeSlider" Grid.Column="0" Minimum="80" Maximum="200" SmallChange="5" LargeChange="10"
+                                TickFrequency="5" IsSnapToTickEnabled="True" VerticalAlignment="Center" />
+                        <TextBlock x:Name="UiSizeText" Grid.Column="1" Opacity="0.7" VerticalAlignment="Center" />
+                        <Button Grid.Column="2" Click="OnUiSizeResetClick" ToolTip.Tip="{loc:Loc UiSizeReset}" VerticalAlignment="Center">
+                            <loc:ThemedSvg Path="/Assets/cycle.svg" Size="16" />
+                        </Button>
+                    </Grid>
+                </StackPanel>
 
                 <!-- Installs a font file, or the fonts in a zip, into the Fonts folder of the settings. -->
                 <TextBlock x:Name="FontStatus" Opacity="0.7" TextWrapping="Wrap" VerticalAlignment="Center" />

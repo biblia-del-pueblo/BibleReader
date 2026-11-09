@@ -69,7 +69,7 @@ public partial class App : Application
 
     private static async Task OpenAsync(BibleView view)
     {
-        string? directory = BibleDirectory is null ? null : await BibleDirectory;
+        string? directory = BibleDirectory; // found before the app started (see BibleApplication)
         if (directory is null)
         {
             view.Content = new TextBlock
