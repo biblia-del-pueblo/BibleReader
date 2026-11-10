@@ -890,8 +890,8 @@ public partial class BibleToolbar : UserControl
         // The Strongs button is only there for a Bible that has Strong's numbers (known once a book of it has been read).
         StrongsButton.IsVisible = position?.Book?.Bible?.HasStrongs == true;
         UpdateStrongsLetters(position?.Book);
-        BookName.Text = ShortenWithEllipsis(position?.Book?.Name ?? string.Empty, IsWide ? 30 : 20);
-        BibleName.Text = ShortenWithEllipsis(position?.Book?.Bible?.Name ?? string.Empty, IsWide ? 35 : 25);
+        BookName.Text = ShortenWithEllipsis(position?.Book?.Name ?? string.Empty, IsWide ? 30 : 14);
+        BibleName.Text = ShortenWithEllipsis(position?.Book?.Bible?.Name ?? string.Empty, IsWide ? 35 :16);
         ReferenceText.Text = position is null ? "—"
             : position.Verse > 0 ? $"{position.Chapter}:{position.Verse}"
             : position.Chapter > 0 ? position.Chapter.ToString() : string.Empty;
