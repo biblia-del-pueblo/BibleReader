@@ -35,8 +35,8 @@ public partial class BibleToolbar : UserControl
         AvaloniaProperty.Register<BibleToolbar, BibleTextBlock?>(nameof(Target));
 
     /// <summary>The position shown. Follows <see cref="Target"/>; can also be set directly.</summary>
-    public static readonly StyledProperty<Bible.VersePosition?> PositionProperty =
-        AvaloniaProperty.Register<BibleToolbar, Bible.VersePosition?>(nameof(Position));
+    public static readonly StyledProperty<BookText.VersePosition?> PositionProperty =
+        AvaloniaProperty.Register<BibleToolbar, BookText.VersePosition?>(nameof(Position));
 
     /// <summary>
     /// True while the online Bibles are shown instead of the text. Set by the "Online Bibles…" menu entry; the host
@@ -45,8 +45,8 @@ public partial class BibleToolbar : UserControl
     public static readonly StyledProperty<bool> ShowOnlineBiblesProperty =
         AvaloniaProperty.Register<BibleToolbar, bool>(nameof(ShowOnlineBibles));
     /// <summary>The Bible chosen in the Bibles popup. Bind a <see cref="BibleTextBlock.Bible"/> to it to read it.</summary>
-    public static readonly StyledProperty<Bible?> BibleProperty =
-        AvaloniaProperty.Register<BibleToolbar, Bible?>(nameof(Bible));
+    public static readonly StyledProperty<BookText?> BibleProperty =
+        AvaloniaProperty.Register<BibleToolbar, BookText?>(nameof(Bible));
 
     /// <summary>True while the settings page is shown instead of the text. Set by the "Settings…" menu entry.</summary>
     public static readonly StyledProperty<bool> ShowSettingsProperty =
@@ -68,9 +68,9 @@ public partial class BibleToolbar : UserControl
     public bool IsWide { get => GetValue(IsWideProperty); private set => SetValue(IsWideProperty, value); }
 
     public BibleTextBlock? Target { get => GetValue(TargetProperty); set => SetValue(TargetProperty, value); }
-    public Bible.VersePosition? Position { get => GetValue(PositionProperty); set => SetValue(PositionProperty, value); }
+    public BookText.VersePosition? Position { get => GetValue(PositionProperty); set => SetValue(PositionProperty, value); }
 
-    public Bible? Bible
+    public BookText? Bible
     {
         get => GetValue(BibleProperty);
         set => SetValue(BibleProperty, value);
@@ -81,7 +81,7 @@ public partial class BibleToolbar : UserControl
     private DateTime _biblesClosedAt = DateTime.MinValue;
     private DateTime _strongsClosedAt = DateTime.MinValue;
 
-    private Bible.Book? _chaptersFor; // the book whose chapters the popup shows (null: the book page)
+    private BookText.Book? _chaptersFor; // the book whose chapters the popup shows (null: the book page)
 
     static BibleToolbar()
     {
@@ -100,6 +100,7 @@ public partial class BibleToolbar : UserControl
             if (e.NewValue is true) bar.ShowOnlineBibles = false;
             bar.ShowText = !bar.ShowOnlineBibles && !bar.ShowSettings;
         });
+        IsWideProperty.Changed.AddClassHandler<BibleToolbar>((bar, e) => bar.UpdateIsWide());
     }
 
     /// <summary>
@@ -196,7 +197,7 @@ public partial class BibleToolbar : UserControl
         ShowBooks(books);
         BookPopup.IsOpen = true;
     }
-    
+
     /// <summary>The menu: copy the current reference or verse text, and switch between reading and the online Bibles.</summary>
     private void OnMenuClick(object? sender, RoutedEventArgs e)
     {
@@ -238,10 +239,10 @@ public partial class BibleToolbar : UserControl
     private Control? _historyHoldTarget;
     private Avalonia.Threading.DispatcherTimer? _historyHold;
 
-    private static Settings.HistoryEntry EntryOf(Bible.VersePosition p) => new() { BookIndex = p.Book.Index, Chapter = p.Chapter, Verse = p.Verse };
+    private static Settings.HistoryEntry EntryOf(BookText.VersePosition p) => new() { BookIndex = p.Book.Index, Chapter = p.Chapter, Verse = p.Verse };
 
     /// <summary>The book of the entry in the Bible that is read (the history is of positions, not of Bibles).</summary>
-    private Bible.Book? BookOf(Settings.HistoryEntry entry) => Target?.Books?.FirstOrDefault(b => b.Index == entry.BookIndex);
+    private BookText.Book? BookOf(Settings.HistoryEntry entry) => Target?.Books?.FirstOrDefault(b => b.Index == entry.BookIndex);
 
     /// <summary>
     /// Notes where the reader is now in the current entry, so that coming back lands there. Scrolling does not make
@@ -264,7 +265,7 @@ public partial class BibleToolbar : UserControl
     /// Adds the place that the reader is about to go to (a chapter, a search result) as the newest entry; the entries ahead
     /// of the current one are dropped. Call it before the text block is moved.
     /// </summary>
-    private void PushHistory(Bible.VersePosition target)
+    private void PushHistory(BookText.VersePosition target)
     {
         if (target.Book is null) return;
         SnapshotCurrent();
@@ -303,7 +304,7 @@ public partial class BibleToolbar : UserControl
         _historyIndex = _history.IndexOf(entry);
         ShowOnlineBibles = false;
         ShowSettings = false;
-        Target.Position = new Bible.VersePosition { Book = book, Chapter = entry.Chapter, Verse = entry.Verse };
+        Target.Position = new BookText.VersePosition { Book = book, Chapter = entry.Chapter, Verse = entry.Verse };
         UpdateHistoryButtons();
         SaveHistory();
     }
@@ -444,8 +445,8 @@ public partial class BibleToolbar : UserControl
         if ((DateTime.UtcNow - _biblesClosedAt).TotalMilliseconds < 300) return;
 
         BiblesItems.Children.Clear();
-        var bibles = Settings.Current.Bibles ?? new List<Bible>();
-        string? current = Position?.Book?.Bible?.Name;
+        var bibles = Settings.Current.Bibles ?? new List<BookText>();
+        string? current = Position?.Book?.BookText?.Name;
         // Strong's dictionaries are not read like a Bible: they are switched on and off in the Strongs list.
         foreach (var bible in bibles.Where(b => !string.IsNullOrEmpty(b.EnglishName) && b is not IStrongDictionary))
         {
@@ -471,7 +472,8 @@ public partial class BibleToolbar : UserControl
 
     /// <summary>
     /// A click on the Strongs button switches all the installed Strong's dictionaries on, or, when they all are on,
-    /// off. A double click or a long press opens the list, in which every dictionary is switched on or off by itself.
+    /// off. A double click, a right click or a long press opens the list, in which every dictionary is switched on or
+    /// off by itself.
     /// </summary>
     private async void OnStrongsClick(object? sender, RoutedEventArgs e)
     {
@@ -509,7 +511,7 @@ public partial class BibleToolbar : UserControl
         foreach (var dictionary in dictionaries)
         {
             var chosen = dictionary;
-            var name = (chosen as Bible) is { } book && !string.IsNullOrEmpty(book.Name ?? book.EnglishName)
+            var name = (chosen as BookText) is { } book && !string.IsNullOrEmpty(book.Name ?? book.EnglishName)
                 ? book.Name ?? book.EnglishName : chosen.GetType().Name;
             var box = new CheckBox { Content = ShortenWithEllipsis(name, 40), IsChecked = chosen.IsEnabled, Margin = new Thickness(4, 2) };
             box.IsCheckedChanged += (_, _) =>
@@ -532,7 +534,7 @@ public partial class BibleToolbar : UserControl
     private bool _syncingStrongs;
 
     private static List<IStrongDictionary> StrongsDictionariesInstalled() =>
-        (Settings.Current.Bibles ?? new List<Bible>()).OfType<IStrongDictionary>().ToList();
+        (Settings.Current.Bibles ?? new List<BookText>()).OfType<IStrongDictionary>().ToList();
 
     /// <summary>A dictionary was switched on or off: tell <see cref="StrongsDictionaries.Any"/>, save, and show the state of the list.</summary>
     private void StrongsDictionariesChanged()
@@ -571,7 +573,7 @@ public partial class BibleToolbar : UserControl
     private static readonly TimeSpan LongPressDelay = TimeSpan.FromMilliseconds(500);
     private object? _strongsPending;      // the toggle that waits for a possible second press
     private ulong _strongsPressedAt;
-    private bool _strongsLongPressed, _strongsOpenOnRelease;
+    private bool _strongsLongPressed, _strongsOpenOnRelease, _strongsRightPressed;
     private Avalonia.Threading.DispatcherTimer? _strongsHold;
 
     /// <summary>
@@ -582,6 +584,18 @@ public partial class BibleToolbar : UserControl
     {
         _strongsLongPressed = false;
         _strongsOpenOnRelease = false;
+        _strongsRightPressed = false;
+        if (e.GetCurrentPoint(StrongsButton).Properties.IsRightButtonPressed)
+        {
+            // A right click opens the list, like a long press; it is no click, so the button is not pressed by it.
+            // The list opens when the button is released: a popup that opens during a press is light-dismissed by it.
+            _strongsHold?.Stop();
+            _strongsPending = null;
+            _strongsPressedAt = 0;
+            _strongsRightPressed = true;
+            e.Handled = true;
+            return;
+        }
         if (_strongsPressedAt != 0 && e.Timestamp - _strongsPressedAt < DoubleClickMilliseconds)
         {
             _strongsPressedAt = 0;
@@ -610,7 +624,16 @@ public partial class BibleToolbar : UserControl
     }
 
     /// <summary>The press ended (or was taken away): it was not held long enough.</summary>
-    private void OnStrongsReleased(object? sender, RoutedEventArgs e) => _strongsHold?.Stop();
+    private void OnStrongsReleased(object? sender, RoutedEventArgs e)
+    {
+        _strongsHold?.Stop();
+        if (!_strongsRightPressed) return;
+        _strongsRightPressed = false;
+        if (e is not PointerReleasedEventArgs) return; // the press was taken away: no list
+        // Pressing already light-dismissed an open list: this right click closes it, it does not open it again.
+        if ((DateTime.UtcNow - _strongsClosedAt).TotalMilliseconds < 300) return;
+        OpenStrongsPopup();
+    }
 
     private void OnStrongsPopupClosed(object? sender, EventArgs e) => _strongsClosedAt = DateTime.UtcNow;
 
@@ -650,11 +673,11 @@ public partial class BibleToolbar : UserControl
         if (string.IsNullOrEmpty(phrase)) return;
         SearchStatus.IsVisible = true;
 
-        var shown = Position?.Book?.Bible ?? Bible;
+        var shown = Position?.Book?.BookText ?? Bible;
         if (shown is null) { SearchStatus.Text = Localizer.Get("OpenBibleFirst"); return; }
 
         // The Bible that is read is a plain Bible; the installed one of the same folder does the search.
-        var searchable = (Settings.Current.Bibles ?? new List<Bible>()).OfType<InstallableBook>()
+        var searchable = (Settings.Current.Bibles ?? new List<BookText>()).OfType<InstallableBook>()
             .FirstOrDefault(b => b.EnglishName == shown.EnglishName || b.EnglishName == shown.Name)
             ?? new InstallableBook { EnglishName = shown.EnglishName ?? shown.Name, Name = shown.Name };
 
@@ -701,7 +724,7 @@ public partial class BibleToolbar : UserControl
         if (Target is null) return;
         // the book of the text block (the search made its own list of the books of the folder)
         var book = Target.Books?.FirstOrDefault(b => b.Index == result.Position.Book.Index) ?? result.Position.Book;
-        var place = new Bible.VersePosition { Book = book, Chapter = result.Position.Chapter, Verse = result.Position.Verse };
+        var place = new BookText.VersePosition { Book = book, Chapter = result.Position.Chapter, Verse = result.Position.Verse };
         PushHistory(place);
         Target.Position = place;
     }
@@ -735,7 +758,7 @@ public partial class BibleToolbar : UserControl
     }
 
     /// <summary>"Genesis 1:9", "Genesis 1" or "Genesis", as far as the position goes.</summary>
-    private static string ReferenceOf(Bible.VersePosition position)
+    private static string ReferenceOf(BookText.VersePosition position)
     {
         string name = position.Book?.Name ?? string.Empty;
         return position.Verse > 0 ? $"{name} {position.Chapter}:{position.Verse}"
@@ -744,17 +767,17 @@ public partial class BibleToolbar : UserControl
     }
 
     /// <summary>The words of the verse, without footnotes or markup; empty when the position is not a verse.</summary>
-    private static string VerseTextOf(Bible.VersePosition position)
+    private static string VerseTextOf(BookText.VersePosition position)
     {
         if (position.Book is not { } book || position.Chapter <= 0 || position.Verse <= 0) return string.Empty;
         var verse = book.Runs
-            .Where(run => run.Class == Bible.Run.Classes.Chapter && run.Chapter == position.Chapter)
+            .Where(run => run.Class == BookText.Run.Classes.Chapter && run.Chapter == position.Chapter)
             .SelectMany(chapter => chapter.Runs ?? [])
-            .FirstOrDefault(run => run.Class == Bible.Run.Classes.Verse && run.Position?.Verse == position.Verse);
+            .FirstOrDefault(run => run.Class == BookText.Run.Classes.Verse && run.Position?.Verse == position.Verse);
         return verse is null ? string.Empty : Regex.Replace(PlainText(verse), @"\s+", " ").Trim();
 
-        static string PlainText(Bible.Run run) =>
-            run.Class == Bible.Run.Classes.Footnote ? string.Empty
+        static string PlainText(BookText.Run run) =>
+            run.Class == BookText.Run.Classes.Footnote ? string.Empty
             : run.Runs?.Any() == true ? string.Concat(run.Runs.Select(PlainText))
             : run.Text ?? string.Empty;
     }
@@ -767,7 +790,7 @@ public partial class BibleToolbar : UserControl
     }
 
     /// <summary>First page of the popup: one button per book.</summary>
-    private void ShowBooks(IReadOnlyList<Bible.Book> books)
+    private void ShowBooks(IReadOnlyList<BookText.Book> books)
     {
         _chaptersFor = null;
         ChapterHeader.IsVisible = false;
@@ -778,7 +801,7 @@ public partial class BibleToolbar : UserControl
     }
 
     /// <summary>Second page of the popup: one button per chapter of <paramref name="book"/>.</summary>
-    private async void ShowChapters(Bible.Book book)
+    private async void ShowChapters(BookText.Book book)
     {
         _chaptersFor = book;
         TitleText.Text = book.Name;
@@ -803,16 +826,16 @@ public partial class BibleToolbar : UserControl
         }
     }
 
-    private static List<int> ChapterNumbers(Bible.Book book) =>
+    private static List<int> ChapterNumbers(BookText.Book book) =>
         Regex.Matches(book.Markdown, @"(?:^|\n)#\s+(?<n>[0-9]+)\s*\r?\n")
             .Select(m => int.Parse(m.Groups["n"].Value))
             .Distinct()
             .ToList();
 
-    private static string Abbreviation(Bible.Book book)
+    private static string Abbreviation(BookText.Book book)
     {
-        if (!string.IsNullOrWhiteSpace(book.Abbrevation)) return book.Abbrevation;
-        string name = book.Name ?? string.Empty;
+        if (!string.IsNullOrWhiteSpace(book.Abbrevation)) return book.Abbrevation.Replace(" ","");
+        string name = book.Name.Replace(" ", "") ?? string.Empty;
         return name.Length > 3 ? name[..3] : name;
     }
 
@@ -828,17 +851,17 @@ public partial class BibleToolbar : UserControl
         return button;
     }
 
-    private static bool IsFrontMatter(Bible.Book book) =>
+    private static bool IsFrontMatter(BookText.Book book) =>
         System.IO.Path.GetFileName(book.File ?? string.Empty).StartsWith("00.", StringComparison.Ordinal);
 
-    private void SelectChapter(Bible.Book book, int chapter)
+    private void SelectChapter(BookText.Book book, int chapter)
     {
         BookPopup.IsOpen = false;
         ShowOnlineBibles = false; // a chapter is read in the text, not in the online list
         ShowSettings = false;
         if (Target is null) return;
         // Verse 0 is the start of the chapter; the text block loads the book if it is not shown yet.
-        var place = new Bible.VersePosition { Book = book, Chapter = chapter, Verse = 0 };
+        var place = new BookText.VersePosition { Book = book, Chapter = chapter, Verse = 0 };
         PushHistory(place);
         Target.Position = place;
     }
@@ -847,16 +870,16 @@ public partial class BibleToolbar : UserControl
     private static readonly FontFamily HebrewFont = new("avares://BibleReader.Library/Assets#Frank Ruehl CLM");
 
     /// <summary>Alpha, beta and aleph, bet: the language of the Strong's numbers of the testament that is read.</summary>
-    private void UpdateStrongsLetters(Bible.Book? book)
+    private void UpdateStrongsLetters(BookText.Book? book)
     {
         // The Old Testament has Hebrew Strong's numbers (H), the New Testament Greek ones (G). The books of the
         // Apocrypha are Greek; front and back matter say nothing, so the letters stay as they are.
         bool? hebrew = book?.Class switch
         {
-            Bible.Book.Classes.Pentateuch or Bible.Book.Classes.Historical or Bible.Book.Classes.PoetryAndWisdom
-                or Bible.Book.Classes.MajorProphets or Bible.Book.Classes.MinorProphets => true,
-            Bible.Book.Classes.Gospels or Bible.Book.Classes.Acts or Bible.Book.Classes.Epistles
-                or Bible.Book.Classes.Revelation or Bible.Book.Classes.Apocrypha => false,
+            BookText.Book.Classes.Pentateuch or BookText.Book.Classes.Historical or BookText.Book.Classes.PoetryAndWisdom
+                or BookText.Book.Classes.MajorProphets or BookText.Book.Classes.MinorProphets => true,
+            BookText.Book.Classes.Gospels or BookText.Book.Classes.Acts or BookText.Book.Classes.Epistles
+                or BookText.Book.Classes.Revelation or BookText.Book.Classes.Apocrypha => false,
             _ => null,
         };
         if (hebrew is null && !string.IsNullOrEmpty(StrongsLetters.Text)) return;
@@ -865,10 +888,10 @@ public partial class BibleToolbar : UserControl
         StrongsLetters.Text = hebrew == true ? "אב" : "αβ";
     }
 
-    private Bible? _watchedBible;
+    private BookText? _watchedBible;
 
-    /// <summary>Follows <see cref="Bible.HasStrongs"/> of the Bible that is shown, so the Strongs button appears as soon as it is known.</summary>
-    private void WatchBible(Bible? bible)
+    /// <summary>Follows <see cref="BookText.HasStrongs"/> of the Bible that is shown, so the Strongs button appears as soon as it is known.</summary>
+    private void WatchBible(BookText? bible)
     {
         if (ReferenceEquals(bible, _watchedBible)) return;
         if (_watchedBible is not null) _watchedBible.PropertyChanged -= OnBiblePropertyChanged;
@@ -885,16 +908,30 @@ public partial class BibleToolbar : UserControl
     private void UpdateText()
     {
         var position = Position;
-        WatchBible(position?.Book?.Bible);
+        WatchBible(position?.Book?.BookText);
         BackButton.IsVisible = ForwardButton.IsVisible = IsWide;
         // The Strongs button is only there for a Bible that has Strong's numbers (known once a book of it has been read).
-        StrongsButton.IsVisible = position?.Book?.Bible?.HasStrongs == true;
+        StrongsButton.IsVisible = position?.Book?.BookText?.HasStrongs == true;
         UpdateStrongsLetters(position?.Book);
-        BookName.Text = ShortenWithEllipsis(position?.Book?.Name ?? string.Empty, IsWide ? 30 : 14);
-        BibleName.Text = ShortenWithEllipsis(position?.Book?.Bible?.Name ?? string.Empty, IsWide ? 35 :16);
+        BookName.Text = ShortenWithEllipsis(position?.Book?.Name ?? string.Empty, IsWide ? 35 : 30);
+        BibleName.Text = ShortenWithEllipsis(position?.Book?.BookText?.Name ?? string.Empty, IsWide ? 35 : 30);
         ReferenceText.Text = position is null ? "—"
             : position.Verse > 0 ? $"{position.Chapter}:{position.Verse}"
             : position.Chapter > 0 ? position.Chapter.ToString() : string.Empty;
+    }
+
+    public void UpdateIsWide()
+    {
+        // The widths of the existing columns are changed: a Grid that is given a new ColumnDefinitions after it was
+        // laid out can keep its old measure, which left the position button without any size in a wide bar.
+        var width = IsWide ? GridLength.Auto : new GridLength(1, GridUnitType.Star);
+        ToolbarGrid.ColumnDefinitions[3].Width = width; // the position button: the room that is left in a narrow bar
+        PositionGrid.ColumnDefinitions[0].Width = width; // its book and Bible name
+
+        // Tighter buttons in a narrow bar, where every pixel counts; roomier ones in a wide bar.
+        var padding = IsWide ? new Thickness(4, 4) : new Thickness(2, 4);
+        foreach (var button in new[] { MenuButton, BackButton, ForwardButton, PositionButton, BiblesButton, SearchButton, StrongsButton })
+            button.Padding = padding;
     }
 
     private string ShortenWithEllipsis(string text, int maxLength)

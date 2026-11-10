@@ -3,18 +3,20 @@ using Avalonia.Controls.Platform;
 using Avalonia.Controls.Templates;
 using Avalonia.Media;
 using BibleMarkdown;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace BibleReader.Library;
 
-public class Bible : System.ComponentModel.INotifyPropertyChanged
+public class BookText : System.ComponentModel.INotifyPropertyChanged
 {
     /// <summary>Raised when <see cref="HasStrongs"/> changes (possibly on the thread that reads a book).</summary>
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
@@ -31,6 +33,7 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
         }
     } = false;
 
+    public bool IsBible => Books.Any(book => book.IsBible);
     internal static readonly Dictionary<int, Book.Classes> ClassByIndex = new Dictionary<int, Book.Classes>()
     {
         {0, Book.Classes.Prefix },
@@ -210,8 +213,8 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
             Apocrypha,
             Appendix
         }
-        public Bible Bible { get; set; }
-        public Book(Bible bible) { Bible = bible; } 
+        public BookText BookText { get; set; }
+        public Book(BookText bible) { BookText = bible; } 
         public string Name { get; set; }
         public string Abbrevation { get; set; }
         public int Index { get; set; }
@@ -220,8 +223,10 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
         public string Description { get; set; }
         public string File { get; set; }
         public string Markdown { get => field ??= System.IO.File.ReadAllText(File, System.Text.Encoding.UTF8); set => field = value; }
+        bool? isBible = null;
+        public bool IsBible => isBible ??= Regex.IsMatch(Markdown, @"\A(?=[\s\S]*@\d)(?![\s\S]*^#[ \t]+(?!\d+[ \t]*\r?$))", RegexOptions.Multiline);
         public List<Run> Runs {
-            get => field ??= Bible.ParseBook(this).ToList();
+            get => field ??= BookText.ParseBibleBook(this).ToList();
             set => field = value;
         }
     }
@@ -229,7 +234,17 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
     {
         public Book Book { get; set; }
         public int Chapter { get; set; }
+        public Run Title { get; set; }
+        public int TitleIndex { get; set; }
         public int Verse { get; set; }
+
+        public VersePosition Clone => new VersePosition()
+        {
+            Book = Book,
+            Chapter = Chapter,
+            Title = Title,
+            Verse = Verse
+        };
     }
 
     public class Run
@@ -269,6 +284,7 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
         public int Chapter { get; set; }
         public Run Parent { get; private set; }
         public bool First { get; set; }
+        public int TitleLevel { get; set; }
         IEnumerable<Run> Append(IEnumerable<Run> children)
         {
             yield return this;
@@ -296,28 +312,64 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
     internal const string StrongsPart = @"_[%&\p{Nd}\p{L}\p{M}-]+";
     internal const string StrongsWord = @"(?<![\p{L}\p{M}_])(?=[\p{L}\p{M}]+(?:" + StrongsPart + "){0,}?" + StrongsAttribute +
         @")[\p{L}\p{M}]+(?:" + StrongsPart + ")+";
+    // A verse marker inside a text: "@" and a number, after a space or newline (or the start) and followed by a space.
+    const string VerseMarker = @"(?<![^ \n])@[0-9]+(?=[ \t])";
+    // A title inside a text: one or more "#" at the start of a line, a space and the text up to the end of the line.
+    const string TitleStart = @"(?<![^\n])#+ ";
     static readonly Regex TextParts = new(
+        @"(?<![^ \n])@(?<verse>[0-9]+)(?=[ \t])|" +
+        @"(?<![^\n])(?<hashes>#+) (?<title>[^\r\n]*)(?:\r?\n|$)|" +
         @"\*\*(?<bold>.*?)\*\*|\*(?<italic>.*?)\*|" +
         @"\^\[(?<footnote>" + Balanced + @")\]|" +
         @"\[(?<smallcaps>" + Balanced + @")" + SmallCapsEnd + "|" +
         @"\[(?<wordsofjesus>" + Balanced + @")" + WordsOfJesusEnd + "|" +
         @"\[(?<link>" + Balanced + @")\]\((?<linkurl>[a-zA-Z]+://.*?)\)|" +
         "(?<strongs>" + StrongsWord + ")|" +
-        @"(?<normal>.*?(?=" + StrongsWord + @"|\*\*.*?\*\*|\*.*?\*|\^\[" + Balanced + @"\]|" +
+        @"(?<normal>.*?(?=" + VerseMarker + "|" + TitleStart + "|" + StrongsWord + @"|\*\*.*?\*\*|\*.*?\*|\^\[" + Balanced + @"\]|" +
         @"\[" + Balanced + SmallCapsEnd + @"|\[" + Balanced + WordsOfJesusEnd + @"|\[" + Balanced + LinkEnd + @"|$))",
         RegexOptions.Singleline | RegexOptions.Compiled);
 
-    public static IEnumerable<Run> ParseText(string text, Run.Classes textClass, VersePosition position)
+    public static IEnumerable<Run> ParseText(string text, VersePosition position)
     {
+        int titleIndex = 1;
         foreach (Match m in TextParts.Matches(text))
         {
-            if (m.Groups["bold"].Success)
+            if (m.Value == "") continue;
+
+            if (m.Groups["verse"].Success)
+            {
+                position = position.Clone;
+                position.Verse = int.Parse(m.Groups["verse"].Value);
+                yield return new Run
+                {
+                    Class = Run.Classes.Verse,
+                    Text = "",
+                    Position = position,
+                    Runs = Enumerable.Empty<Run>()
+                };
+            }
+            else if (m.Groups["title"].Success)
+            {
+                position = position.Clone;
+                position.TitleIndex = titleIndex++;
+                var title = new Run
+                {
+                    Class = Run.Classes.Title,
+                    Text = m.Groups["title"].Value,
+                    TitleLevel = m.Groups["hashes"].Length,
+                    Position = position,
+                    Runs = ParseText(m.Groups["title"].Value, position).ToList()
+                };
+                position.Title = title;
+                yield return title;
+            }
+            else if (m.Groups["bold"].Success)
                 yield return new Run
                 {
                     Class = Run.Classes.Bold,
                     Text = m.Groups["bold"].Value,
                     Position = position,
-                    Runs = ParseText(m.Groups["bold"].Value, Run.Classes.Bold, position).ToList()
+                    Runs = ParseText(m.Groups["bold"].Value, position).ToList()
                 };
             else if (m.Groups["italic"].Success)
                 yield return new Run
@@ -325,7 +377,7 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
                     Class = Run.Classes.Italic,
                     Text = m.Groups["italic"].Value,
                     Position = position,
-                    Runs = ParseText(m.Groups["italic"].Value, Run.Classes.Italic, position).ToList()
+                    Runs = ParseText(m.Groups["italic"].Value, position).ToList()
                 };
             else if (m.Groups["footnote"].Success)
                 yield return new Run
@@ -333,7 +385,7 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
                     Class = Run.Classes.Footnote,
                     Text = m.Groups["footnote"].Value,
                     Position = position,
-                    Runs = ParseText(m.Groups["footnote"].Value, Run.Classes.Text, position).ToList()
+                    Runs = ParseText(m.Groups["footnote"].Value, position).ToList()
                 };
             else if (m.Groups["smallcaps"].Success)
                 yield return new Run
@@ -341,7 +393,7 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
                     Class = Run.Classes.SmallCaps,
                     Text = m.Groups["smallcaps"].Value,
                     Position = position,
-                    Runs = ParseText(m.Groups["smallcaps"].Value, Run.Classes.SmallCaps, position).ToList()
+                    Runs = ParseText(m.Groups["smallcaps"].Value, position).ToList()
                 };
             else if (m.Groups["link"].Success)
                 yield return new Run
@@ -350,7 +402,7 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
                     Text = m.Groups["link"].Value,
                     Url = m.Groups["linkurl"].Value,
                     Position = position,
-                    Runs = Enumerable.Empty<Run>()
+                    Runs = ParseText(m.Groups["link"].Value, position).ToList()
                 };
             else if (m.Groups["wordsofjesus"].Success)
                 yield return new Run
@@ -358,7 +410,7 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
                     Class = Run.Classes.WordsOfJesus,
                     Text = m.Groups["wordsofjesus"].Value,
                     Position = position,
-                    Runs = ParseText(m.Groups["wordsofjesus"].Value, Run.Classes.WordsOfJesus, position).ToList()
+                    Runs = ParseText(m.Groups["wordsofjesus"].Value, position).ToList()
                 };
             else if (m.Groups["strongs"].Success)
                 yield return ParseStrongsWord(m.Groups["strongs"].Value, position);
@@ -382,7 +434,7 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
     /// </summary>
     static Run ParseStrongsWord(string word, VersePosition position)
     {
-        if (position?.Book?.Bible is { } bible) bible.HasStrongs = true;
+        if (position?.Book?.BookText is { } booktext) booktext.HasStrongs = true;
         var text = StrongsAttributes.Replace(word, "").Replace('_', ' ');
         var numbers = Regex.Matches(word, @"(?<=_)[GH][0-9]+(?![%&\p{Nd}\p{L}\p{M}-])").Select(n => n.Value);
         var lemma = Regex.Match(word, @"(?<=_&)[\p{L}\p{M}]+");
@@ -454,7 +506,7 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
                 Class = Run.Classes.Title,
                 Text = titleText,
                 Position = position,
-                Runs = ParseText(titleText, Run.Classes.Title, position).ToList()
+                Runs = ParseText(titleText, position).ToList()
             };
         }
         else
@@ -467,7 +519,7 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
                 Class = Run.Classes.Verse,
                 Text = verseText,
                 Position = position,
-                Runs = ParseText(verseText, Run.Classes.Text, position).ToList()
+                Runs = ParseText(verseText, position).ToList()
             };
             yield return verseRun;
         }
@@ -490,7 +542,26 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
         };
     }
 
-    public static IEnumerable<Run> ParseBook(Book book)
+    public static IEnumerable<Run> ParseNormalBook(Book book)
+    {
+        var position = new VersePosition()
+        {
+            Book = book,
+            Title = null,
+            Chapter = 1,
+            Verse = 1
+        };
+        bool first = true;
+        foreach (var run in ParseText(book.Markdown, position)) {
+            if (first && run.Class == Run.Classes.Title)
+            {
+                first = false;
+                run.First = true;
+            }
+            yield return run;
+        }
+    }
+    public static IEnumerable<Run> ParseBibleBook(Book book)
     {
         var markdown = book.Markdown;
         var first = true;
@@ -509,17 +580,23 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
             }, RegexOptions.Singleline);// ^^ footnotes
         } while (replaced);
 
-        var chapters = Regex.Matches(markdown, @"(^|\n)#\s+(?<chno>[0-9]+)\s*\r?\n(?<chbody>.*?)(?=\n#\s+[0-9]+\s*\r?\n|$)", RegexOptions.Singleline)
-            .OfType<Match>();
-        foreach (var chapter in chapters.SelectMany(chapter => ParseChapter(chapter, new VersePosition { Book = book })))
+        if (book.IsBible)
         {
-            var title = chapter.Runs.FirstOrDefault(r => r.Class == Run.Classes.Title);
-            if (title != null)
+            var chapters = Regex.Matches(markdown, @"(^|\n)#\s+(?<chno>[0-9]+)\s*\r?\n(?<chbody>.*?)(?=\n#\s+[0-9]+\s*\r?\n|$)", RegexOptions.Singleline)
+                .OfType<Match>();
+            foreach (var chapter in chapters.SelectMany(chapter => ParseChapter(chapter, new VersePosition { Book = book })))
             {
-                title.First = first;
-                first = false;
+                var title = chapter.Runs.FirstOrDefault(r => r.Class == Run.Classes.Title);
+                if (title != null)
+                {
+                    title.First = first;
+                    first = false;
+                }
+                yield return chapter;
             }
-            yield return chapter;
+        } else
+        {
+            foreach (var run in ParseNormalBook(book)) yield return run;
         }
     }
 
@@ -548,9 +625,9 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
         EnglishName = bible.EnglishName;
         Books = bible.Books;
     }
-    public static Bible OpenFrom(string path)
+    public static BookText OpenFrom(string path)
     {
-        var bible = new Bible();
+        var bible = new BookText();
         bible.Name = WebUtility.UrlDecode(Path.GetFileName(path));
         var dir = new DirectoryInfo(path);
         if (!dir.Exists) throw new DirectoryNotFoundException($"Directory not found: {path}");
@@ -591,11 +668,12 @@ public class Bible : System.ComponentModel.INotifyPropertyChanged
                 book.Book.Id = bid;
                 if (string.IsNullOrEmpty(bid))
                 {
-                    if (Bible.ClassByIndex.TryGetValue(book.Book.Index, out var @class)) book.Book.Class = @class;
+                    if (BookText.ClassByIndex.TryGetValue(book.Book.Index, out var @class)) book.Book.Class = @class;
                     else book.Book.Class = Book.Classes.Apocrypha;
                 } else
                 {
-                    if (Bible.ClassById.TryGetValue(bid, out var @class)) book.Book.Class = @class;
+                    if (BookText.ClassById.TryGetValue(bid, out var @class)) book.Book.Class = @class;
+                    else if(BookText.ClassByIndex.TryGetValue(book.Book.Index, out var classbyindex)) book.Book.Class = classbyindex;
                     else book.Book.Class = Book.Classes.Apocrypha;
                 }
             }

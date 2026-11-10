@@ -34,8 +34,8 @@ namespace BibleReader.Library
         /// <summary>
         /// The modules of a kind that crosswire.org lists. Its page has a table per language (the language is in the
         /// heading before the table), with the link to the details of a module, its name, its description and the
-        /// link to download it. The name of the module is the <see cref="Bible.EnglishName"/> (it names the folder of
-        /// the module), the description is the <see cref="Bible.Name"/>.
+        /// link to download it. The name of the module is the <see cref="BookText.EnglishName"/> (it names the folder of
+        /// the module), the description is the <see cref="BookText.Name"/>.
         /// </summary>
         protected static async Task<List<T>> GetModulesAsync<T>(string modType, Func<T> create) where T : CrossWireBook
         {
@@ -133,14 +133,19 @@ namespace BibleReader.Library
                     Postprocess = BookArchive.PostprocessMarkdownSmallCaps
                 };
                 importer.FromSWORD(path, srcpath, true);
+                importer.ImportBookNames(path);
                 importer.PostprocessMarkdown(path);
+                Directory.Delete(srcpath, true);
             });
             if (!IsImported)
                 throw new InvalidDataException("The SWORD module was downloaded, but nothing could be imported from it.");
         }
 
         /// <summary>Whether the folder of the module holds what the import makes of it.</summary>
-        protected virtual bool IsImported => Directory.EnumerateFiles(ConfigPath, "*.md").Any();
+        protected virtual bool IsImported => 
+            Directory.EnumerateFiles(ConfigPath)
+            .Any(file => file.EndsWith(".md", StringComparison.OrdinalIgnoreCase) ||
+                file.EndsWith(".db", StringComparison.OrdinalIgnoreCase));
     }
 
     public interface IStrongDictionary

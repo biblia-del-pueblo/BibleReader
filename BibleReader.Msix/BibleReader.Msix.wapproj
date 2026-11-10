@@ -1,82 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-  <PropertyGroup Condition="'$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '15.0'">
-    <VisualStudioVersion>15.0</VisualStudioVersion>
-  </PropertyGroup>
-
-  <!-- This project is built with Visual Studio's MSBuild: the packaging targets are part of Visual Studio. -->
-
-  <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|ARM64">
-      <Configuration>Debug</Configuration>
-      <Platform>ARM64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|ARM64">
-      <Configuration>Release</Configuration>
-      <Platform>ARM64</Platform>
-    </ProjectConfiguration>
-  </ItemGroup>
-
-  <PropertyGroup>
-    <WapProjPath Condition="'$(WapProjPath)'==''">$(MSBuildExtensionsPath)\Microsoft\DesktopBridge\</WapProjPath>
-  </PropertyGroup>
-
-  <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.props" />
-
-  <PropertyGroup>
-    <ProjectGuid>aa6c9cf6-60c2-4343-be8f-f92acd48a28d</ProjectGuid>
-    <TargetPlatformVersion>10.0.26100.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <!-- The Store signs the package it publishes; sign one for sideloading with a certificate of your own. -->
-    <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
-    <EntryPointProjectUniqueName>..\BibleReader.Desktop\BibleReader.Desktop.csproj</EntryPointProjectUniqueName>
-    <!-- Publish > Create App Packages: one .msixupload with the x64 and the ARM64 package. -->
-    <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x64|arm64</AppxBundlePlatforms>
-    <UapAppxPackageBuildMode>StoreUpload</UapAppxPackageBuildMode>
-    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-    <!-- The app's packages are restored for this project too, against its UAP target framework: harmless. -->
-    <NoWarn>$(NoWarn);NU1701;NU1702;NU1605;NU1510</NoWarn>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest">
-      <SubType>Designer</SubType>
-    </AppxManifest>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Images\LockScreenLogo.scale-200.png" />
-    <Content Include="Images\SplashScreen.scale-200.png" />
-    <Content Include="Images\Square150x150Logo.scale-200.png" />
-    <Content Include="Images\Square44x44Logo.scale-200.png" />
-    <Content Include="Images\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Images\Square44x44Logo.targetsize-256.png" />
-    <Content Include="Images\StoreLogo.png" />
-    <Content Include="Images\StoreLogo.scale-200.png" />
-    <Content Include="Images\Wide310x150Logo.scale-200.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\BibleReader.Desktop\BibleReader.Desktop.csproj">
-      <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>
-    </ProjectReference>
-  </ItemGroup>
-
-  <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" PrivateAssets="all" />
-  </ItemGroup>
-
+    <PropertyGroup Condition="'$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '15.0'">
+        <VisualStudioVersion>15.0</VisualStudioVersion>
+        <AppxPackageName>CrossBible</AppxPackageName>
+    </PropertyGroup>
+    <!-- This project is built with Visual Studio's MSBuild: the packaging targets are part of Visual Studio. -->
+    <ItemGroup Label="ProjectConfigurations">
+        <ProjectConfiguration Include="Debug|x64">
+            <Configuration>Debug</Configuration>
+            <Platform>x64</Platform>
+        </ProjectConfiguration>
+        <ProjectConfiguration Include="Release|x64">
+            <Configuration>Release</Configuration>
+            <Platform>x64</Platform>
+        </ProjectConfiguration>
+        <ProjectConfiguration Include="Debug|ARM64">
+            <Configuration>Debug</Configuration>
+            <Platform>ARM64</Platform>
+        </ProjectConfiguration>
+        <ProjectConfiguration Include="Release|ARM64">
+            <Configuration>Release</Configuration>
+            <Platform>ARM64</Platform>
+        </ProjectConfiguration>
+    </ItemGroup>
+    <PropertyGroup>
+        <WapProjPath Condition="'$(WapProjPath)'==''">$(MSBuildExtensionsPath)\Microsoft\DesktopBridge\</WapProjPath>
+    </PropertyGroup>
+    <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.props" />
+    <PropertyGroup>
+        <ProjectGuid>aa6c9cf6-60c2-4343-be8f-f92acd48a28d</ProjectGuid>
+        <TargetPlatformVersion>10.0.26100.0</TargetPlatformVersion>
+        <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+        <DefaultLanguage>en-US</DefaultLanguage>
+        <!-- The Store signs the package it publishes; sign one for sideloading with a certificate of your own. -->
+        <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+        <EntryPointProjectUniqueName>..\BibleReader.Desktop\BibleReader.Desktop.csproj</EntryPointProjectUniqueName>
+        <!-- Publish > Create App Packages: one .msixupload with the x64 and the ARM64 package. -->
+        <AppxBundle>Always</AppxBundle>
+        <AppxBundlePlatforms>x64|arm64</AppxBundlePlatforms>
+        <UapAppxPackageBuildMode>StoreUpload</UapAppxPackageBuildMode>
+        <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+        <!-- The app's packages are restored for this project too, against its UAP target framework: harmless. -->
+        <NoWarn>$(NoWarn);NU1701;NU1702;NU1605;NU1510</NoWarn>
+        <PackageCertificateThumbprint>258AE178E01340A14D24E6E90F2ABCDFCADB7EA9</PackageCertificateThumbprint>
+    </PropertyGroup>
+    <ItemGroup>
+        <AppxManifest Include="Package.appxmanifest">
+            <SubType>Designer</SubType>
+        </AppxManifest>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="Estrellas_de_Esperanza.pfx" />
+        <Content Include="Images\LockScreenLogo.scale-200.png" />
+        <Content Include="Images\SplashScreen.scale-200.png" />
+        <Content Include="Images\Square150x150Logo.scale-200.png" />
+        <Content Include="Images\Square44x44Logo.scale-200.png" />
+        <Content Include="Images\Square44x44Logo.targetsize-24_altform-unplated.png" />
+        <Content Include="Images\Square44x44Logo.targetsize-256.png" />
+        <Content Include="Images\StoreLogo.png" />
+        <Content Include="Images\StoreLogo.scale-200.png" />
+        <Content Include="Images\Wide310x150Logo.scale-200.png" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\BibleReader.Desktop\BibleReader.Desktop.csproj">
+            <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>
+        </ProjectReference>
+    </ItemGroup>
+    <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" PrivateAssets="all" />
+    </ItemGroup>
 </Project>

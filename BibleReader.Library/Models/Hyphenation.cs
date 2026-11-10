@@ -111,10 +111,10 @@ public static class Hyphenation
     }
 
     /// <summary>The language code (<c>"de"</c>) of the installed Bible of this name, or null if it is not known or has no patterns.</summary>
-    public static string? LanguageOf(Bible? bible)
+    public static string? LanguageOf(BookText? bible)
     {
         if (bible is null) return null;
-        var installed = (Settings.Current.Bibles ?? new List<Bible>()).OfType<InstallableBook>()
+        var installed = (Settings.Current.Bibles ?? new List<BookText>()).OfType<InstallableBook>()
             .FirstOrDefault(b => b.EnglishName == bible.EnglishName || b.EnglishName == bible.Name);
         if (installed is null) return null;
         return CodeOf(installed.Language) ?? CodeOf(installed.LanguageEnglishName);

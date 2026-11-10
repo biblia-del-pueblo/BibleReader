@@ -19,8 +19,17 @@ public class FloatRun : Run
     public static readonly StyledProperty<double> FloatWidthProperty =
         AvaloniaProperty.Register<FloatRun, double>(nameof(FloatWidth), double.NaN);
 
+    /// <summary>
+    /// The height that the floated text takes in the layout; NaN: the height of the text. The text is still drawn
+    /// in full, also where it is taller than this (a line box is taller than digits, which stay above the baseline):
+    /// it reaches over the lines below it, which are not shortened by it.
+    /// </summary>
+    public static readonly StyledProperty<double> FloatHeightProperty =
+        AvaloniaProperty.Register<FloatRun, double>(nameof(FloatHeight), double.NaN);
+
     public FloatSide Side { get => GetValue(SideProperty); set => SetValue(SideProperty, value); }
     public double FloatWidth { get => GetValue(FloatWidthProperty); set => SetValue(FloatWidthProperty, value); }
+    public double FloatHeight { get => GetValue(FloatHeightProperty); set => SetValue(FloatHeightProperty, value); }
 
     /// <summary>The control FloatTextBlock actually places; kept in sync with this run's properties.</summary>
     internal TextBlock Visual { get; }
@@ -43,6 +52,7 @@ public class FloatRun : Run
     {
         Visual.Text = Text;
         Visual.Width = FloatWidth;
+        BibleTextBlock.SetLayoutHeight(Visual, FloatHeight);
         BibleTextBlock.SetSide(Visual, Side);
 
         // Copy only what this run sets locally, so everything else is inherited from the FloatTextBlock.

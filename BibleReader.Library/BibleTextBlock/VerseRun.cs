@@ -10,7 +10,7 @@ namespace BibleReader.Library.UI;
 public sealed class VerseRun : Run
 {
     /// <summary>The verse this run starts.</summary>
-    public Bible.VersePosition? Position { get; set; }
+    public BookText.VersePosition? Position { get; set; }
 
     public VerseRun() { }
     public VerseRun(string text) : base(text) { }

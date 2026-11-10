@@ -51,11 +51,12 @@
             Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
             BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
         <Grid>
-            <StackPanel Orientation="Horizontal" Spacing="0">
+            <Grid x:Name="ToolbarGrid" ColumnDefinitions ="Auto,Auto,Auto,*,Auto,Auto,Auto" ColumnSpacing="0">
                 <Button x:Name="MenuButton"
+                        Grid.Column="0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        Padding="8,4"
+                        Padding="2,4"
                         BorderThickness="0"
                         Background="Transparent"
                         Cursor="Hand"
@@ -67,8 +68,9 @@
                 <!-- Back and forward in the history of positions; only in a wide bar (a narrow one has a menu entry).
                      A long press on back lists the history. -->
                 <Button x:Name="BackButton"
+                        Grid.Column="1"
                         VerticalAlignment="Center"
-                        Padding="8,4"
+                        Padding="2,4"
                         BorderThickness="0"
                         Background="Transparent"
                         Cursor="Hand"
@@ -79,8 +81,9 @@
                     <loc:ThemedSvg Path="/Assets/angle-left.svg" Size="18" />
                 </Button>
                 <Button x:Name="ForwardButton"
+                        Grid.Column="2"
                         VerticalAlignment="Center"
-                        Padding="8,4"
+                        Padding="2,4"
                         BorderThickness="0"
                         Background="Transparent"
                         Cursor="Hand"
@@ -92,27 +95,29 @@
                 </Button>
                 <!-- The position is a flat button: it looks like text until hovered. -->
                 <Button x:Name="PositionButton"
+                        Grid.Column="3"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        Padding="8,4"
+                        Padding="2,4"
                         BorderThickness="0"
                         Background="Transparent"
                         Cursor="Hand"
                         Click="OnPositionClick">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <StackPanel>
+                    <Grid x:Name="PositionGrid" ColumnDefinitions="Auto,Auto,Auto" ColumnSpacing="5">
+                        <StackPanel Grid.Column="0">
                             <TextBlock x:Name="BookName" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="{loc:Size 18}"/>
-                            <TextBlock x:Name="BibleName" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="{loc:Size 12}" />
+                            <TextBlock x:Name="BibleName" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="{loc:Size 12}"/>
                         </StackPanel>
-                        <TextBlock x:Name="ReferenceText" Opacity="0.8" VerticalAlignment="Center" />
+                        <TextBlock x:Name="ReferenceText" Opacity="0.8" VerticalAlignment="Center" Grid.Column="1"/>
                         <!-- Direct Svg tag -->
-                        <loc:ThemedSvg Path="/Assets/down-arrow.svg" Size="18" />
-                    </StackPanel>
+                        <loc:ThemedSvg Path="/Assets/down-arrow.svg" Size="18" Grid.Column="2"/>
+                    </Grid>
                 </Button>
                 <!-- The installed Bibles: opens a list to choose the Bible to read. -->
                 <Button x:Name="BiblesButton"
+                        Grid.Column="4"
                         VerticalAlignment="Center"
-                        Padding="8,4"
+                        Padding="2,4"
                         BorderThickness="0"
                         Background="Transparent"
                         Cursor="Hand"
@@ -124,8 +129,9 @@
                 </Button>
                 <!-- Search: opens a box to type the words, and below it the verses that have them, best match first. -->
                 <Button x:Name="SearchButton"
+                        Grid.Column="5"
                         VerticalAlignment="Center"
-                        Padding="8,4"
+                        Padding="2,4"
                         BorderThickness="0"
                         Background="Transparent"
                         Cursor="Hand"
@@ -135,9 +141,10 @@
                 </Button>
                 <!-- The installed Strong's dictionaries: opens a list in which they are switched on and off. -->
                 <Button x:Name="StrongsButton"
+                        Grid.Column="6"
                         Classes="strongs"
                         VerticalAlignment="Center"
-                        Padding="8,4"
+                        Padding="2,4"
                         BorderThickness="0"
                         Cursor="Hand"
                         ToolTip.Tip="{loc:Loc StrongsDictionaries}"
@@ -145,7 +152,7 @@
                     <!-- Two Greek or Hebrew letters, after the testament of the position (see UpdateText). -->
                     <TextBlock x:Name="StrongsLetters" FontSize="{loc:Size 20}" VerticalAlignment="Center" />
                 </Button>
-            </StackPanel>
+            </Grid>
 
             <!-- The menu: opened by the menu button, its entries are added in code. -->
             <Popup x:Name="MenuPopup"

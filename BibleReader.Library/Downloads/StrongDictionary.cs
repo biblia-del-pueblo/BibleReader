@@ -8,7 +8,7 @@ namespace BibleReader.Library.Downloads
     public class StrongsDictionaries
     {
         public static string? Lookup(string key) => string.Join(Environment.NewLine+Environment.NewLine, 
-            (Settings.Current.Bibles ?? new List<Bible>())
+            (Settings.Current.Bibles ?? new List<BookText>())
                 .OfType<IStrongDictionary>()
                 .SelectMany(d => key.Split(' ')
                     .Select(k => d.IsEnabled ? d.LookupStrong(NormalizeKey(k)) : null))
@@ -32,7 +32,7 @@ namespace BibleReader.Library.Downloads
         /// <summary>Raised when <see cref="Any"/> changed (possibly on another thread than the UI).</summary>
         public static event EventHandler? AnyChanged;
 
-        static bool Compute() => (Settings.Current.Bibles ?? new List<Bible>())
+        static bool Compute() => (Settings.Current.Bibles ?? new List<BookText>())
             .OfType<IStrongDictionary>()
             .Any(d => d.IsEnabled);
 

@@ -22,7 +22,7 @@ namespace BibleReader.Library.Downloads
         // with "HN"), and the small caps go around the whole word: "[Lord_H3068_&lemma_%morph]{.smallcaps}", which the
         // reader reads as a small caps run that holds a word with a Strong's number.
         static readonly Regex SmallCapsPattern = new(
-            @"(?<!(^|\r?\n)#[^\r\n]*?)(?:(?<strongs>" + Bible.StrongsWord + @")|[A-Z][A-Z]+)",
+            @"(?<!(^|\r?\n)#[^\r\n]*?)(?:(?<strongs>" + BookText.StrongsWord + @")|[A-Z][A-Z]+)",
             RegexOptions.Singleline | RegexOptions.Compiled);
 
         static readonly Regex StrongsAttributePart = new(@"^(?:[GH][0-9]+|&.+|%.+)$", RegexOptions.Compiled);

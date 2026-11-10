@@ -103,12 +103,12 @@
                 <!-- Installs a font file, or the fonts in a zip, into the Fonts folder of the settings. -->
                 <TextBlock x:Name="FontStatus" Opacity="0.7" TextWrapping="Wrap" VerticalAlignment="Center" />
 
-                <StackPanel Spacing="16" Orientation="Horizontal">
+                <WrapPanel ItemSpacing="16" LineSpacing="16" Orientation="Horizontal">
                     <CheckBox x:Name="JesusBox" Content="{loc:Loc ShowJesusRed}"
                               IsCheckedChanged="OnJesusChanged" />
                     <CheckBox x:Name="GreenVerseBox" Content="{loc:Loc ShowVersesGreen}"
                               IsCheckedChanged="OnGreenVerseChanged" />
-                </StackPanel>
+                </WrapPanel>
 
                 <!-- Words are split at the end of a line (for the languages that have hyphenation patterns). -->
                 <CheckBox x:Name="HyphenateBox" Content="{loc:Loc Hyphenation}"

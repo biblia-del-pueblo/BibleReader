@@ -13,8 +13,8 @@ namespace BibleReader.Library
     public class Settings
     {
         const string SettingsFile = "settings.json";
-        public List<Bible> Bibles { get; set; }
-        /// <summary>The <see cref="Bible.EnglishName"/> of the Bible that was open last; it is opened again at the start.</summary>
+        public List<BookText> Bibles { get; set; }
+        /// <summary>The <see cref="BookText.EnglishName"/> of the Bible that was open last; it is opened again at the start.</summary>
         public string? CurrentBible { get; set; }
         /// <summary>Where the reader was in <see cref="CurrentBible"/>: the number of the book (<c>Book.Index</c>), the chapter and the verse.</summary>
         public int CurrentBookIndex { get; set; }

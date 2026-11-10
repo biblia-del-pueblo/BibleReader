@@ -24,7 +24,7 @@ public partial class BibleView : UserControl
         {
             if (e.Property == BibleTextBlock.PositionProperty) { SavePositionSoon(); return; }
             if (e.Property != BibleTextBlock.BibleProperty) return;
-            var name = (e.NewValue as Bible)?.EnglishName;
+            var name = (e.NewValue as BookText)?.EnglishName;
             if (Settings.Current.CurrentBible == name) return;
             Settings.Current.CurrentBible = name;
             try { Settings.Current.Save(); } catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Could not save the settings: {ex}"); }
@@ -133,13 +133,13 @@ public partial class BibleView : UserControl
     /// </summary>
     public double MinColumnWidth { get; set; } = 350;
 
-    public IReadOnlyList<Bible.Book>? Books
+    public IReadOnlyList<BookText.Book>? Books
     {
         get => Block.Books;
         set => Block.Books = value;
     }
     /// <summary>The Bible shown; the text block follows the toolbar's <see cref="BibleToolbar.Bible"/>.</summary>
-    public Bible? Bible
+    public BookText? Bible
     {
         get => Block.Bible;
         set => Block.Bible = value;
@@ -231,9 +231,9 @@ public partial class BibleView : UserControl
     /// Reads the books in <paramref name="directory"/> and shows <paramref name="bookIndex"/> (default: the first
     /// real book, skipping the front matter such as the table of contents).
     /// </summary>
-    public async Task OpenAsync(string directory, int bookIndex = -1) => await OpenAsync(await Task.Run(() => Bible.OpenFrom(directory)), bookIndex);
+    public async Task OpenAsync(string directory, int bookIndex = -1) => await OpenAsync(await Task.Run(() => BookText.OpenFrom(directory)), bookIndex);
 
-    public async Task OpenAsync(Bible bible, int bookIndex = -1)
+    public async Task OpenAsync(BookText bible, int bookIndex = -1)
     {
         var books = bible.Books;
         Block.Books = books;

@@ -148,7 +148,7 @@ public partial class OnlineBiblesView : UserControl
 
     /// <summary>True while no Bible is installed (the Bibles of the "Installed Bibles" list).</summary>
     public static bool NoneInstalled =>
-        !(Settings.Current.Bibles ?? new List<Bible>()).OfType<InstallableBook>().Any(b => !string.IsNullOrEmpty(b.EnglishName));
+        !(Settings.Current.Bibles ?? new List<BookText>()).OfType<InstallableBook>().Any(b => !string.IsNullOrEmpty(b.EnglishName));
 
     /// <summary>"Yes, there is persecution": the online Bibles stay unlisted (the setting stays off).</summary>
     private void OnPersecutionYesClick(object? sender, RoutedEventArgs e) => AnswerPersecution(noPersecution: false);
@@ -173,7 +173,7 @@ public partial class OnlineBiblesView : UserControl
     private void UpdateInstalled()
     {
         // The same rows as the online list: an installed Bible can be deleted from here too.
-        var items = (Settings.Current.Bibles ?? new List<Bible>())
+        var items = (Settings.Current.Bibles ?? new List<BookText>())
             .OfType<InstallableBook>()
             .Where(b => !string.IsNullOrEmpty(b.EnglishName))
             .OrderBy(b => string.IsNullOrWhiteSpace(b.Name) ? b.EnglishName : b.Name, StringComparer.CurrentCultureIgnoreCase)
@@ -234,7 +234,7 @@ public partial class OnlineBiblesView : UserControl
                 throw new InvalidDataException(Localizer.Get("NoBooksImported"));
 
             var settings = Settings.Current;
-            settings.Bibles ??= new List<Bible>();
+            settings.Bibles ??= new List<BookText>();
             settings.Bibles.Add(bible);
             settings.Save();
             UpdateInstalled();
@@ -534,7 +534,7 @@ public partial class OnlineBiblesView : UserControl
             await item.Bible.Install();
             item.IsInstalled = true;
             var settings = Settings.Current;
-            settings.Bibles ??= new List<Bible>();
+            settings.Bibles ??= new List<BookText>();
             if (!settings.Bibles.OfType<InstallableBook>().Any(b => b.Origin == item.Bible.Origin && b.EnglishName == item.Bible.EnglishName))
                 settings.Bibles.Add(item.Bible);
             settings.Save();

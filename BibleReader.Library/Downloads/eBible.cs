@@ -78,6 +78,7 @@ public class eBible : InstallableBook
                 Postprocess = BookArchive.PostprocessMarkdownSmallCaps
             };
             importer.FromSWORD(path, srcpath, true);
+            importer.ImportBookNames(path, srcpath);
             importer.PostprocessMarkdown(path);
             Directory.Delete(srcpath, true);
         });

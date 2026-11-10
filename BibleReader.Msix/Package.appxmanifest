@@ -12,7 +12,7 @@
 
   <Identity
     Name="EstrellasDeEsperanza.CrossBible"
-    Publisher="CN=00000000-0000-0000-0000-000000000000"
+    Publisher="CN=Estrellas de Esperanza"
     Version="1.0.0.0" />
 
   <Properties>
