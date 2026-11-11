@@ -1,4 +1,5 @@
-﻿using BibleMarkdown;
+﻿using Avalonia.Remote.Protocol;
+using BibleMarkdown;
 using BibleReader.Library.Downloads;
 using HtmlAgilityPack;
 using System;
@@ -128,13 +129,12 @@ namespace BibleReader.Library
 
             await Task.Run(() =>
             {
-                var importer = new Importer()
-                {
-                    Postprocess = BookArchive.PostprocessMarkdownSmallCaps
-                };
-                importer.FromSWORD(path, srcpath, true);
-                importer.ImportBookNames(path);
-                importer.PostprocessMarkdown(path);
+                var transform = new Transform(path, srcpath);
+                transform.Import.Postprocess = BookArchive.PostprocessMarkdownSmallCaps;
+                transform.Import.FromSWORD(true);
+                transform.Import.ImportBookNames();
+                transform.Import.PostprocessMarkdown();
+                transform.Index.Create();
                 Directory.Delete(srcpath, true);
             });
             if (!IsImported)

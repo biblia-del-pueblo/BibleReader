@@ -83,11 +83,11 @@ namespace BibleReader.Library.Downloads
             
             try {
                 await Task.Run(() => {
-                    var importer = new Importer()
-                    {
-                        Postprocess = PostprocessMarkdownSmallCaps
-                    };
-                    importer.All(path);
+                    var transform = new Transform(path, src);
+                    transform.Import.Postprocess = PostprocessMarkdownSmallCaps;
+                    transform.Import.All();
+                    transform.Index.Create();
+                    Directory.Delete(src, true);
                 });
             }
             finally { }

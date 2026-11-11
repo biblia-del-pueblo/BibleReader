@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using BibleMarkdown;
 
 namespace BibleReader.Library.Downloads
 {
@@ -57,10 +58,18 @@ namespace BibleReader.Library.Downloads
         public override async Task Install()
         {
             if (string.IsNullOrEmpty(DetailsUrl)) throw new InvalidOperationException("The address of the Bible is not set.");
-            var path = ConfigPath;
-            await Download.DownloadAndUnzip(DetailsUrl, path);
-            if (!Directory.EnumerateFiles(path, "*.md").Any())
-                throw new InvalidDataException("The Bible was downloaded, but it has no books.");
+            var srcpath = Path.Combine(ConfigPath, "src");
+            await Task.Run(async () =>
+            {
+                await Download.DownloadAndUnzip(DetailsUrl, srcpath);
+                var transform = new Transform(ConfigPath, srcpath);
+                transform.Import.All();
+                if (!Directory.EnumerateFiles(ConfigPath, "*.md").Any() &&
+                    !Directory.EnumerateFiles(ConfigPath, "*.db").Any())
+                    throw new InvalidDataException("The Bible was downloaded, but it has no books.");
+                transform.Index.Create();
+                Directory.Delete(srcpath, true);
+            });
         }
     }
 }

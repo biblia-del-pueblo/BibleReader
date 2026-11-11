@@ -73,13 +73,13 @@ public class eBible : InstallableBook
         await Download.DownloadAndUnzip(swordUrl, srcpath);
         // ImportFromSWORD(mdpath, srcpath) writes the markdown books to mdpath, and does nothing unless FromSource is set.
         await Task.Run(() => {
-            var importer = new BibleMarkdown.Importer()
-            {
-                Postprocess = BookArchive.PostprocessMarkdownSmallCaps
-            };
-            importer.FromSWORD(path, srcpath, true);
-            importer.ImportBookNames(path, srcpath);
-            importer.PostprocessMarkdown(path);
+            var transform = new BibleMarkdown.Transform(path, srcpath);
+            transform.Import.Postprocess = BookArchive.PostprocessMarkdownSmallCaps;
+            transform.Import.FromSWORD(true);
+            transform.Import.ImportBookNames();
+            transform.Import.PostprocessMarkdown();
+            transform.Index.Create();
+
             Directory.Delete(srcpath, true);
         });
     if (!Directory.EnumerateFiles(path, "*.md").Any())

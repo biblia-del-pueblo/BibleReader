@@ -6,5 +6,7 @@
   <Project Path="BibleReader.Desktop/BibleReader.Desktop.csproj" />
   <Project Path="BibleReader.iOS/BibleReader.iOS.csproj" />
   <Project Path="BibleReader.Library/BibleReader.Library.csproj" />
-  <Project Path="BibleReader.Msix/BibleReader.Msix.wapproj" Type="c7167f0d-bc9f-4e6e-afe1-012c56b48db5" />
+  <Project Path="BibleReader.Msix/BibleReader.Msix.wapproj" Type="c7167f0d-bc9f-4e6e-afe1-012c56b48db5">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
 </Solution>

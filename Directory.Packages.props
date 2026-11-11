@@ -6,13 +6,13 @@
     <ItemGroup>
         <!-- Avalonia packages -->
         <!-- Important: keep version in sync! -->
-        <PackageVersion Include="Avalonia" Version="12.1.5" />
-        <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.5" />
-        <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.1.5" />
-        <PackageVersion Include="Avalonia.Desktop" Version="12.1.5" />
-        <PackageVersion Include="Avalonia.iOS" Version="12.1.5" />
-        <PackageVersion Include="Avalonia.Browser" Version="12.1.5" />
-        <PackageVersion Include="Avalonia.Android" Version="12.1.5" />
+        <PackageVersion Include="Avalonia" Version="12.1.6" />
+        <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.6" />
+        <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.1.6" />
+        <PackageVersion Include="Avalonia.Desktop" Version="12.1.6" />
+        <PackageVersion Include="Avalonia.iOS" Version="12.1.6" />
+        <PackageVersion Include="Avalonia.Browser" Version="12.1.6" />
+        <PackageVersion Include="Avalonia.Android" Version="12.1.6" />
         <PackageVersion Include="Svg.Controls.Skia.Avalonia" Version="12.0.0.17" />
 
         <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
@@ -20,7 +20,7 @@
         <PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.2.0.3" />
         <!-- AndroidX Core 1.19 contains the Kotlin extensions; an older Core.Ktx next to it duplicates classes (D8 error).
              Keep this at the same version as Xamarin.AndroidX.Core. -->
-        <PackageVersion Include="Xamarin.AndroidX.Core.Core.Ktx" Version="1.19.0.1" />
+        <PackageVersion Include="Xamarin.AndroidX.Core.Core.Ktx" Version="1.19.1" />
 
         <!-- Browser (WebAssembly): Avalonia 12.1.5 brings SkiaSharp 3.119.4 and its native WebAssembly library, but the SVG
              package (Svg.Skia 5.2.3) needs SkiaSharp 4.148.0 / HarfBuzzSharp 14.2.0. The managed code then calls native
@@ -28,12 +28,11 @@
              packages at the same versions as the managed ones. -->
         <PackageVersion Include="SkiaSharp.NativeAssets.WebAssembly" Version="4.148.0" />
         <PackageVersion Include="HarfBuzzSharp.NativeAssets.WebAssembly" Version="14.2.0" />
-        <PackageVersion Include="LibArchive.Net" Version="0.3.1" />
         <!-- For BibleReader.Msix, which packages the desktop app for the Microsoft Store. -->
         <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7705" />
         <PackageVersion Include="EstrellasDeEsperanza.AsyncLock" Version="4.2.1" />
         <PackageVersion Include="NHyphenator" Version="2.0.0" />
         <PackageVersion Include="HtmlAgilityPack" Version="1.13.1" />
-        <PackageVersion Include="System.Linq.AsyncEnumerable" Version="10.0.0" />
+        <PackageVersion Include="System.Linq.AsyncEnumerable" Version="11.0.0" />
     </ItemGroup>
 </Project>
