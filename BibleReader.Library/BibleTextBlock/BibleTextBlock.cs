@@ -98,11 +98,11 @@ public class BibleTextBlock : Panel
             defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
 
     /// <summary>
-    /// The Bible to read. Setting it (or binding it, e.g. to <see cref="BibleToolbar.Bible"/>) loads its books when
+    /// The Bible to read. Setting it (or binding it, e.g. to <see cref="BibleToolbar.BookText"/>) loads its books when
     /// they are not loaded yet and shows the first real book, skipping the front matter.
     /// </summary>
-    public static readonly StyledProperty<BookText?> BibleProperty =
-        AvaloniaProperty.Register<BibleTextBlock, BookText?>(nameof(Bible));
+    public static readonly StyledProperty<BookText?> BookTextProperty =
+        AvaloniaProperty.Register<BibleTextBlock, BookText?>(nameof(BookText));
 
     /// <summary>
     /// True while the text asked for is still being prepared: a requested verse that is not on screen yet, or the very
@@ -131,7 +131,7 @@ public class BibleTextBlock : Panel
         {
             if (!c._settingPosition) c.ScrollToPosition(e.NewValue as BookText.VersePosition);
         });
-        BibleProperty.Changed.AddClassHandler<BibleTextBlock>((c, e) => c.OnBibleChanged(e.NewValue as BookText));
+        BookTextProperty.Changed.AddClassHandler<BibleTextBlock>((c, e) => c.OnBibleChanged(e.NewValue as BookText));
         AffectsMeasure<BibleTextBlock>(ForegroundProperty);
         SideProperty.Changed.AddClassHandler<Control>((c, _) => (c.Parent as BibleTextBlock)?.MarkDirty());
     }
@@ -172,7 +172,7 @@ public class BibleTextBlock : Panel
         get
         {
             if (!Hyphenate) return null;
-            var bible = Bible;
+            var bible = BookText;
             if (!ReferenceEquals(bible, _hyphenBible) || (_hyphenCode is null && bible is not null))
             {
                 _hyphenBible = bible;
@@ -182,7 +182,7 @@ public class BibleTextBlock : Panel
         }
     }
 
-    public BookText? Bible { get => GetValue(BibleProperty); set => SetValue(BibleProperty, value); }
+    public BookText? BookText { get => GetValue(BookTextProperty); set => SetValue(BookTextProperty, value); }
     public BookText.VersePosition? Position { get => GetValue(PositionProperty); set => SetValue(PositionProperty, value); }
     public Orientation Orientation { get => GetValue(OrientationProperty); set => SetValue(OrientationProperty, value); }
     public int ColumnCount { get => GetValue(ColumnCountProperty); set => SetValue(ColumnCountProperty, value); }
@@ -394,7 +394,7 @@ public class BibleTextBlock : Panel
                 foreach (var book in loaded.Books) book.BookText = bible;
                 bible.Books = loaded.Books;
             }
-            if (!ReferenceEquals(Bible, bible)) return; // another Bible was chosen while this one loaded
+            if (!ReferenceEquals(BookText, bible)) return; // another Bible was chosen while this one loaded
             var books = bible.Books;
             Books = books;
             int index = books.FindIndex(book =>
@@ -402,7 +402,7 @@ public class BibleTextBlock : Panel
             // Keep the position: the same book (by its number), chapter and verse of the new Bible, when it has them.
             int kept = previous is { } old ? books.FindIndex(book => book.Index == old.BookIndex) : -1;
             await ShowBookAsync(kept >= 0 ? kept : index < 0 ? 0 : index);
-            if (kept >= 0 && previous is { } p && (p.Chapter > 0 || p.Verse > 0) && ReferenceEquals(Bible, bible))
+            if (kept >= 0 && previous is { } p && (p.Chapter > 0 || p.Verse > 0) && ReferenceEquals(BookText, bible))
                 Position = new BookText.VersePosition { Book = books[kept], Chapter = p.Chapter, Verse = p.Verse };
             if (books.Count == 0) { _switchingBible = false; UpdateBusy(); } // nothing to lay out
         }

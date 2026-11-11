@@ -44,9 +44,9 @@ public partial class BibleToolbar : UserControl
     /// </summary>
     public static readonly StyledProperty<bool> ShowOnlineBiblesProperty =
         AvaloniaProperty.Register<BibleToolbar, bool>(nameof(ShowOnlineBibles));
-    /// <summary>The Bible chosen in the Bibles popup. Bind a <see cref="BibleTextBlock.Bible"/> to it to read it.</summary>
-    public static readonly StyledProperty<BookText?> BibleProperty =
-        AvaloniaProperty.Register<BibleToolbar, BookText?>(nameof(Bible));
+    /// <summary>The Bible chosen in the Bibles popup. Bind a <see cref="BibleTextBlock.BookText"/> to it to read it.</summary>
+    public static readonly StyledProperty<BookText?> BookTextProperty =
+        AvaloniaProperty.Register<BibleToolbar, BookText?>(nameof(BookText));
 
     /// <summary>True while the settings page is shown instead of the text. Set by the "Settings…" menu entry.</summary>
     public static readonly StyledProperty<bool> ShowSettingsProperty =
@@ -70,10 +70,10 @@ public partial class BibleToolbar : UserControl
     public BibleTextBlock? Target { get => GetValue(TargetProperty); set => SetValue(TargetProperty, value); }
     public BookText.VersePosition? Position { get => GetValue(PositionProperty); set => SetValue(PositionProperty, value); }
 
-    public BookText? Bible
+    public BookText? BookText
     {
-        get => GetValue(BibleProperty);
-        set => SetValue(BibleProperty, value);
+        get => GetValue(BookTextProperty);
+        set => SetValue(BookTextProperty, value);
     }
 
     private DateTime _closedAt = DateTime.MinValue;
@@ -438,7 +438,7 @@ public partial class BibleToolbar : UserControl
         HistoryPopup.IsOpen = true;
     }
 
-    /// <summary>Lists the installed Bibles (<see cref="Settings.Bibles"/>); choosing one sets <see cref="Bible"/>.</summary>
+    /// <summary>Lists the installed Bibles (<see cref="Settings.Bibles"/>); choosing one sets <see cref="BookText"/>.</summary>
     private void OnBiblesClick(object? sender, RoutedEventArgs e)
     {
         if (BiblesPopup.IsOpen) { BiblesPopup.IsOpen = false; return; }
@@ -459,7 +459,7 @@ public partial class BibleToolbar : UserControl
                 BiblesPopup.IsOpen = false;
                 ShowOnlineBibles = false;
                 ShowSettings = false;
-                if (Bible != chosen) Bible = chosen;
+                if (BookText != chosen) BookText = chosen;
             };
             BiblesItems.Children.Add(button);
         }
@@ -673,7 +673,7 @@ public partial class BibleToolbar : UserControl
         if (string.IsNullOrEmpty(phrase)) return;
         SearchStatus.IsVisible = true;
 
-        var shown = Position?.Book?.BookText ?? Bible;
+        var shown = Position?.Book?.BookText ?? BookText;
         if (shown is null) { SearchStatus.Text = Localizer.Get("OpenBibleFirst"); return; }
 
         // The Bible that is read is a plain Bible; the installed one of the same folder does the search.
@@ -902,7 +902,7 @@ public partial class BibleToolbar : UserControl
     private void OnBiblePropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         // A book is read on any thread, the button belongs to the UI thread.
-        if (e.PropertyName == nameof(Bible.HasStrongs)) Avalonia.Threading.Dispatcher.UIThread.Post(UpdateText);
+        if (e.PropertyName == nameof(BookText.HasStrongs)) Avalonia.Threading.Dispatcher.UIThread.Post(UpdateText);
     }
 
     private void UpdateText()

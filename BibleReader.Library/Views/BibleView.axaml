@@ -10,7 +10,7 @@
              Bible Roman is the font embedded in this assembly's Assets folder (regular, italic and bold). -->
         <local:BibleTextBlock x:Name="Block"
                               Grid.Row="1"
-                              Bible="{Binding #Toolbar.Bible}"
+                              BookText="{Binding #Toolbar.BookText}"
                               Margin="16,8"
                               IsVisible="{Binding #Toolbar.ShowText}"
                               Orientation="Vertical"

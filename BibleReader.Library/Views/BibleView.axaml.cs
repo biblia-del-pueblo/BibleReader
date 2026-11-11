@@ -23,7 +23,7 @@ public partial class BibleView : UserControl
         Block.PropertyChanged += (_, e) =>
         {
             if (e.Property == BibleTextBlock.PositionProperty) { SavePositionSoon(); return; }
-            if (e.Property != BibleTextBlock.BibleProperty) return;
+            if (e.Property != BibleTextBlock.BookTextProperty) return;
             var name = (e.NewValue as BookText)?.EnglishName;
             if (Settings.Current.CurrentBible == name) return;
             Settings.Current.CurrentBible = name;
@@ -93,9 +93,9 @@ public partial class BibleView : UserControl
     private void SavePosition(bool force)
     {
         if (Block.IsBusy) { if (!force) SavePositionSoon(); return; } // still opening: the position is not the reader's yet
-        if (Block.Bible is null || Block.Position is not { Book: { } book } position) return;
+        if (Block.BookText is null || Block.Position is not { Book: { } book } position) return;
         var settings = Settings.Current;
-        if (settings.CurrentBible != Block.Bible.EnglishName) return; // the Bible is being switched
+        if (settings.CurrentBible != Block.BookText.EnglishName) return; // the Bible is being switched
         if (settings.CurrentBookIndex == book.Index && settings.CurrentChapter == position.Chapter && settings.CurrentVerse == position.Verse) return;
         settings.CurrentBookIndex = book.Index;
         settings.CurrentChapter = position.Chapter;
@@ -110,12 +110,12 @@ public partial class BibleView : UserControl
         SettingsView.ApplyTheme(Settings.Current.Theme);
         ApplyAppearance(); // before the first Bible is opened below, so its text is built with these
         // With no Bible to read, the list of the online Bibles is what the reader needs first.
-        if (Block.Bible is null && OnlineBiblesView.NoneInstalled) { Toolbar.ShowOnlineBibles = true; return; }
-        if (Block.Bible is not null || Settings.Current.CurrentBible is not { Length: > 0 } name) return;
+        if (Block.BookText is null && OnlineBiblesView.NoneInstalled) { Toolbar.ShowOnlineBibles = true; return; }
+        if (Block.BookText is not null || Settings.Current.CurrentBible is not { Length: > 0 } name) return;
         if (Settings.Current.Bibles?.FirstOrDefault(b => b.EnglishName == name) is not { } bible) return;
         var settings = Settings.Current;
         Block.OpenNextAt(settings.CurrentBookIndex, settings.CurrentChapter, settings.CurrentVerse);
-        Toolbar.Bible = bible; // the text block follows, and opens at the saved position
+        Toolbar.BookText = bible; // the text block follows, and opens at the saved position
     }
 
     /// <summary>
@@ -138,11 +138,11 @@ public partial class BibleView : UserControl
         get => Block.Books;
         set => Block.Books = value;
     }
-    /// <summary>The Bible shown; the text block follows the toolbar's <see cref="BibleToolbar.Bible"/>.</summary>
+    /// <summary>The Bible shown; the text block follows the toolbar's <see cref="BibleToolbar.BookText"/>.</summary>
     public BookText? Bible
     {
-        get => Block.Bible;
-        set => Block.Bible = value;
+        get => Block.BookText;
+        set => Block.BookText = value;
     }
 
     public async Task ShowBookAsync(int n)=> await Block.ShowBookAsync(n);
@@ -213,8 +213,8 @@ public partial class BibleView : UserControl
     /// <summary>A deleted Bible can no longer be read: when it is the one shown, the toolbar and the text block drop it.</summary>
     private void OnBibleDeleted(object? sender, InstallableBook bible)
     {
-        if (Toolbar.Bible?.EnglishName == bible.EnglishName) Toolbar.Bible = null;
-        if (Block.Bible?.EnglishName == bible.EnglishName) Block.Bible = null; // also when it was opened with OpenAsync
+        if (Toolbar.BookText?.EnglishName == bible.EnglishName) Toolbar.BookText = null;
+        if (Block.BookText?.EnglishName == bible.EnglishName) Block.BookText = null; // also when it was opened with OpenAsync
     }
 
     /// <summary>The text block, for settings the view does not expose itself.</summary>
